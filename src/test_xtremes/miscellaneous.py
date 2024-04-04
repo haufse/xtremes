@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 from scipy import stats
 from scipy.optimize import minimize
-from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r
+from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
@@ -157,57 +157,50 @@ def PWM2GEV(b_0, b_1, b_2):
     return gamma, mu, sigma 
 
 
-
-def draw_randoms(modelname, modelparams, n):
+def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0, seed=None):
+    """
+        Simulates a time series based on a given correllation structure.
+    """
+    if seed is not None:
+        np.random.seed(seed)
     # draw from GEV
-    if modelname == 'GEV':
-        if modelparams[0] == 0:
-            # gumbel case
-            s = gumbel_r.rvs(size=n)
-        if modelparams[0] > 0:
-            # frechet case
-            s = invweibull.rvs(1/modelparams[0], size=n)
-        if modelparams[0] < 0:
-            # weibull case
-            s = weibull_max.rvs(-1/modelparams[0], size=n)
-    elif modelname == 'AR_GEV':
-        if modelparams[0] == 0:
-            # gumbel case
-            noise = gumbel_r.rvs(size=n)
-            s = [noise[0]]
-            for i in range(1, n):
-                s.append((1-modelparams[1])*s[i-1] + modelparams[1]*noise[i])
-        if modelparams[0] > 0:
-            # frechet case
-            noise = invweibull.rvs(1/modelparams[0], size=n)
-            s = [noise[0]]
-            for i in range(1, n):
-                s.append((1-modelparams[1])*s[i-1] + modelparams[1]*noise[i])
-        if modelparams[0] < 0:
-            # weibull case
-            noise = weibull_max.rvs(-1/modelparams[0], size=n)
-            s = [noise[0]]
-            for i in range(1, n):
-                s.append((1-modelparams[1])*s[i-1] + modelparams[1]*noise[i])
-    elif modelname == 'AMAX_GEV':
-        if modelparams[0] == 0:
-            # gumbel case
-            noise = gumbel_r.rvs(size=n)
-            s = [noise[0]]
-            for i in range(1, n):
-                s.append(max([(1-modelparams[1])*s[i-1], modelparams[1]*noise[i]]))
-        if modelparams[0] > 0:
-            # frechet case
-            noise = invweibull.rvs(1/modelparams[0], size=n)
-            s = [noise[0]]
-            for i in range(1, n):
-                s.append(max([(1-modelparams[1])*s[i-1], modelparams[1]*noise[i]]))
-        if modelparams[0] < 0:
-            # weibull case
-            noise = weibull_max.rvs(-1/modelparams[0], size=n)
-            s = [noise[0]]
-            for i in range(1, n):
-                s.append(max([(1-modelparams[1])*s[i-1], modelparams[1]*noise[i]]))
+    if correlation.upper() == 'IID':
+        if distr == 'GEV':
+            if modelparams[0] == 0:
+                # gumbel case
+                s = gumbel_r.rvs(size=n)
+            if modelparams[0] > 0:
+                # frechet case
+                s = invweibull.rvs(1/modelparams[0], size=n)
+            if modelparams[0] < 0:
+                # weibull case
+                s = weibull_max.rvs(-1/modelparams[0], size=n)
+    elif correlation == 'ARMAX':
+        # creating Frechet(1)-AMAX model
+        Z = invweibull.rvs(1, size=n)
+        X = [Z[0]]
+        for f in Z[1:]:
+            xi = np.max([ts * X[-1], (1 - ts) * f])
+            X.append(xi)
+        # transforming model to desired distribution
+        if distr == 'GPD':
+            s = genpareto.ppf(invweibull.cdf(X), modelparams[0])
+        else:
+            raise ValueError('Other distributions yet to be implemented')
+        
+    elif correlation == 'AR':
+        Z = cauchy.rvs(size=n)
+        X = [Z[0]]
+        for f in Z[1:]:
+            xi = np.max([ts * X[-1], (1 - ts) * f])
+            X.append(xi)
+        # transforming model to desired distribution
+        if distr == 'GPD':
+            s = genpareto.ppf(cauchy.cdf(X))
+        else:
+            raise ValueError('Other distributions yet to be implemented')
+        
+
     else:
         raise ValueError('No valid model specified')
     

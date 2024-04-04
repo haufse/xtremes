@@ -122,12 +122,7 @@ ts = 0.5
 
 # 0 as lat parameter: no Time Series Dependence
 
-def execute_model(model='GEV', gamma_true=0, estimate_pi=False, option=1):
-    modelparams_dict = {
-        'GEV': [gamma_true, 0],
-        'AR_GEV': [gamma_true, ts],
-        'AMAX_GEV': [gamma_true, ts],
-    }
+def execute_model(model='GPD', ts=0, gamma_true=0, estimate_pi=False, option=1):
     ns = [1000, 2000, 3000]
     all_mse, all_gamma, all_mu, all_sigma, all_pi = [], [], [], [], []
     for n in ns:
