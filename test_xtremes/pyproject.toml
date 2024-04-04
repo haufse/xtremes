@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "test_xtremes"
+version = "0.0.3"
+authors = [
+  { name="Erik Haufs", email="haufse@hhu.de" },
+]
+description = "Testing publication of xtremes"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/haufse/xtremes"
+#Issues = "https://github.com/pypa/sampleproject/issues"
