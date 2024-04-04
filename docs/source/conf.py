@@ -6,8 +6,8 @@ project = 'test-xtremes'
 copyright = '2024, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.0'
-version = '0.0.4'
+release = '0.1'
+version = '0.1.0'
 
 # -- General configuration
 
