@@ -4,5 +4,3 @@ numpy
 scipy
 pynverse
 tqdm
-#python-docs-theme
-sphinx-rtd-theme
