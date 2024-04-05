@@ -1,5 +1,9 @@
-xtremes
-=======
-Python package assisting the ClimXtreme-Project.
-This package will contain supplementary code for the upcoming papers (to be added)
+Template for the Read the Docs tutorial
+=======================================
 
+This GitHub template includes fictional Python library
+with some basic Sphinx docs.
+
+Read the tutorial here:
+
+https://docs.readthedocs.io/en/stable/tutorial/
