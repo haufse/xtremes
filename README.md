@@ -1,9 +1,11 @@
-Template for the Read the Docs tutorial
-=======================================
-(changing format to .md, apparently this fails otherwise)
-This GitHub template includes fictional Python library
-with some basic Sphinx docs.
+Welcome to xtremes!
+===================
 
-Read the tutorial here:
+**xtremes** is a Python library for various utilities useful in Extreme Value Statistics. It is created within the ClimXtreme project 
+and will provide supplementary code and simulations for the papers yet to come.
 
-https://docs.readthedocs.io/en/stable/tutorial/
+Check out <https://test.pypi.org/project/test-xtremes/> for installation and <https://xtremes.readthedocs.io/en/latest/> for further information!
+
+.. note::
+
+   This project is under active & heavy development.
