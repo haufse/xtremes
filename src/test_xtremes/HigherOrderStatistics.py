@@ -6,115 +6,170 @@ from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
-
 import test_xtremes.miscellaneous as misc
 
-def getgammas(n=200, r=10, rep=1000, model='normal', modelparams = [0,1, 0], stride='block', initParams='auto', estimate_pi=False, option=1):
-    """
-    params:
-        n: number of data points
-        r: block size
-        rep: repititions for estimation
-        model:  model to be chosen
-            modelparams: list of necessary parameters
-            'normal': iid normal, param1 = mean, param2 = std
-            'exponential': iid exponential, param1 = lambda
-            'AR':
-            'AMAX':
-        stride: sliding block with stride
-            'block': stride = r, i.e. disjoint blocks
-            1: sliding blocks
-            other ints: sliding with stride
-        initParams: initial params for ML optimization
-    """
-    gammas, mus, sigmas, pis = [], [], [], []
-    for i in range(rep):# tqdm
-        succ = False
-        attempt_counter = 0
-        while succ == False:
-            
-            s = misc.draw_randoms(modelname=model, modelparams=modelparams, n=n)
+def extract_BM(timeseries, block_size=10, stride='DBM'):
+    n = len(timeseries)
+    r = block_size
+    p = stride2int(stride, block_size)
+    out = [np.max(timeseries[i*p:i*p+r]) for i in range((n-r)//p+1)]
+    return np.array(out)
 
-            if stride == 'block':
-                p = r
-            elif isinstance(stride, int):
-                p = stride
+def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
+    n = len(timeseries)
+    r = block_size
+    p = stride2int(stride, block_size)
+    out = [np.sort(timeseries[i*p:i*p+r])[-orderstats:] for i in range((n-r)//p+1)]
+    return np.array(out)
+
+class TimeSeries:
+    def __init__(self, n, distr='GEV', correlation='IID', modelparams=[0], ts=0):
+        self.timeseries = []
+        self.distr = distr
+        self.corr = correlation
+        self.modelparams = modelparams
+        self.ts = ts
+        self.len = n
+        self.blockmaxima = []
+        self.high_order_stats = []
+    
+    def __len__(self):
+        return self.len
+    
+    def simulate(self, rep=10, seeds='default'):
+        self.reps = 10
+        if seeds == 'default':
+            for i in range(rep):
+                series = simulate_timeseries(self.len,
+                                             distr=self.distr, 
+                                             correlation=self.corr, 
+                                             modelparams=self.modelparams, 
+                                             ts=self.ts, 
+                                             seed=i)
+                self.timeseries.append(series)
+        elif seeds == None:
+            for i in range(rep):
+                series = simulate_timeseries(self.len,
+                                             distr=self.distr, 
+                                             correlation=self.corr, 
+                                             modelparams=self.modelparams, 
+                                             ts=self.ts, 
+                                             seed=None)
+                self.timeseries.append(series)
+        else:
+            if not hasattr(seeds, '__len__'):
+                # handles the case of seeds being an integer and rep=1
+                seeds = [seeds]
+            if len(seeds) != rep:
+                raise ValueError('Number of given seeds does not match repititions!')
             else:
-                raise ValueError('No valid stride specified')
-            
-            if initParams == 'auto':
-                mxm = [np.max(s[i*p:i*p+r]) for i in range((n-r)//p)]
-                b_0, b_1, b_2 = misc.PWM_estimation(mxm)
-                gamma0, mu0, sigma0 = misc.PWM2GEV(b_0, b_1, b_2)
-                # last model param is TS param, Ex 10.12 in Beirlant et al 2004 states pi = ts in AMAX
-                pi0 = misc.invsigmoid(modelparams[-1]) #np.random.uniform(0.7, 1)
-                initParams = [gamma0, mu0, sigma0, pi0]
+                for i in range(rep):
+                    series = simulate_timeseries(self.len,
+                                                distr=self.distr, 
+                                                correlation=self.corr, 
+                                                modelparams=self.modelparams, 
+                                                ts=self.ts, 
+                                                seed=seeds[i])
+                    self.timeseries.append(series)
+        
+    def get_blockmaxima(self, block_size=2, stride='DBM', rep=10):
+        if self.timeseries == []:
+            warnings.warn('TimeSeries was not simulated yet, I will do it for you. For more flexibility, simulate first!')
+            self.simulate(rep=rep)
+        self.block_size = block_size
+        self.stride = stride
+        for series in self.timeseries:
+            bms = extract_BM(series, block_size=block_size, stride=stride)
+            self.blockmaxima.append(bms)
+    
 
-            # define cost function based on option
-            if option == 1:
-                
-                maxima = [np.max(s[i*p:i*p+r]) for i in range((n-r)//p)]
-                
-                #def cost(params):
-                #    gamma, mu, sigma, pi = params        
-                #    cst = - sum(ll_GEV(maxima, gamma=gamma,mu=mu,sigma=sigma, pi=pi))
-                #    return cst
-                
-                def cost(params):
-                    gamma, mu, sigma, pi = params     
-                    uni, count = np.unique(maxima, return_counts=True)   
-                    cst = - np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
-                    return cst
-            
-            if option == 2:
-                
-                maxima = np.array([[np.max(s[i*p:i*p+r]), np.partition(s[i*p:i*p+r], -2)[-2]] for i in range((n-r)//p)])
-                
-                def cost(params):
-                    gamma, mu, sigma, pi = params     
-                    uni, count = np.unique(maxima, return_counts=True,axis=0)   
-                    cst = - np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
-                    return cst
-            
-            if option == 3:
-                
-                maxima_second = np.array([[np.max(s[i*p:i*p+r]), np.partition(s[i*p:i*p+r], -2)[-2]] for i in range((n-r)//p)])
+    def get_HOS(self, orderstats = 2, block_size=2, stride='DBM', rep=10):
+        if self.timeseries == []:
+            warnings.warn('TimeSeries was not simulated yet, I will do it for you. For more flexibility, simulate first!')
+            self.simulate(rep=rep)
+        self.block_size = block_size
+        self.stride = stride
+        for series in self.timeseries:
+            hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
+            self.high_order_stats.append(hos)
 
+def cost_function(high_order_stats, option=1, estimate_pi=False, pi0=1):
+    # define cost function based on option
+    maxima = high_order_stats.T[-1]
+    secondlargest = high_order_stats.T[-2]
+    if option == 1:       
+        def cost(params):
+            gamma, mu, sigma, pi = params     
+            uni, count = np.unique(maxima, return_counts=True)   
+            cst = - np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
+            return cst
+        
+    if option == 2:
+        def cost(params):
+            gamma, mu, sigma, pi = params     
+            uni, count = np.unique(high_order_stats, return_counts=True, axis=0)   
+            cst = - np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
+            return cst
+    
+    if option == 3:
+        def cost(params):
+            gamma, mu, sigma, pi = params
+            if not estimate_pi:
+                pi = pi0
+            # add likelihood for maxima
+            uni, count = np.unique(maxima, return_counts=True)   
+            cst = - np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option, max_only=True), count)
+            # add likelihood for second largest
+            uni, count = np.unique(secondlargest, return_counts=True)   
+            cst -=  np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option, second_only=True), count)
+            return cst
+        
+    return cost
 
-                #def cost(params):
-                #    gamma, mu, sigma, pi = params     
-                #    uni, count = np.unique(maxima_second, return_counts=True,axis=0)   
-                #    cst = - np.dot(ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
-                #    return cst
-                
-                maxima, second = maxima_second.T
-                def cost(params):
-                    gamma, mu, sigma, pi = params
-                    if not estimate_pi:
-                        pi = pi0
-                    # add likelihood for maxima
-                    uni, count = np.unique(maxima, return_counts=True)   
-                    cst = - np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option, max_only=True), count)
-                    # add likelihood for second maxima
-                    uni, count = np.unique(second, return_counts=True)   
-                    cst -=  np.dot(misc.ll_GEV(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option, second_only=True), count)
-                    return cst
+def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
+    initParams = np.array(PWM_estimators)
+    # pi parameter from theory
+    if corr == 'ARMAX':
+        pis = np.ones(len(PWM_estimators)) * misc.invsigmoid(1-ts)
+    elif corr == 'IDD':
+        pis = np.ones(len(PWM_estimators))
+    else:
+        pis = np.ones(shape=(1,len(PWM_estimators)))
+    return np.append(initParams.T, pis, axis=0).T
 
-
-            results = minimize(cost, initParams, method='Nelder-Mead')#'BFGS')#options={'maxiter':10000})
-            succ = results.success
-            attempt_counter += 1
-            if attempt_counter > 5:
-                print('Warning: Minimization failed more than 5 times, breaking...')
-                break
-        if attempt_counter < 6:
+class HighOrderStats:
+    def __init__(self, TimeSeries):
+        TimeSeries.get_HOS()
+        self.TimeSeries = TimeSeries
+        self.high_order_stats = TimeSeries.high_order_stats
+        self.blockmaxima = [ho_stat.T[-1] for ho_stat in self.high_order_stats]
+        self.gamma_true = modelparams2gamma_true(TimeSeries.distr, TimeSeries.corr, TimeSeries.modelparams)
+        self.PWM_estimators = []
+        self.ML_estimators = []
+    
+    def get_PWM_estimation(self):
+        for bms in self.blockmaxima:
+            b0, b1, b2 = misc.PWM_estimation(bms) 
+            gamma, mu, sigma = misc.PWM2GEV(b0, b1, b2)
+            self.PWM_estimators.append([gamma, mu, sigma])
+        self.PWM_estimators = np.array(self.PWM_estimators)
+        
+    def get_ML_estimation(self, initParams = 'auto', option=1, estimate_pi=False):
+        if self.PWM_estimators == []:
+            self.get_PWM_estimation()
+        if initParams == 'auto':
+            initParams = automatic_parameter_initialization(self.PWM_estimators, 
+                                                            self.TimeSeries.corr, 
+                                                            ts=self.TimeSeries.ts)
+        for i, ho_stat in enumerate(self.high_order_stats):
+            cost = cost_function(ho_stat, option=option, estimate_pi=estimate_pi, pi0=pi0)
+            results = misc.minimize(cost, initParams[i], method='Nelder-Mead')
+    
             gamma, mu, sigma, pi = results.x
-            gammas.append(gamma)
-            mus.append(mu)
-            sigmas.append(sigma)
-            pis.append(pi)
-    return gammas, mus, sigmas, pis
-
+            
+            self.ML_estimators.append([gamma, mu, sigma, pi])
+        self.ML_estimators = np.array(self.ML_estimators)
+        
 
 # time series parameter
 ts = 0.5

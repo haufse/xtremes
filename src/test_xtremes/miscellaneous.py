@@ -13,12 +13,12 @@ def sigmoid(x):
     return 1/(1+np.exp(-x))
 
 def invsigmoid(y):
-    if y == 0:
-        return -36 # exp(-36)=0
-    if y == 1:
-        return 36 # exp(36)=infty
-    elif y < 0 or y > 1:
+    if y < 0 or y > 1:
         return ValueError('Sigmoid only maps to (0, 1)!')
+    elif y < np.exp(-30):
+        return -30 # exp(-30)=0
+    elif y > 1-np.exp(30):
+        return 30 # exp(30)=infty
     else:
         return inversefunc(sigmoid, y_values=y).item()
 
@@ -175,6 +175,9 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             if modelparams[0] < 0:
                 # weibull case
                 s = weibull_max.rvs(-1/modelparams[0], size=n)
+        if distr == 'GPD':
+            s = genpareto.rvs(c=modelparams[0], size=n)
+
     elif correlation == 'ARMAX':
         # creating Frechet(1)-AMAX model
         Z = invweibull.rvs(1, size=n)
@@ -184,7 +187,7 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             X.append(xi)
         # transforming model to desired distribution
         if distr == 'GPD':
-            s = genpareto.ppf(invweibull.cdf(X), modelparams[0])
+            s = genpareto.ppf(invweibull.cdf(X, c=1), c=modelparams[0])
         else:
             raise ValueError('Other distributions yet to be implemented')
         
@@ -196,7 +199,7 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             X.append(xi)
         # transforming model to desired distribution
         if distr == 'GPD':
-            s = genpareto.ppf(cauchy.cdf(X))
+            s = genpareto.ppf(cauchy.cdf(X), c=modelparams[0])
         else:
             raise ValueError('Other distributions yet to be implemented')
         
@@ -206,6 +209,22 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     
     return s
     
+def stride2int(stride, block_size):
+    if stride == 'SBM':
+        return 1
+    elif stride == 'DBM':
+        return int(block_size) 
+    else:
+        return int(stride)
+
+def modelparams2gamma_true(distr, correllation, modelparams):
+    """
+    calculate, if known, the theoretical gamma resulting from model specification.
+    This is especially necessary for MSE calculation.
+    """
+    if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: # NOT PROVEN FOR AR, or find source
+        return modelparams[0]
+
 
 def mse(gammas, gamma_true):
     if len(gammas) > 1:
