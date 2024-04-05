@@ -4,4 +4,4 @@ API
 .. autosummary::
    :toctree: generated
 
-   test-xtremesXXXXXX
+   test_xtremes
