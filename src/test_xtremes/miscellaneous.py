@@ -20,7 +20,7 @@ from pynverse import inversefunc
 import pickle
 import warnings
 
-
+# BASIC FUNTIONS
 def sigmoid(x):
     r""" Sigmoid  of x
 
@@ -67,6 +67,34 @@ def invsigmoid(y):
         return 30 # exp(30)=infty
     else:
         return inversefunc(sigmoid, y_values=y).item()
+
+
+def mse(gammas, gamma_true):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
+    if len(gammas) > 1:
+        MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
+        variance = sum((np.array(gammas) - np.mean(gammas))**2)/(len(np.array(gammas))-1)
+        bias = MSE - variance
+        return MSE, variance, bias
+    else:
+        warnings.warn('No variance can be computed on only 1 element!')
+        return np.nan, np.nan, np.nan
 
 # the GEV
 def gev(x, gamma=0, mu=0, sigma=1):
@@ -387,32 +415,5 @@ def modelparams2gamma_true(distr, correllation, modelparams):
     if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: # NOT PROVEN FOR AR, or find source
         return modelparams[0]
 
-
-def mse(gammas, gamma_true):
-    r""" Inverse Sigmoid of x
-
-    Notes
-    -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
-    """
-    if len(gammas) > 1:
-        MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
-        variance = sum((np.array(gammas) - np.mean(gammas))**2)/(len(np.array(gammas))-1)
-        bias = MSE - variance
-        return MSE, variance, bias
-    else:
-        warnings.warn('No variance can be computed on only 1 element!')
-        return np.nan, np.nan, np.nan
 
 
