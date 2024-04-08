@@ -22,12 +22,16 @@ import warnings
 
 
 def sigmoid(x):
-    """
-    Computes the sigmoid of a function.
-
+    r""" Sigmoid  of x
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
     .. math::
-        sigmoid(x) := 1/(1+\exp(-x))
-
+        \sigma(x) := 1/(1+\exp(-x))
+    
+    Parameters
+    ----------
     :param x: input
     :type x: int, float list or numpy.array
     :return: The sigmoid of the input
@@ -37,6 +41,10 @@ def sigmoid(x):
     return 1/(1+np.exp(-x))
 
 def invsigmoid(y):
+    """
+    Computes the inverse sigmoid of given values.
+
+    """
     if y < 0 or y > 1:
         return ValueError('Sigmoid only maps to (0, 1)!')
     elif y < np.exp(-30):
