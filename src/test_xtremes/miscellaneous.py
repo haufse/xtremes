@@ -23,12 +23,16 @@ import warnings
 
 def sigmoid(x):
     """
-    Returns the sigmoid of a function.
+    Computes the sigmoid of a function.
+
+    .. math::
+
+        \mathrm{sigmoid}(x) := \frac{1}{1+\exp(-x)}
 
     :param x: input
-    :type x: int, float list or np.array
+    :type x: int, float list or numpy.array
     :return: The sigmoid of the input
-    :rtype: np.ndarray[float]
+    :rtype: numpy.ndarray[float]
     """
     x = np.array(x)
     return 1/(1+np.exp(-x))
