@@ -26,7 +26,7 @@ def sigmoid(x):
     Computes the sigmoid of a function.
 
     .. math::
-        \mathrm{sigmoid}(x) := \frac{1}{1+\exp(-x)}
+        \mathrm{sigmoid}(x) := frac{1}{1+\exp(-x)}
 
     :param x: input
     :type x: int, float list or numpy.array
