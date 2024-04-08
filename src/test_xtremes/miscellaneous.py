@@ -12,6 +12,7 @@ import warnings
 def sigmoid(x):
     """
     Returns the sigmoid of a function.
+    
     :param x: input
     :type x: int, float list or np.array
     :return: The sigmoid of the input
