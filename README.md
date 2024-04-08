@@ -6,6 +6,6 @@ and will provide supplementary code and simulations for the papers yet to come.
 
 Check out <https://test.pypi.org/project/test-xtremes/> for installation and <https://xtremes.readthedocs.io/en/latest/> for further information!
 
-.. note::
-
+Note:
+-----
    This project is under active & heavy development.
