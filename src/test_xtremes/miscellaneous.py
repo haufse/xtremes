@@ -1,3 +1,15 @@
+"""
+test_xtremes.miscellaneous - Python sublibrary for diverse functions.
+
+.. code-block:: python
+
+    # Import test_xtremes
+    import test_xtremes.miscellaneous as misc
+
+    # Call its only function
+    misc.sigmoid(1)
+"""
+
 import numpy as np
 from tqdm import tqdm
 from scipy import stats
@@ -12,10 +24,11 @@ import warnings
 def sigmoid(x):
     """
     Returns the sigmoid of a function.
-    
+
     :param x: input
     :type x: int, float list or np.array
     :return: The sigmoid of the input
+    :rtype: np.ndarray[float]
     """
     x = np.array(x)
     return 1/(1+np.exp(-x))
