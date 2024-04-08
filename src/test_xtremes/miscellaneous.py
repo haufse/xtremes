@@ -6,9 +6,16 @@ from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
+import warnings
 
 
 def sigmoid(x):
+    """
+    Returns the sigmoid of a function.
+    :param x: input
+    :type x: int, float list or np.array
+    :return: The sigmoid of the input
+    """
     x = np.array(x)
     return 1/(1+np.exp(-x))
 
@@ -233,6 +240,7 @@ def mse(gammas, gamma_true):
         bias = MSE - variance
         return MSE, variance, bias
     else:
+        warnings.warn('No variance can be computed on only 1 element!')
         return np.nan, np.nan, np.nan
 
 

@@ -4,4 +4,5 @@ numpy
 scipy
 pynverse
 tqdm
+asyncio
 sphinx-rtd-size
