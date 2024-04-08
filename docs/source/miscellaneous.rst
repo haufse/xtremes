@@ -1,9 +1,33 @@
 Miscellaneous
 =============
 
-This subpackage is a collection for non-specialized, frequently used or basic functions. 
+This module is a collection for non-specialized, frequently used or basic functions. 
 
 
-you can use the ``test_xtremes.miscellaneous.sigmoid`` function:
+Basic functions
+---------------
 
 .. autofunction:: test_xtremes.miscellaneous.sigmoid
+.. autofunction:: test_xtremes.miscellaneous.invsigmoid
+.. autofunction:: test_xtremes.miscellaneous.mse
+
+The GEV and its Likelihood
+--------------------------
+
+.. autofunction:: test_xtremes.miscellaneous.gev
+.. autofunction:: test_xtremes.miscellaneous.GEV
+.. autofunction:: test_xtremes.miscellaneous.ll_gev
+.. autofunction:: test_xtremes.miscellaneous.ll_GEV
+
+Piece Wise Moment Estimation 
+----------------------------
+
+.. autofunction:: test_xtremes.miscellaneous.PWM_estimation
+.. autofunction:: test_xtremes.miscellaneous.PWM2GEV
+
+Simulating Time Series
+----------------------
+
+.. autofunction:: test_xtremes.miscellaneous.simulate_timeseries
+.. autofunction:: test_xtremes.miscellaneous.stride2int
+.. autofunction:: test_xtremes.miscellaneous.modelparams2gamma_true

@@ -18,4 +18,5 @@ Contents
 
    usage
    miscellaneous
+   highorderstatistics
    api

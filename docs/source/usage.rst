@@ -18,8 +18,9 @@ Until now, only a preliminary test version is avaiable:
 
    (.venv) $ pip install -i https://test.pypi.org/simple/ test-xtremes
 
-Creating stuff
-----------------
 
-To be adapted later:
-tutorial stuff!
+The modules
+-----------
+So far, two modules are implemented. The module ``test_xtremes.miscellaneous`` contains basic functionalities, 
+whereas ``test_xtremes.HigherOrderStatistics`` is specialized on the influence of higher order statistics for 
+Maximum Likelihood estimations.

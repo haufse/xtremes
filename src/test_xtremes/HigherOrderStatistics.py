@@ -13,6 +13,22 @@ import test_xtremes.miscellaneous as misc
 # FUNCTIONS
 
 def extract_BM(timeseries, block_size=10, stride='DBM'):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     n = len(timeseries)
     r = block_size
     p = misc.stride2int(stride, block_size)
@@ -20,6 +36,22 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
     return np.array(out)
 
 def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     n = len(timeseries)
     r = block_size
     p = misc.stride2int(stride, block_size)
@@ -28,6 +60,22 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     
 
 def cost_function(high_order_stats, option=1, estimate_pi=False, pi0=1):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     # define cost function based on option
     maxima = high_order_stats.T[-1]
     secondlargest = high_order_stats.T[-2]
@@ -61,6 +109,22 @@ def cost_function(high_order_stats, option=1, estimate_pi=False, pi0=1):
     return cost
 
 def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     initParams = np.array(PWM_estimators)
     # pi parameter from theory
     if corr == 'ARMAX':
@@ -74,6 +138,22 @@ def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
 
 # parallel running ML estimations
 def background(f):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     def wrapped(*args, **kwargs):
         return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
 
@@ -81,6 +161,22 @@ def background(f):
 
 @background
 def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     with open(file, 'rb') as f:
         timeseries = pickle.load(f)
     out = {}
@@ -95,6 +191,22 @@ def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 
     return res
 
 def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False):
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     loop = asyncio.get_event_loop()
     looper = asyncio.gather(*[run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi) for gamma_true in gamma_trues])
     results = loop.run_until_complete(looper) 
@@ -108,6 +220,22 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
 # CLASSES
 
 class PWM_estimators:
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     def __init__(self, TimeSeries):
         # TimeSeries object needs blockmaxima
         if TimeSeries.blockmaxima == [] and TimeSeries.high_order_stats == []:
@@ -157,6 +285,22 @@ class PWM_estimators:
             warnings.warn('No variance can be computed on only one element!')
 
 class ML_estimators:
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     def __init__(self, TimeSeries):
         # TimeSeries object needs high order statistics
         if TimeSeries.high_order_stats == []:
@@ -219,6 +363,22 @@ class ML_estimators:
             
 
 class TimeSeries:
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     def __init__(self, n, distr='GEV', correlation='IID', modelparams=[0], ts=0):
         self.timeseries = []
         self.distr = distr
@@ -290,6 +450,22 @@ class TimeSeries:
             self.high_order_stats.append(hos)
 
 class HighOrderStats:
+    r""" Sigmoid  of x
+
+    Notes
+    -----
+    Computes the sigmoid of given values.
+    
+    .. math::
+        \sigma(x) := \frac{1}{1+\exp(-x)}
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
+    :return: The sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    """
     def __init__(self, TimeSeries):
         TimeSeries.get_HOS()
         self.TimeSeries = TimeSeries

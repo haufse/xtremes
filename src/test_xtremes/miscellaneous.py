@@ -23,17 +23,18 @@ import warnings
 
 def sigmoid(x):
     r""" Sigmoid  of x
+
     Notes
     -----
     Computes the sigmoid of given values.
     
     .. math::
-        \sigma(x) := 1/(1+\exp(-x))
+        \sigma(x) := \frac{1}{1+\exp(-x)}
     
     Parameters
     ----------
-    :param x: input
-    :type x: int, float list or numpy.array
+    :param x: input, :math:`x\in\mathbb{R}`
+    :type x: int, float, list or numpy.array
     :return: The sigmoid of the input
     :rtype: numpy.ndarray[float]
     """
@@ -41,9 +42,22 @@ def sigmoid(x):
     return 1/(1+np.exp(-x))
 
 def invsigmoid(y):
-    """
-    Computes the inverse sigmoid of given values.
+    r""" Inverse Sigmoid of x
 
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
     """
     if y < 0 or y > 1:
         return ValueError('Sigmoid only maps to (0, 1)!')
@@ -56,6 +70,23 @@ def invsigmoid(y):
 
 # the GEV
 def gev(x, gamma=0, mu=0, sigma=1):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     y = (x-mu)/sigma #standard
     if gamma == 0:
         return np.exp(-np.exp(-y))*np.exp(-y)/sigma
@@ -63,15 +94,32 @@ def gev(x, gamma=0, mu=0, sigma=1):
         return np.exp(-(1+gamma*y)**(-1/gamma))*(1+gamma*y)**(-1/gamma-1)/sigma
     else:
         return 0
+
 # the GEV for lists
 def GEV(x, gamma=0, mu=0, sigma=1):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     g = lambda x: gev(x, gamma, mu, sigma)
     return list(map(g, x))
 
 # log-likelihood
 def ll_gev(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
-    """
-    Computes the log likelihood of the GEV
+    r"""Computes the log likelihood of the GEV
     option: int
         if ==1: only use maximum for likelihood
         if ==2: use maximum + 2. largest for likelihood
@@ -142,11 +190,45 @@ def ll_gev(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_onl
     
 # the log GEV for lists
 def ll_GEV(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     g = lambda x: ll_gev(x, gamma, mu, sigma, pi, option, max_only=max_only, second_only=second_only)
     return list(map(g, x))
 
 # PWM Estimation
 def PWM_estimation(maxima):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     n = len(maxima)
     if n > 2:
         m = np.sort(maxima)
@@ -159,6 +241,23 @@ def PWM_estimation(maxima):
         return np.nan, np.nan, np.nan
 
 def PWM2GEV(b_0, b_1, b_2):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     def g1(x):
         if x == 0:
             return np.log(3)/np.log(2)
@@ -190,8 +289,22 @@ def PWM2GEV(b_0, b_1, b_2):
 
 
 def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0, seed=None):
-    """
-        Simulates a time series based on a given correllation structure.
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
     """
     if seed is not None:
         np.random.seed(seed)
@@ -242,6 +355,23 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     return s
     
 def stride2int(stride, block_size):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     if stride == 'SBM':
         return 1
     elif stride == 'DBM':
@@ -259,6 +389,23 @@ def modelparams2gamma_true(distr, correllation, modelparams):
 
 
 def mse(gammas, gamma_true):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
     if len(gammas) > 1:
         MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
         variance = sum((np.array(gammas) - np.mean(gammas))**2)/(len(np.array(gammas))-1)
