@@ -18,5 +18,5 @@ Contents
 
    usage
    miscellaneous
-   highorderstatistics
+   higherorderstatistics
    api

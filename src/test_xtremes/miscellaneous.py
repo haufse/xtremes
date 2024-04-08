@@ -147,12 +147,22 @@ def GEV(x, gamma=0, mu=0, sigma=1):
 
 # log-likelihood
 def ll_gev(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
-    r"""Computes the log likelihood of the GEV
-    option: int
-        if ==1: only use maximum for likelihood
-        if ==2: use maximum + 2. largest for likelihood
-        if ==3: use maximum + 2. largest + additional param for likelihood
-        max only and second only for splitting up option 3
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
     """
     # numerically more stable?
     sigma = np.abs(sigma)
@@ -408,9 +418,22 @@ def stride2int(stride, block_size):
         return int(stride)
 
 def modelparams2gamma_true(distr, correllation, modelparams):
-    """
-    calculate, if known, the theoretical gamma resulting from model specification.
-    This is especially necessary for MSE calculation.
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
     """
     if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: # NOT PROVEN FOR AR, or find source
         return modelparams[0]
