@@ -6,7 +6,7 @@ test_xtremes.miscellaneous - Python sublibrary for diverse functions.
     # Import test_xtremes
     import test_xtremes.miscellaneous as misc
 
-    # Call its only function
+    # Call an arbitray function
     misc.sigmoid(1)
 """
 
@@ -46,7 +46,7 @@ def invsigmoid(y):
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+    Computes the inverse sigmoid :math:`\sigma^{-1}` of given values, where :math:`\sigma` is defined as
    
     .. math::
         \sigma(x) := 1/(1+\exp(-x)).
@@ -70,22 +70,38 @@ def invsigmoid(y):
 
 
 def mse(gammas, gamma_true):
-    r""" Inverse Sigmoid of x
+    r""" Mean Squared Error for shape param
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+    Computes the mean squared error, variance and bias of a set of estimators given the true 
+    (theoretical) value. This function is originally intended for estimating the GEV shape parameter
+    :math:`gamma`, but works for other estimators just as fine
    
     .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+        \mathrm{MSE}(\hat\gamma) &:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\gamma\right)^2 \\
+        \mathrm{Var}(\hat\gamma) &:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\overline\gamma\right)^2 \\
+        \mathrm{Bias}(\hat\gamma) &:= \frac{n}{n-1} \left(\gamma-\overline\gamma\right)^2.
     
+    Here, :math:`\overline\gamma` denotes the mean 
+
+    .. math::
+        \overline\gamma := \frac{1}{n}\sum_{i=1}^n \gamma_i .
+    
+    Also note that
+
+    .. math::
+        \mathrm{MSE} := \mathrm{Bias} + \mathrm{Var}. 
+
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :param gammas: list of estimated values
+    :param gamma_true: true / theoretical parameter
+    :type gammas: list or numpy.array
+    :type gamma_true: int or float
+    :return: MSE, variance and bias 
+    :rtype: tuple[float]
+    :raise test_xtremes.miscellaneous.warning: If len(gammas)==1. nans are returned.
     """
     if len(gammas) > 1:
         MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
@@ -96,35 +112,95 @@ def mse(gammas, gamma_true):
         warnings.warn('No variance can be computed on only 1 element!')
         return np.nan, np.nan, np.nan
 
-# the GEV
-def gev(x, gamma=0, mu=0, sigma=1):
-    r""" Inverse Sigmoid of x
+def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
+    r""" CDF of the GEV
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+    Computes the cumulative density function of the Generalized Extreme Value distribution
    
     .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+        G_{\gamma,\mu,\sigma}(x):= \exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
+    
+    For :math:`\gamma=0`, this term can be interpreted as the limit :math:`\lim_{\gamma\to 0}`.:
+
+    .. math::
+        G_{0,\mu,\sigma}(x):= \exp\left(-\exp\left(-\frac{x-\mu}{\sigma}\right)\right).
+    
+        
+    This function also allows the usage of an extremal index, another parameter relevant when
+    dealing with stationary time series and its extreme values.
+
+    .. math::
+        G_{\gamma,\mu,\sigma,\theta}(x):= \exp\left(-\theta\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
     
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
+    :param x: input, GEV argument :math:`x\in \mathb{R}`
     :type x: int, float, list or numpy.array
+    :param gamma: input, GEV argument :math:`\gamma\in \mathb{R}`
+    :type gamma: int, float, list or numpy.array
+    :param mu: input, GEV argument :math:`\mu\in \mathb{R}`
+    :type mu: int, float, list or numpy.array
+    :param sigma: input, GEV argument :math:`\sigma>0`
+    :type sigma: int, float, list or numpy.array
+    :param theta: input, GEV argument :math:`\vartheta\in [0, 1]`
+    :type theta: int, float, list or numpy.array
     :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :rtype: numpy.ndarray[float] or float
     """
+    x = np.array(x)
+    y = (x-mu)/sigma
+    if gamma == 0:
+        tau = -np.exp(-y)
+    else:
+        tau = (1+gamma*x)**(-1/gamma)
+    out = np.exp(-theta*tau)
+    if len(out) == 1:
+        return out[0]
+    else:
+        return out
+
+
+
+def GEV_pdf(x, gamma=0, mu=0, sigma=1):
+    r""" PDF of the GEV
+
+    Notes
+    -----
+    Computes the probability density function of the Generalized Extreme Value distribution
+   
+    .. math::
+        g(x) := \exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right)\cdot\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1-1/\gamma}/\sigma
+    
+    Parameters
+    ----------
+    :param x: input, GEV argument :math:`x\in \mathb{R}`
+    :type x: int, float, list or numpy.array
+    :param gamma: input, GEV argument :math:`\gamma\in \mathb{R}`
+    :type gamma: int, float, list or numpy.array
+    :param mu: input, GEV argument :math:`\mu\in \mathb{R}`
+    :type mu: int, float, list or numpy.array
+    :param sigma: input, GEV argument :math:`\sigma>0`
+    :type sigma: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float] or float
+    """
+    x = np.array(x)
     y = (x-mu)/sigma #standard
     if gamma == 0:
-        return np.exp(-np.exp(-y))*np.exp(-y)/sigma
+        out = np.exp(-np.exp(-y))*np.exp(-y)/sigma
     elif 1+gamma*y>0:
-        return np.exp(-(1+gamma*y)**(-1/gamma))*(1+gamma*y)**(-1/gamma-1)/sigma
+        out = np.exp(-(1+gamma*y)**(-1/gamma))*(1+gamma*y)**(-1/gamma-1)/sigma
     else:
-        return 0
+        out = np.zeros_like(x)
+    if len(out) == 1:
+        return out[0]
+    else:
+        return out
 
-# the GEV for lists
-def GEV(x, gamma=0, mu=0, sigma=1):
+
+def GEV_ll(x, gamma=0, mu=0, sigma=1):
     r""" Inverse Sigmoid of x
 
     Notes
@@ -142,111 +218,19 @@ def GEV(x, gamma=0, mu=0, sigma=1):
     :rtype: numpy.ndarray[float]
     :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
     """
-    g = lambda x: gev(x, gamma, mu, sigma)
-    return list(map(g, x))
-
-# log-likelihood
-def ll_gev(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
-    r""" Inverse Sigmoid of x
-
-    Notes
-    -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
-    """
-    # numerically more stable?
+    x = np.array(x)
     sigma = np.abs(sigma)
-    #if sigma < 0.1:
-    #    print('sigma close to 0!')
-    #    sigma += 0.1
     y = (x-mu)/sigma #standard
-    if option == 1:
-        if np.abs(gamma) < 0.01:
-            return -np.log(sigma)-np.exp(-y)-y
-        elif 1+gamma*y>0:
-            return -np.log(sigma)-(1+gamma*y)**(-1/gamma)+np.log(1+gamma*y)*(-1/gamma-1)
-        else:
-            return -1000 # ln(0)
-    
-    elif option == 2:
-        # y[0] is max, y[1] 2nd largest
-        if np.abs(gamma) < 0.0001:
-            return - 2 * np.log(sigma) - np.exp(-y[1]) - y[0] - y[1] 
-        elif 1+gamma*y[0]>0 and 1+gamma*y[1]>0:
-            return -2 * np.log(sigma)-(1+gamma*y[1])**(-1/gamma)-np.log(1+gamma*y[0])*(1/gamma+1)-np.log(1+gamma*y[1])*(1/gamma+1)
-        else:
-            return -1000 # ln(0)
-    
-    elif option == 3 and max_only:
-        # y is maximum
-        if np.abs(gamma) < 0.0001:
-            return - 2 * np.log(sigma) - np.exp(-y) - y
-        elif 1+gamma*y>0:
-            l = -2 * np.log(sigma)
-            l += -(1+gamma*y)**(-1/gamma)
-            l += -np.log(1+gamma*y)*(1/gamma+1)
-            return l
-        else:
-            return -1000 # ln(0)
-    
-    elif option == 3 and second_only:
-        spi = sigmoid(pi)
-        # y is second largest
-        if np.abs(gamma) < 0.0001 and 1-spi+spi*(1+gamma*y)**(-1/gamma)>0:
-            return  - np.exp(-y) - y - np.log(1-spi+spi*np.exp(-y))
-        elif 1+gamma*y>0 and 1-spi+spi*(1+gamma*y)**(-1/gamma)>0:
-            l = -(1+gamma*y)**(-1/gamma)
-            l += -np.log(1+gamma*y)*(1/gamma+1)
-            l +=- np.log(1-spi+spi*(1+gamma*y)**(-1/gamma))
-            return l
-        else:
-            return -1000 # ln(0)
-
-    elif option == 3:
-        # y[0] is max, y[1] 2nd largest
-        spi = sigmoid(pi)
-        if np.abs(gamma) < 0.0001 and 1-spi+spi*(1+gamma*y[1])**(-1/gamma)>0:
-            return - 2 * np.log(sigma) - np.exp(-y[0]) - np.exp(-y[1]) - y[0] - y[1] - np.log(1-spi+spi*np.exp(-y[1]))
-        elif 1+gamma*y[0]>0 and 1+gamma*y[1]>0 and 1-spi+spi*(1+gamma*y[1])**(-1/gamma)>0:
-            l = -2 * np.log(sigma)
-            l += -(1+gamma*y[0])**(-1/gamma)-(1+gamma*y[1])**(-1/gamma)
-            l += -np.log(1+gamma*y[0])*(1/gamma+1)-np.log(1+gamma*y[1])*(1/gamma+1)
-            l +=- np.log(1-spi+spi*(1+gamma*y[1])**(-1/gamma))
-            return l
-        else:
-            return -1000 # ln(0)
-    
-# the log GEV for lists
-def ll_GEV(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
-    r""" Inverse Sigmoid of x
-
-    Notes
-    -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
-    """
-    g = lambda x: ll_gev(x, gamma, mu, sigma, pi, option, max_only=max_only, second_only=second_only)
-    return list(map(g, x))
+    if np.abs(gamma) < 0.01:
+        out = -np.log(sigma)-np.exp(-y)-y
+    elif 1+gamma*y>0:
+        out = -np.log(sigma)-(1+gamma*y)**(-1/gamma)+np.log(1+gamma*y)*(-1/gamma-1)
+    else:
+        out = -1000 * np.ones_like(x)
+    if len(out) == 1:
+        return out[0]
+    else:
+        return out
 
 # PWM Estimation
 def PWM_estimation(maxima):

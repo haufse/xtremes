@@ -17,10 +17,9 @@ Basic functions
 The GEV and its Likelihood
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: test_xtremes.miscellaneous.gev
-.. autofunction:: test_xtremes.miscellaneous.GEV
-.. autofunction:: test_xtremes.miscellaneous.ll_gev
-.. autofunction:: test_xtremes.miscellaneous.ll_GEV
+.. autofunction:: test_xtremes.miscellaneous.GEV_pdf
+.. autofunction:: test_xtremes.miscellaneous.GEV_cdf
+.. autofunction:: test_xtremes.miscellaneous.GEV_ll
 
 Piece Wise Moment Estimation 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

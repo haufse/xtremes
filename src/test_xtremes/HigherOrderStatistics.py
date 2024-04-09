@@ -12,6 +12,108 @@ import test_xtremes.miscellaneous as misc
 
 # FUNCTIONS
 
+# log-likelihood
+def likelihoods(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
+    # numerically more stable?
+    sigma = np.abs(sigma)
+    #if sigma < 0.1:
+    #    print('sigma close to 0!')
+    #    sigma += 0.1
+    y = (x-mu)/sigma #standard
+    if option == 1:
+        if np.abs(gamma) < 0.01:
+            return -np.log(sigma)-np.exp(-y)-y
+        elif 1+gamma*y>0:
+            return -np.log(sigma)-(1+gamma*y)**(-1/gamma)+np.log(1+gamma*y)*(-1/gamma-1)
+        else:
+            return -1000 # ln(0)
+    
+    elif option == 2:
+        # y[0] is max, y[1] 2nd largest
+        if np.abs(gamma) < 0.0001:
+            return - 2 * np.log(sigma) - np.exp(-y[1]) - y[0] - y[1] 
+        elif 1+gamma*y[0]>0 and 1+gamma*y[1]>0:
+            return -2 * np.log(sigma)-(1+gamma*y[1])**(-1/gamma)-np.log(1+gamma*y[0])*(1/gamma+1)-np.log(1+gamma*y[1])*(1/gamma+1)
+        else:
+            return -1000 # ln(0)
+    
+    elif option == 3 and max_only:
+        # y is maximum
+        if np.abs(gamma) < 0.0001:
+            return - 2 * np.log(sigma) - np.exp(-y) - y
+        elif 1+gamma*y>0:
+            l = -2 * np.log(sigma)
+            l += -(1+gamma*y)**(-1/gamma)
+            l += -np.log(1+gamma*y)*(1/gamma+1)
+            return l
+        else:
+            return -1000 # ln(0)
+    
+    elif option == 3 and second_only:
+        spi = sigmoid(pi)
+        # y is second largest
+        if np.abs(gamma) < 0.0001 and 1-spi+spi*(1+gamma*y)**(-1/gamma)>0:
+            return  - np.exp(-y) - y - np.log(1-spi+spi*np.exp(-y))
+        elif 1+gamma*y>0 and 1-spi+spi*(1+gamma*y)**(-1/gamma)>0:
+            l = -(1+gamma*y)**(-1/gamma)
+            l += -np.log(1+gamma*y)*(1/gamma+1)
+            l +=- np.log(1-spi+spi*(1+gamma*y)**(-1/gamma))
+            return l
+        else:
+            return -1000 # ln(0)
+
+    elif option == 3:
+        # y[0] is max, y[1] 2nd largest
+        spi = sigmoid(pi)
+        if np.abs(gamma) < 0.0001 and 1-spi+spi*(1+gamma*y[1])**(-1/gamma)>0:
+            return - 2 * np.log(sigma) - np.exp(-y[0]) - np.exp(-y[1]) - y[0] - y[1] - np.log(1-spi+spi*np.exp(-y[1]))
+        elif 1+gamma*y[0]>0 and 1+gamma*y[1]>0 and 1-spi+spi*(1+gamma*y[1])**(-1/gamma)>0:
+            l = -2 * np.log(sigma)
+            l += -(1+gamma*y[0])**(-1/gamma)-(1+gamma*y[1])**(-1/gamma)
+            l += -np.log(1+gamma*y[0])*(1/gamma+1)-np.log(1+gamma*y[1])*(1/gamma+1)
+            l +=- np.log(1-spi+spi*(1+gamma*y[1])**(-1/gamma))
+            return l
+        else:
+            return -1000 # ln(0)
+
+def Likelihoods(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
+    r""" Inverse Sigmoid of x
+
+    Notes
+    -----
+    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+   
+    .. math::
+        \sigma(x) := 1/(1+\exp(-x)).
+    
+    Parameters
+    ----------
+    :param x: input, :math:`x\in [0, 1]`
+    :type x: int, float, list or numpy.array
+    :return: The inverse sigmoid of the input
+    :rtype: numpy.ndarray[float]
+    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    """
+    g = lambda x: likelihoods(x, gamma, mu, sigma, pi, option, max_only=max_only, second_only=second_only)
+    return list(map(g, x))
+
 def extract_BM(timeseries, block_size=10, stride='DBM'):
     r""" Sigmoid  of x
 
