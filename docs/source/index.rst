@@ -19,4 +19,5 @@ Contents
    usage
    miscellaneous
    higherorderstatistics
-   api
+   api_misc
+   api_hos
