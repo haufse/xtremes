@@ -17,6 +17,6 @@ Contents
 .. toctree::
 
    usage
-   miscellaneous.inc
-   higherorderstatistics.inc
+   miscellaneous
+   higherorderstatistics
    api
