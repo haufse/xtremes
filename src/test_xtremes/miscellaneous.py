@@ -76,7 +76,7 @@ def mse(gammas, gamma_true):
     -----
     Computes the mean squared error, variance and bias of a set of estimators given the true 
     (theoretical) value. This function is originally intended for estimating the GEV shape parameter
-    :math:`gamma`, but works for other estimators just as fine
+    :math:`\gamma`, but works for other estimators just as fine
    
     .. math::
         \mathrm{MSE}(\hat\gamma) &:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\gamma\right)^2 \\
@@ -282,9 +282,9 @@ def PWM2GEV(b_0, b_1, b_2):
     As shown in :cite:`Hosking1985`, they follow the relationship
    
     .. math::
-        \gamma &= g_1^{-1}\left(\frac{3\beta_2-\beat_0}{2\beta_1-\beta_0}\right) \\
-        \sigma &= g_2(gamma)\cdot (2\beta_1-\beta_0) \\
-        \mu &= \beta_0+\sigma\cddot g_3(\gamma),
+        \gamma &= g_1^{-1}\left(\frac{3\beta_2-\beta_0}{2\beta_1-\beta_0}\right) \\
+        \sigma &= g_2(\gamma)\cdot (2\beta_1-\beta_0) \\
+        \mu &= \beta_0+\sigma\cdot g_3(\gamma),
     
     where
     
@@ -297,7 +297,7 @@ def PWM2GEV(b_0, b_1, b_2):
     are defined by continuity to result in  
 
     .. math::
-        g_1(0)= \frac{\log 3}{\log 2}, && g_2(0) = \frac{1}{\log 2}, && g_3(0) = -\gamma_\mathrm{EM}
+        g_1(0)= \frac{\log 3}{\log 2}, \qquad g_2(0) = \frac{1}{\log 2}, \qquad g_3(0) = -\gamma_\mathrm{EM}
     
     with :math:`\gamma_\mathrm{EM}` being the Euler-Mascheroni constant.
 
@@ -353,10 +353,10 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     here, the next value is computed via
     
     .. math::
-        X_0&:=Z_0
+        X_0&:=Z_0 \\
         X_i&:=\max\{\alpha\cdot X_{i-1}, (1-\alpha)\cdot Z_i\}
     
-    where :math:``Z_i`` is drawn from a GPD distribution. The time series parameter :math:`\alpha`
+    where :math:`Z_i` is drawn from a GPD distribution. The time series parameter :math:`\alpha`
     is passed via ``ts``. By specifying the ``distr``, the values are afterwards transformed to 
     follow the specified distribution.
 
@@ -364,10 +364,10 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     here, the next value is computed via
     
     .. math::
-        X_0&:=Z_0
+        X_0&:=Z_0 \\
         X_i&:=\max\{\alpha\cdot X_{i-1} + (1-\alpha)\cdot Z_i\}
     
-    where :math:``Z_i`` is drawn from a Cauchy distribution. The time series parameter :math:`\alpha`
+    where :math:`Z_i` is drawn from a Cauchy distribution. The time series parameter :math:`\alpha`
     is passed via ``ts``. By specifying the ``distr``, the values are afterwards transformed to 
     follow the specified distribution.
 
