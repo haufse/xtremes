@@ -132,19 +132,19 @@ def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
     dealing with stationary time series and its extreme values.
 
     .. math::
-        G_{\gamma,\mu,\sigma,\theta}(x):= \exp\left(-\theta\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
+        G_{\gamma,\mu,\sigma,\vartheta}(x):= \exp\left(-\vartheta\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
     
     Parameters
     ----------
-    :param x: input, GEV argument :math:`x\in \mathb{R}`
+    :param x: input, GEV argument :math:`x\in \mathbb{R}`
     :type x: int, float, list or numpy.array
-    :param gamma: input, GEV argument :math:`\gamma\in \mathb{R}`
+    :param gamma: input, GEV shape parameter :math:`\gamma\in \mathbb{R}`
     :type gamma: int, float, list or numpy.array
-    :param mu: input, GEV argument :math:`\mu\in \mathb{R}`
+    :param mu: input, GEV location parameter :math:`\mu\in \mathbb{R}`
     :type mu: int, float, list or numpy.array
-    :param sigma: input, GEV argument :math:`\sigma>0`
+    :param sigma: input, GEV scale parameter :math:`\sigma>0`
     :type sigma: int, float, list or numpy.array
-    :param theta: input, GEV argument :math:`\vartheta\in [0, 1]`
+    :param theta: input, extremal index :math:`\vartheta\in [0, 1]`
     :type theta: int, float, list or numpy.array
     :return: The inverse sigmoid of the input
     :rtype: numpy.ndarray[float] or float
@@ -175,13 +175,13 @@ def GEV_pdf(x, gamma=0, mu=0, sigma=1):
     
     Parameters
     ----------
-    :param x: input, GEV argument :math:`x\in \mathb{R}`
+    :param x: input, GEV argument :math:`x\in \mathbb{R}`
     :type x: int, float, list or numpy.array
-    :param gamma: input, GEV argument :math:`\gamma\in \mathb{R}`
+    :param gamma: input, GEV shape parameter :math:`\gamma\in \mathbb{R}`
     :type gamma: int, float, list or numpy.array
-    :param mu: input, GEV argument :math:`\mu\in \mathb{R}`
+    :param mu: input, GEV location parameter :math:`\mu\in \mathbb{R}`
     :type mu: int, float, list or numpy.array
-    :param sigma: input, GEV argument :math:`\sigma>0`
+    :param sigma: input, GEV scale parameter :math:`\sigma>0`
     :type sigma: int, float, list or numpy.array
     :return: The inverse sigmoid of the input
     :rtype: numpy.ndarray[float] or float
@@ -201,22 +201,27 @@ def GEV_pdf(x, gamma=0, mu=0, sigma=1):
 
 
 def GEV_ll(x, gamma=0, mu=0, sigma=1):
-    r""" Inverse Sigmoid of x
+    r""" log-likelihood of the GEV
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+    Computes the log-likelihood function of the Generalized Extreme Value distribution
    
     .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+        l(x) := -\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}-\frac{\gamma+1}{\gamma}\log\left(1+\gamma \frac{x-\mu}{\sigma}\right)-\log\sigma
     
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
+    :param x: input, GEV argument :math:`x\in \mathbb{R}`
     :type x: int, float, list or numpy.array
+    :param gamma: input, GEV shape parameter :math:`\gamma\in \mathbb{R}`
+    :type gamma: int, float, list or numpy.array
+    :param mu: input, GEV location parameter :math:`\mu\in \mathbb{R}`
+    :type mu: int, float, list or numpy.array
+    :param sigma: input, GEV scale parameter :math:`\sigma>0`
+    :type sigma: int, float, list or numpy.array
     :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :rtype: numpy.ndarray[float] or float
     """
     x = np.array(x)
     sigma = np.abs(sigma)
@@ -234,11 +239,11 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
 
 # PWM Estimation
 def PWM_estimation(maxima):
-    r""" Inverse Sigmoid of x
+    r""" PWM Estimation of GEV params
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+    Computes Probability Weighted Moment estimators on given block maxima, as introduced in .
    
     .. math::
         \sigma(x) := 1/(1+\exp(-x)).

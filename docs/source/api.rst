@@ -63,3 +63,6 @@ Running Extensive Simulations
 .. autofunction:: test_xtremes.HigherOrderStatistics.background
 .. autofunction:: test_xtremes.HigherOrderStatistics.run_ML_estimation
 .. autofunction:: test_xtremes.HigherOrderStatistics.run_multiple_ML_estimations
+
+
+.. bibliography:: references.bib
