@@ -23,4 +23,4 @@ The modules
 -----------
 So far, two modules are implemented. The module ``test_xtremes.miscellaneous`` contains basic functionalities, 
 whereas ``test_xtremes.HigherOrderStatistics`` is specialized on the influence of higher order statistics for 
-Maximum Likelihood estimations.
+Maximum Likelihood estimations. For each module, there will be a tutorial and a subsection in the API reference
