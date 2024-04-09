@@ -6,5 +6,5 @@ pynverse
 tqdm
 asyncio
 sphinx-rtd-size
-sphinxcontrib-bibtex==1.0.0
+sphinxcontrib-bibtex
 

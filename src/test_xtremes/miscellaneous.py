@@ -243,7 +243,7 @@ def PWM_estimation(maxima):
 
     Notes
     -----
-    Computes Probability Weighted Moment estimators on given block maxima, as introduced in .
+    Computes Probability Weighted Moment estimators on given block maxima, as introduced in :cite:`Greenwood1979`.
    
     .. math::
         \sigma(x) := 1/(1+\exp(-x)).
