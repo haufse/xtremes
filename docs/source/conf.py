@@ -21,7 +21,7 @@ extensions = [
     'sphinxcontrib.bibtex'
 ]
     
-bibtex_bibfiles = ['refs.bib']
+bibtex_bibfiles = ['references.bib']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
