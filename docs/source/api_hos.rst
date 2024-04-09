@@ -34,4 +34,4 @@ Running Extensive Simulations
 .. autofunction:: test_xtremes.HigherOrderStatistics.run_multiple_ML_estimations
 
 
-.. bibliography:: references.bib
+.. bibliography:: 
