@@ -243,18 +243,24 @@ def PWM_estimation(maxima):
 
     Notes
     -----
-    Computes Probability Weighted Moment estimators on given block maxima, as introduced in :cite:`Greenwood1979`.
+    Computes the first three Probability Weighted Moments :math:`\beta_0,\beta_1,\beta_2`
+    on given block maxima, as introduced in :cite:`Greenwood1979`.
+
+    Let :math:`M_{(1)} \leq M_{(2)} \leq \cdots \leq M_{(n)}` be increasingly sorted block maxima.
+    Then the first three PWMs are defined as
    
     .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+        \beta_0 &:= \frac{1}{n}\sum_{i=1}^n M_{(i)},\\
+        \beta_1 &:= \frac{1}{n(n-1)}\sum_{i=1}^n (i-1) M_{(i)},\\
+        \beta_2 &:= \frac{1}{n(n-1)(n-2)}\sum_{i=1}^n (i-1)(i-2)M_{(i)},\\
     
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :param x: sequence of maxima
+    :type x: list or numpy.array, `len(x)` :math:`\geq3`
+    :return: the first three PWMs
+    :rtype: tuple[float]
+    :raise test_xtremes.miscellaneous.warning: If less than three maxima are given as input
     """
     n = len(maxima)
     if n > 2:
@@ -264,26 +270,43 @@ def PWM_estimation(maxima):
         b_2 = sum([i*(i-1)*m[i] for i in range(n)]) / (n*(n-1)*(n-2))
         return b_0, b_1, b_2
     else:
-        print('PWM requires at least 3 maxima!')
+        warnings.warn('PWM requires at least 3 maxima!')
         return np.nan, np.nan, np.nan
 
 def PWM2GEV(b_0, b_1, b_2):
-    r""" Inverse Sigmoid of x
+    r"""GEV params from PWM 
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
+    Computes estimators for the parameters of the GEV distribution from given PWM estimators.
+    As shown in :cite:`Hosking1985`, they follow the relationship
    
     .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+        \gamma &= g_1^{-1}\left(\frac{3\beta_2-\beat_0}{2\beta_1-\beta_0}\right) \\
+        \sigma &= g_2(gamma)\cdot (2\beta_1-\beta_0) \\
+        \mu &= \beta_0+\sigma\cddot g_3(\gamma),
     
+    where
+    
+    .. math::
+        g_1(\gamma) &:= \frac{3^\gamma-1}{2^\gamma-1} \\
+        g_2(\gamma) &:= \frac{\gamma}{\Gamma(1-\gamma)(2^\gamma-1)} \\
+        g_3(\gamma) &:= \frac{1-\Gamma(1-\gamma)}{\gamma}.
+
+    Note that :math:`\Gamma` denotes the gamma function. The values for :math:`g_\bullet(0)` 
+    are defined by continuity to result in  
+
+    .. math::
+        g_1(0)= \frac{\log 3}{\log 2}, && g_2(0) = \frac{1}{\log 2}, && g_3(0) = -\gamma_\mathrm{EM}
+    
+    with :math:`\gamma_\mathrm{EM}` being the Euler-Mascheroni constant.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :param b_0, b_1, b_2: PWM estimators, as output from ``PWM_estimators``
+    :type b_0, b_1, b_2: int or float
+    :return: Estimators for the GEV params
+    :rtype: tuple[float]
     """
     def g1(x):
         if x == 0:
@@ -316,19 +339,54 @@ def PWM2GEV(b_0, b_1, b_2):
 
 
 def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0, seed=None):
-    r""" Inverse Sigmoid of x
+    r""" Simulate a Time Series for GEV
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
+    This function allows to simulate three different kind of time series. 
+
+    The most basic time series is the IID case, in which there is no temporal dependence.
+    The distribution from which the random variables are drawn can be chosen via ``distr``, 
+    respective model parameters are passed via ``modelparams``.
+
+    One model for a stationary time series with temporal dependence is the ARMAX model.
+    here, the next value is computed via
+    
     .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+        X_0&:=Z_0
+        X_i&:=\max\{\alpha\cdot X_{i-1}, (1-\alpha)\cdot Z_i\}
+    
+    where :math:``Z_i`` is drawn from a GPD distribution. The time series parameter :math:`\alpha`
+    is passed via ``ts``. By specifying the ``distr``, the values are afterwards transformed to 
+    follow the specified distribution.
+
+    The second model for a stationary time series with temporal dependence is the AR model.
+    here, the next value is computed via
+    
+    .. math::
+        X_0&:=Z_0
+        X_i&:=\max\{\alpha\cdot X_{i-1} + (1-\alpha)\cdot Z_i\}
+    
+    where :math:``Z_i`` is drawn from a Cauchy distribution. The time series parameter :math:`\alpha`
+    is passed via ``ts``. By specifying the ``distr``, the values are afterwards transformed to 
+    follow the specified distribution.
+
+    See also
+    --------
+    It is highly recommended to see the associated Tutorial.
     
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
+    :param n: length of time series to simulate
+    :type n: int
+    :param distr: distribution to draw from
+    :type distr: str
+    :param correllation: correllation to specify, choose from ``['IID', 'ARMAX', 'AR']``
+    :type correllation: str
+    :param modelparams: parameters belonging to ``distr``
+    :type modelparams: list
+    :param ts: time series parameter :math:`\alpha\in[0,1]`
+    :type ts: float
     :return: The inverse sigmoid of the input
     :rtype: numpy.ndarray[float]
     :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
@@ -382,22 +440,22 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     return s
     
 def stride2int(stride, block_size):
-    r""" Inverse Sigmoid of x
+    r""" Integer from Stride
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
-    
+    This function is a utility when handling Block maxima (disjoint, sliding, striding).
+    Apart from giving the stride directly, it is handy to have the additional options
+    `'SBM'` and `'DBM'` for sliding and disjoint BM, respectively. This funtion converts exactly this.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :param stride: stride to be converted
+    :type stride: int or str
+    :param block_size: block size for conversion, ignored if ``stride=='SBM'``
+    :type block_size: int
+    :return: The converted stride
+    :rtype: int
     """
     if stride == 'SBM':
         return 1
@@ -407,22 +465,24 @@ def stride2int(stride, block_size):
         return int(stride)
 
 def modelparams2gamma_true(distr, correllation, modelparams):
-    r""" Inverse Sigmoid of x
+    r""" Extract gamma_true from model params
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
-    
+    For some few models, it is possible to extract the true value
+    of gamma theoretically. Whenever this is possible, the conversion
+    should be subject to this function.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
+    :param distr: valid distribution type
+    :type distr: str
+    :param correllation: valid correllation type, currently ``['IID', 'ARMAX', 'AR']``
+    :type correllation: str
+    :param modelparams: valid modelparam
+    :type modelparams: list
+    :return: gamma_true, if applicable
     :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
     """
     if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: # NOT PROVEN FOR AR, or find source
         return modelparams[0]
