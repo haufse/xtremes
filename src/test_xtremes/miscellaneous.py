@@ -156,10 +156,7 @@ def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
     else:
         tau = (1+gamma*x)**(-1/gamma)
     out = np.exp(-theta*tau)
-    if len(out) == 1:
-        return out[0]
-    else:
-        return out
+    return out
 
 
 
@@ -194,10 +191,7 @@ def GEV_pdf(x, gamma=0, mu=0, sigma=1):
         out = np.exp(-(1+gamma*y)**(-1/gamma))*(1+gamma*y)**(-1/gamma-1)/sigma
     else:
         out = np.zeros_like(x)
-    if len(out) == 1:
-        return out[0]
-    else:
-        return out
+    return out
 
 
 def GEV_ll(x, gamma=0, mu=0, sigma=1):
@@ -232,10 +226,7 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
         out = -np.log(sigma)-(1+gamma*y)**(-1/gamma)+np.log(1+gamma*y)*(-1/gamma-1)
     else:
         out = -1000 * np.ones_like(x)
-    if len(out) == 1:
-        return out[0]
-    else:
-        return out
+    return out
 
 # PWM Estimation
 def PWM_estimation(maxima):
