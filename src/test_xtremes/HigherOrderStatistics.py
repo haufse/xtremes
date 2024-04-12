@@ -13,88 +13,66 @@ import test_xtremes.miscellaneous as misc
 # FUNCTIONS
 
 # log-likelihood
-def log_likelihoods(x, gamma=0, mu=0, sigma=1, pi=1, option=1, max_only=False, second_only=False):
-    r""" Inverse Sigmoid of x
 
-    Notes
-    -----
-    Computes the inverse sigmoid :math:`\sigmoid^{-1}` of given values, where :math:`sigmoid` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
+def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=1, ts=1):
     
-    Parameters
-    ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
-    """
-
-    x = np.array(x)
+    unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
+    # split into largest and second largest
+    maxima = unique_hos.T[0]
+    second = unique_hos.T[1]
     sigma = np.abs(sigma)
-    #if sigma < 0.1:
-    #    print('sigma close to 0!')
-    #    sigma += 0.1
-    y = (x-mu)/sigma #standard
+    
+    # standardize both
+    y_max = (maxima-mu)/sigma 
+    y_sec = (second-mu)/sigma
+
+    out = np.zeros_like(y_max)
+    
     if option == 1:
-        if np.abs(gamma) < 0.01:
-            return -np.log(sigma)-np.exp(-y)-y
-        elif 1+gamma*y>0:
-            out = -np.log(sigma)-(1+gamma*y)**(-1/gamma)+np.log(1+gamma*y)*(-1/gamma-1)
+        if np.abs(gamma) < 0.0001:
+            out=  -np.log(sigma)-np.exp(-y_max)-y_max
         else:
-            out = -1000 # ln(0)
+            mask = (1+gamma*y_max>0)
+            out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
+            out[np.invert(mask)] = -1000
+        
     
     elif option == 2:
-        # y[0] is max, y[1] 2nd largest
         if np.abs(gamma) < 0.0001:
-            out = - 2 * np.log(sigma) - np.exp(-y[1]) - y[0] - y[1] 
-        elif 1+gamma*y[0]>0 and 1+gamma*y[1]>0:
-            out = -2 * np.log(sigma)-(1+gamma*y[1])**(-1/gamma)-np.log(1+gamma*y[0])*(1/gamma+1)-np.log(1+gamma*y[1])*(1/gamma+1)
+            out = - 2 * np.log(sigma) - np.exp(-second) - y_max - y_sec 
         else:
-            out = -1000 # ln(0)
-    
-    elif option == 3 and max_only:
-        # y is maximum
-        if np.abs(gamma) < 0.0001:
-            out = - 2 * np.log(sigma) - np.exp(-y) - y
-        elif 1+gamma*y>0:
-            l = -2 * np.log(sigma)
-            l += -(1+gamma*y)**(-1/gamma)
-            l += -np.log(1+gamma*y)*(1/gamma+1)
-            out = l
-        else:
-            out = -1000 # ln(0)
-    
-    elif option == 3 and second_only:
-        spi = misc.sigmoid(pi)
-        # y is second largest
-        if np.abs(gamma) < 0.0001 and 1-spi+spi*(1+gamma*y)**(-1/gamma)>0:
-            out =  - np.exp(-y) - y - np.log(1-spi+spi*np.exp(-y))
-        elif 1+gamma*y>0 and 1-spi+spi*(1+gamma*y)**(-1/gamma)>0:
-            l = -(1+gamma*y)**(-1/gamma)
-            l += -np.log(1+gamma*y)*(1/gamma+1)
-            l +=- np.log(1-spi+spi*(1+gamma*y)**(-1/gamma))
-            out = l
-        else:
-            out = -1000 # ln(0)
+            mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
+            out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
+            out[np.invert(mask)] = -1000 # ln(0)
 
     elif option == 3:
-        # y[0] is max, y[1] 2nd largest
+        # forcing pi to live in [0,1]
         spi = misc.sigmoid(pi)
-        if np.abs(gamma) < 0.0001 and 1-spi+spi*(1+gamma*y[1])**(-1/gamma)>0:
-            out = - 2 * np.log(sigma) - np.exp(-y[0]) - np.exp(-y[1]) - y[0] - y[1] - np.log(1-spi+spi*np.exp(-y[1]))
-        elif 1+gamma*y[0]>0 and 1+gamma*y[1]>0 and 1-spi+spi*(1+gamma*y[1])**(-1/gamma)>0:
-            l = -2 * np.log(sigma)
-            l += -(1+gamma*y[0])**(-1/gamma)-(1+gamma*y[1])**(-1/gamma)
-            l += -np.log(1+gamma*y[0])*(1/gamma+1)-np.log(1+gamma*y[1])*(1/gamma+1)
-            l +=- np.log(1-spi+spi*(1+gamma*y[1])**(-1/gamma))
-            out = l
+        if np.abs(gamma) < 0.0001:
+            mask = 1-spi+spi*(1+gamma*y_sec)**(-1/gamma)>0
+            out[mask] = - 2 * np.log(sigma) - np.exp(-y_max[mask]) - np.exp(-y_sec[mask]) - y_max[mask] - y_sec[mask] - np.log(1-spi+spi*np.exp(-y_sec[mask]))
+            out[np.invert(mask)] = -1000 # ln(0)
         else:
-            out = -1000 # ln(0)
+            mask = np.bitwise_and(np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0)), (1-spi+spi*(1+gamma*y_sec)**(-1/gamma)>0))
+            out[mask] += -2 * np.log(sigma)
+            out[mask] += -(1+gamma*y_max[mask])**(-1/gamma)-(1+gamma*y_sec[mask])**(-1/gamma)
+            out[mask] += -np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
+            out[mask] +=- np.log(1-spi+spi*(1+gamma*y_sec[mask])**(-1/gamma))
+            out[np.invert(mask)] = -1000 # ln(0)
     
-    return out
+    elif option == 4:
+        if np.abs(gamma) < 0.0001:
+            #TODO
+            pass
+        else:
+            mask = ((1+gamma*y_max)/(1+gamma*y_sec))**(-1/gamma) > ts
+            out[mask] = -3*np.log(sigma) - (gamma+1)/gamma*np.log(1+gamma*y_max[mask]) - np.log(1+gamma*y_sec[mask]) - (1+gamma*y_sec[mask])**(-1/gamma)+np.log(sigma+(1+gamma*y_sec[mask])**(-1/gamma)-1) 
+            out[np.invert(mask)] = -1000 # ln(0)
+
+    
+    joint_ll = np.dot(out, counts)
+    
+    return joint_ll
 
 
 
@@ -144,55 +122,6 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     out = [np.sort(timeseries[i*p:i*p+r])[-orderstats:] for i in range((n-r)//p+1)]
     return np.array(out)
     
-
-def cost_function(high_order_stats, option=1, estimate_pi=False, pi0=1):
-    r""" Sigmoid  of x
-
-    Notes
-    -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    """
-    # define cost function based on option
-    maxima = high_order_stats.T[-1]
-    secondlargest = high_order_stats.T[-2]
-    if option == 1:       
-        def cost(params):
-            gamma, mu, sigma, pi = params     
-            uni, count = np.unique(maxima, return_counts=True)   
-            cst = - np.dot(log_likelihoods(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
-            return cst
-        
-    if option == 2:
-        def cost(params):
-            gamma, mu, sigma, pi = params     
-            uni, count = np.unique(high_order_stats, return_counts=True, axis=0)   
-            cst = - np.dot(log_likelihoods(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option), count)
-            return cst
-    
-    if option == 3:
-        def cost(params):
-            gamma, mu, sigma, pi = params
-            if not estimate_pi:
-                pi = pi0
-            # add likelihood for maxima
-            uni, count = np.unique(maxima, return_counts=True)   
-            cst = - np.dot(log_likelihoods(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option, max_only=True), count)
-            # add likelihood for second largest
-            uni, count = np.unique(secondlargest, return_counts=True)   
-            cst -=  np.dot(log_likelihoods(uni, gamma=gamma,mu=mu,sigma=sigma, pi=pi, option=option, second_only=True), count)
-            return cst
-        
-    return cost
 
 def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
     r""" Sigmoid  of x
@@ -332,7 +261,7 @@ class PWM_estimators:
         if TimeSeries.blockmaxima != []:
             self.blockmaxima = TimeSeries.blockmaxima
         else:
-            self.blockmaxima = np.array(TimeSeries.high_order_stats).T[-1]
+            self.blockmaxima = np.array(TimeSeries.high_order_stats)[:,:,-1]
         self.values = []
         self.statistics = {}
     
@@ -410,7 +339,11 @@ class ML_estimators:
                                                             self.TimeSeries.corr, 
                                                             ts=self.TimeSeries.ts)
         for i, ho_stat in enumerate(self.high_order_stats):
-            cost = cost_function(ho_stat, option=option, estimate_pi=estimate_pi, pi0=initParams[i][-1])
+            def cost(params):
+                gamma, mu, sigma, pi = params
+                cst = - log_likelihoods(ho_stat, gamma=gamma, mu=mu, sigma=sigma, pi=pi, option=option, ts=self.TimeSeries.ts)
+                return cst
+
             results = misc.minimize(cost, initParams[i], method='Nelder-Mead')
     
             gamma, mu, sigma, pi = results.x
@@ -469,7 +402,7 @@ class TimeSeries:
     :rtype: numpy.ndarray[float]
     """
     def __init__(self, n, distr='GEV', correlation='IID', modelparams=[0], ts=0):
-        self.timeseries = []
+        self.values = []
         self.distr = distr
         self.corr = correlation
         self.modelparams = modelparams
@@ -482,6 +415,8 @@ class TimeSeries:
         return self.len
     
     def simulate(self, rep=10, seeds='default'):
+        # ensure to overwrite existing
+        self.values = []
         self.reps = 10
         if seeds == 'default':
             for i in range(rep):
@@ -491,7 +426,7 @@ class TimeSeries:
                                              modelparams=self.modelparams, 
                                              ts=self.ts, 
                                              seed=i)
-                self.timeseries.append(series)
+                self.values.append(series)
         elif seeds == None:
             for i in range(rep):
                 series = misc.simulate_timeseries(self.len,
@@ -500,7 +435,7 @@ class TimeSeries:
                                              modelparams=self.modelparams, 
                                              ts=self.ts, 
                                              seed=None)
-                self.timeseries.append(series)
+                self.values.append(series)
         else:
             if not hasattr(seeds, '__len__'):
                 # handles the case of seeds being an integer and rep=1
@@ -515,26 +450,30 @@ class TimeSeries:
                                                 modelparams=self.modelparams, 
                                                 ts=self.ts, 
                                                 seed=seeds[i])
-                    self.timeseries.append(series)
+                    self.values.append(series)
         
     def get_blockmaxima(self, block_size=2, stride='DBM', rep=10):
-        if self.timeseries == []:
+        # ensure to overwrite existing
+        self.blockmaxima = []
+        if self.values == []:
             warnings.warn('TimeSeries was not simulated yet, I will do it for you. For more flexibility, simulate first!')
             self.simulate(rep=rep)
         self.block_size = block_size
         self.stride = stride
-        for series in self.timeseries:
+        for series in self.values:
             bms = extract_BM(series, block_size=block_size, stride=stride)
             self.blockmaxima.append(bms)
     
 
     def get_HOS(self, orderstats = 2, block_size=2, stride='DBM', rep=10):
-        if self.timeseries == []:
+        # ensure to overwrite existing
+        self.high_order_stats = []
+        if self.values == []:
             warnings.warn('TimeSeries was not simulated yet, I will do it for you. For more flexibility, simulate first!')
             self.simulate(rep=rep)
         self.block_size = block_size
         self.stride = stride
-        for series in self.timeseries:
+        for series in self.values:
             hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
             self.high_order_stats.append(hos)
 
@@ -566,10 +505,14 @@ class HighOrderStats:
         self.ML_estimators = ML_estimators(TimeSeries=self.TimeSeries)
     
     def get_PWM_estimation(self):
+        # ensure to overwrite existing
+        self.PWM_estimators = PWM_estimators(TimeSeries=self.TimeSeries)
         self.PWM_estimators.get_PWM_estimation()
         self.PWM_estimators.get_statistics(gamma_true=self.gamma_true)
         
     def get_ML_estimation(self, initParams = 'auto', option=1, estimate_pi=False):
+        # ensure to overwrite existing
+        self.ML_estimators = ML_estimators(TimeSeries=self.TimeSeries)
         if self.PWM_estimators.values == [] and initParams == 'auto':
             self.get_PWM_estimation()
         self.ML_estimators.get_ML_estimation(PWM_estimators=self.PWM_estimators, initParams = initParams, option=option, estimate_pi=estimate_pi)
