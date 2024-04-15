@@ -15,8 +15,7 @@ import test_xtremes.miscellaneous as misc
 # log-likelihood
 
 def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=1, ts=1, corr='IID'):
-    """
-    Calculate the log likelihood based on the two highest order statistics in three different ways.
+    r"""Calculate the log likelihood based on the two highest order statistics in three different ways.
 
     Parameters:
     - high_order_statistics (numpy array): Array containing the two highest order statistics.
@@ -44,6 +43,7 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
     >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
     >>> log_likelihoods(hos, gamma=0.5, sigma=2, option=2, corr='ARMAX')
     7.494890426732856
+
     """
     
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
@@ -102,8 +102,7 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
 
 
 def extract_BM(timeseries, block_size=10, stride='DBM'):
-    """
-    Extract block maxima from a given time series.
+    r"""Extract block maxima from a given time series.
 
     Parameters:
     - timeseries (list or numpy array): The input time series data.
@@ -123,6 +122,7 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
     >>> ts = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
     >>> extract_BM(ts, block_size=5, stride='DBM')
     array([ 5, 10, 15])
+
     """
     n = len(timeseries)
     r = block_size
@@ -131,8 +131,7 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
     return np.array(out)
 
 def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
-    """
-    Extract high order statistics from a given time series.
+    r"""Extract high order statistics from a given time series.
 
     Parameters:
     - timeseries (list or numpy array): The input time series data.
@@ -157,6 +156,7 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
            [ 9, 10, 11],
            [12, 13, 14],
            [15, 15, 15]])
+    
     """
     n = len(timeseries)
     r = block_size
@@ -195,8 +195,7 @@ def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
 
 # parallel running ML estimations
 def background(f):
-    """
-    Decorator for running a function in the background using asyncio.
+    r"""Decorator for running a function in the background using asyncio.
 
     Usage:
     - Apply this decorator to a function to run it in the background.
@@ -220,10 +219,10 @@ def background(f):
 
     Returns:
     - wrapped (function): A wrapped version of the input function that runs in the background.
+
     """
     def wrapped(*args, **kwargs):
-        """
-        Wrapper function that runs the input function in the background.
+        r"""Wrapper function that runs the input function in the background.
 
         Parameters:
         - *args: Positional arguments passed to the input function.
@@ -231,6 +230,7 @@ def background(f):
 
         Returns:
         - result: The result of running the input function in the background.
+        
         """
         return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "test-xtremes"
-version = "0.1.9"
+version = "0.2.1"
 dependencies = [
   "numpy",
   "scipy",
