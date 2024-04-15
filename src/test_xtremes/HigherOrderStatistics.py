@@ -247,16 +247,14 @@ def background(f):
 
     Example
     -------
-    ```python
-    @background
-    async def my_background_task():
-        # Your background task logic goes here
-        await asyncio.sleep(5)
-        print("Background task completed")
+    >>> @background
+    >>> async def my_background_task():
+    >>>     # Your background task logic goes here
+    >>>     await asyncio.sleep(5)
+    >>>     print("Background task completed")
+    >>> # Call the decorated function using await
+    >>> await my_background_task()
 
-    # Call the decorated function using await
-    await my_background_task()
-    ```
 
     Wrapper function that runs the input function in the background.
 
