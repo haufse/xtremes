@@ -51,8 +51,11 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
     maxima = unique_hos.T[0]
     second = unique_hos.T[1]
     sigma = np.abs(sigma)
-    
+    if sigma < 0.01:
+        # ensure no division by 0
+        sigma += 0.01
     # standardize both
+
     y_max = (maxima-mu)/sigma 
     y_sec = (second-mu)/sigma
 
@@ -104,26 +107,34 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
 def extract_BM(timeseries, block_size=10, stride='DBM'):
     r"""Extract block maxima from a given time series.
 
-    Parameters:
-    - timeseries (list or numpy array): The input time series data.
-    - block_size (int, optional): The size of each block for extracting maxima. Default is 10.
-    - stride (str, optional): The stride used to move the window. Can be 'DBM' (Default Block Maxima)
-      or an integer specifying the stride size. Default is 'DBM'.
+    Parameters
+    ----------
+    :param timeseries: list or numpy array
+        The input time series data.
+    :param block_size: int, optional
+        The size of each block for extracting maxima. Default is 10.
+    :param stride: str or int, optional
+        The stride used to move the window. Can be 'DBM' (Default Block Maxima)
+        or an integer specifying the stride size. Default is 'DBM'.
 
-    Returns:
-    - block_maxima (numpy array): An array of block maxima.
+    Returns
+    -------
+    :return: numpy array
+        An array of block maxima.
 
-    Notes:
+    Notes
+    -----
     - This function divides the time series into non-overlapping blocks of size 'block_size'.
     - Within each block, the maximum value is extracted as the block maximum.
     - If the length of the time series is not divisible by 'block_size', the last block may have fewer elements.
 
-    Example:
+    Example
+    -------
     >>> ts = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
     >>> extract_BM(ts, block_size=5, stride='DBM')
     array([ 5, 10, 15])
-
     """
+    
     n = len(timeseries)
     r = block_size
     p = misc.stride2int(stride, block_size)
@@ -230,7 +241,7 @@ def background(f):
 
         Returns:
         - result: The result of running the input function in the background.
-        
+
         """
         return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
 
