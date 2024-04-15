@@ -229,12 +229,24 @@ def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
 def background(f):
     r"""Decorator for running a function in the background using asyncio.
 
-    Usage:
+    Parameters
+    ----------
+    :param f: function
+        The function to be run in the background.
+
+    Returns
+    -------
+    :return: function
+        A wrapped version of the input function that runs in the background.
+
+    Usage
+    -----
     - Apply this decorator to a function to run it in the background.
     - The function must be a coroutine function (async def).
     - Use await keyword to call the decorated function.
 
-    Example:
+    Example
+    -------
     ```python
     @background
     async def my_background_task():
@@ -246,24 +258,21 @@ def background(f):
     await my_background_task()
     ```
 
-    Parameters:
-    - f (function): The function to be run in the background.
+    Wrapper function that runs the input function in the background.
 
-    Returns:
-    - wrapped (function): A wrapped version of the input function that runs in the background.
+    Parameters
+    ----------
+    - *args: positional arguments
+        Positional arguments passed to the input function.
+    - **kwargs: keyword arguments
+        Keyword arguments passed to the input function.
 
+    Returns
+    -------
+    :return: result
+        The result of running the input function in the background.
     """
     def wrapped(*args, **kwargs):
-        r"""Wrapper function that runs the input function in the background.
-
-        Parameters:
-        - *args: Positional arguments passed to the input function.
-        - **kwargs: Keyword arguments passed to the input function.
-
-        Returns:
-        - result: The result of running the input function in the background.
-
-        """
         return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
 
     return wrapped
