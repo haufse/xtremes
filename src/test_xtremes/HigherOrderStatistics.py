@@ -14,7 +14,37 @@ import test_xtremes.miscellaneous as misc
 
 # log-likelihood
 
-def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=1, ts=1):
+def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=1, ts=1, corr='IID'):
+    """
+    Calculate the log likelihood based on the two highest order statistics in three different ways.
+
+    Parameters:
+    - high_order_statistics (numpy array): Array containing the two highest order statistics.
+    - gamma (float): The shape parameter for the Generalized Extreme Value (GEV) distribution. Default is 0.
+    - mu (float): The location parameter for the GEV distribution. Default is 0.
+    - sigma (float): The scale parameter for the GEV distribution. Default is 1.
+    - pi (float): The probability of the second highest order statistic being independent in option 2.
+      Default is 1.
+    - option (int): Option for calculating the log likelihood:
+        1: Only consider the maximum value.
+        2: Assume the max and the second largest to be independent.
+        3: Consider the correct joint likelihood. Default is 1.
+    - ts (float): A parameter in the ARMAX correlation mode. Default is 1.
+    - corr (str): The correlation mode. Can be 'IID' (Independent and Identically Distributed)
+      or 'ARMAX' (Auto-Regressive Moving Average with eXogenous inputs). Default is 'IID'.
+
+    Returns:
+    - joint_ll (float): The calculated log likelihood.
+
+    Notes:
+    - This function calculates the log likelihood based on the two highest order statistics in different ways.
+    - The high_order_statistics array should contain the two highest order statistics for each observation.
+
+    Example:
+    >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
+    >>> log_likelihoods(hos, gamma=0.5, sigma=2, option=2, corr='ARMAX')
+    7.494890426732856
+    """
     
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
     # split into largest and second largest
@@ -35,17 +65,8 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
             mask = (1+gamma*y_max>0)
             out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
             out[np.invert(mask)] = -1000
-        
-    
-    elif option == 2:
-        if np.abs(gamma) < 0.0001:
-            out = - 2 * np.log(sigma) - np.exp(-second) - y_max - y_sec 
-        else:
-            mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
-            out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
-            out[np.invert(mask)] = -1000 # ln(0)
 
-    elif option == 3:
+    elif option == 2:
         # forcing pi to live in [0,1]
         spi = misc.sigmoid(pi)
         if np.abs(gamma) < 0.0001:
@@ -60,14 +81,18 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
             out[mask] +=- np.log(1-spi+spi*(1+gamma*y_sec[mask])**(-1/gamma))
             out[np.invert(mask)] = -1000 # ln(0)
     
-    elif option == 4:
+    elif option == 3:
         if np.abs(gamma) < 0.0001:
-            #TODO
-            pass
-        else:
-            mask = ((1+gamma*y_max)/(1+gamma*y_sec))**(-1/gamma) > ts
-            out[mask] = -3*np.log(sigma) - (gamma+1)/gamma*np.log(1+gamma*y_max[mask]) - np.log(1+gamma*y_sec[mask]) - (1+gamma*y_sec[mask])**(-1/gamma)+np.log(sigma+(1+gamma*y_sec[mask])**(-1/gamma)-1) 
+            out = - 2 * np.log(sigma) - np.exp(-second) - y_max - y_sec 
+        elif corr == 'IID':
+            mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
+            out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
             out[np.invert(mask)] = -1000 # ln(0)
+        elif corr == 'ARMAX':
+            mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec > ts**gamma*(1+gamma*y_max)))
+            out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
+            out[np.invert(mask)] = -1000
+
 
     
     joint_ll = np.dot(out, counts)
@@ -77,21 +102,27 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
 
 
 def extract_BM(timeseries, block_size=10, stride='DBM'):
-    r""" Sigmoid  of x
+    """
+    Extract block maxima from a given time series.
 
-    Notes
-    -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    Parameters:
+    - timeseries (list or numpy array): The input time series data.
+    - block_size (int, optional): The size of each block for extracting maxima. Default is 10.
+    - stride (str, optional): The stride used to move the window. Can be 'DBM' (Default Block Maxima)
+      or an integer specifying the stride size. Default is 'DBM'.
+
+    Returns:
+    - block_maxima (numpy array): An array of block maxima.
+
+    Notes:
+    - This function divides the time series into non-overlapping blocks of size 'block_size'.
+    - Within each block, the maximum value is extracted as the block maximum.
+    - If the length of the time series is not divisible by 'block_size', the last block may have fewer elements.
+
+    Example:
+    >>> ts = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+    >>> extract_BM(ts, block_size=5, stride='DBM')
+    array([ 5, 10, 15])
     """
     n = len(timeseries)
     r = block_size
@@ -100,21 +131,32 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
     return np.array(out)
 
 def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
-    r""" Sigmoid  of x
+    """
+    Extract high order statistics from a given time series.
 
-    Notes
-    -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    Parameters:
+    - timeseries (list or numpy array): The input time series data.
+    - orderstats (int, optional): The number of highest order statistics to extract. Default is 2.
+    - block_size (int, optional): The size of each block for extracting statistics. Default is 10.
+    - stride (str or int, optional): The stride used to move the window. Can be 'SBM' (Sliding Block Maxima),
+      'DBM' (Disjoint Block Maxima), or an integer specifying the stride size. Default is 'DBM'.
+
+    Returns:
+    - high_order_stats (numpy array): An array containing the extracted high order statistics.
+
+    Notes:
+    - This function divides the time series into non-overlapping blocks of size 'block_size'.
+    - Within each block, the highest 'orderstats' values are extracted as the high order statistics.
+    - If the length of the time series is not divisible by 'block_size', the last block may have fewer elements.
+
+    Example:
+    >>> ts = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
+    >>> extract_HOS(ts, orderstats=3, block_size=5, stride='DBM')
+    array([[ 3,  4,  5],
+           [ 6,  7,  8],
+           [ 9, 10, 11],
+           [12, 13, 14],
+           [15, 15, 15]])
     """
     n = len(timeseries)
     r = block_size
@@ -153,23 +195,43 @@ def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
 
 # parallel running ML estimations
 def background(f):
-    r""" Sigmoid  of x
+    """
+    Decorator for running a function in the background using asyncio.
 
-    Notes
-    -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    Usage:
+    - Apply this decorator to a function to run it in the background.
+    - The function must be a coroutine function (async def).
+    - Use await keyword to call the decorated function.
+
+    Example:
+    ```python
+    @background
+    async def my_background_task():
+        # Your background task logic goes here
+        await asyncio.sleep(5)
+        print("Background task completed")
+
+    # Call the decorated function using await
+    await my_background_task()
+    ```
+
+    Parameters:
+    - f (function): The function to be run in the background.
+
+    Returns:
+    - wrapped (function): A wrapped version of the input function that runs in the background.
     """
     def wrapped(*args, **kwargs):
+        """
+        Wrapper function that runs the input function in the background.
+
+        Parameters:
+        - *args: Positional arguments passed to the input function.
+        - **kwargs: Keyword arguments passed to the input function.
+
+        Returns:
+        - result: The result of running the input function in the background.
+        """
         return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
 
     return wrapped
@@ -192,6 +254,7 @@ def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 
     :return: The sigmoid of the input
     :rtype: numpy.ndarray[float]
     """
+    
     with open(file, 'rb') as f:
         timeseries = pickle.load(f)
     out = {}
@@ -205,7 +268,7 @@ def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 
     res = {gamma_true: out}
     return res
 
-def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False):
+def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False, parallelize=True):
     r""" Sigmoid  of x
 
     Notes
@@ -222,9 +285,16 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
     :return: The sigmoid of the input
     :rtype: numpy.ndarray[float]
     """
-    loop = asyncio.get_event_loop()
-    looper = asyncio.gather(*[run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi) for gamma_true in gamma_trues])
-    results = loop.run_until_complete(looper) 
+    
+    if parallelize:
+        loop = asyncio.get_event_loop()
+        looper = asyncio.gather(*[run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi) for gamma_true in gamma_trues])
+        results = loop.run_until_complete(looper) 
+    else:
+        results = []
+        for gamma_true in gamma_trues:
+            rslt = run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi)
+            results.append(rslt)
     # merge list of dicts to single dict
     if len(results) > 1:
         out_dict = results[0]
@@ -232,7 +302,7 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
             out_dict = out_dict | results[i]
         return out_dict
     else:
-        return results
+        return results[0]
     
 
 # CLASSES

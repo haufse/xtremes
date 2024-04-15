@@ -22,7 +22,7 @@ The ``ML_estimators`` and ``PWM_estimators`` Classes
 .. autoclass:: test_xtremes.HigherOrderStatistics.PWM_estimators
 .. autoclass:: test_xtremes.HigherOrderStatistics.ML_estimators
 .. autofunction:: test_xtremes.HigherOrderStatistics.automatic_parameter_initialization
-.. autofunction:: test_xtremes.HigherOrderStatistics.cost_function
+.. autofunction:: test_xtremes.HigherOrderStatistics.log_likelihoods
 
 Running Extensive Simulations
 -----------------------------
