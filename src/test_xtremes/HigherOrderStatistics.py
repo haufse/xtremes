@@ -17,34 +17,47 @@ import test_xtremes.miscellaneous as misc
 def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=1, ts=1, corr='IID'):
     r"""Calculate the log likelihood based on the two highest order statistics in three different ways.
 
-    Parameters:
-    - high_order_statistics (numpy array): Array containing the two highest order statistics.
-    - gamma (float): The shape parameter for the Generalized Extreme Value (GEV) distribution. Default is 0.
-    - mu (float): The location parameter for the GEV distribution. Default is 0.
-    - sigma (float): The scale parameter for the GEV distribution. Default is 1.
-    - pi (float): The probability of the second highest order statistic being independent in option 2.
-      Default is 1.
-    - option (int): Option for calculating the log likelihood:
-        1: Only consider the maximum value.
-        2: Assume the max and the second largest to be independent.
-        3: Consider the correct joint likelihood. Default is 1.
-    - ts (float): A parameter in the ARMAX correlation mode. Default is 1.
-    - corr (str): The correlation mode. Can be 'IID' (Independent and Identically Distributed)
-      or 'ARMAX' (Auto-Regressive Moving Average with eXogenous inputs). Default is 'IID'.
+    Parameters
+    ----------
+    :param high_order_statistics: numpy array
+        Array containing the two highest order statistics.
+    :param gamma: float, optional
+        The shape parameter for the Generalized Extreme Value (GEV) distribution. Default is 0.
+    :param mu: float, optional
+        The location parameter for the GEV distribution. Default is 0.
+    :param sigma: float, optional
+        The scale parameter for the GEV distribution. Default is 1.
+    :param pi: float, optional
+        The probability of the second highest order statistic being independent in option 2. Default is 1.
+    :param option: int, optional
+        Option for calculating the log likelihood:
+            1: Only consider the maximum value.
+            2: Assume the max and the second largest to be independent.
+            3: Consider the correct joint likelihood. Default is 1.
+    :param ts: float, optional
+        A parameter in the ARMAX correlation mode. Default is 1.
+    :param corr: str, optional
+        The correlation mode. Can be 'IID' (Independent and Identically Distributed)
+        or 'ARMAX' (Auto-Regressive Moving Average with eXogenous inputs). Default is 'IID'.
 
-    Returns:
-    - joint_ll (float): The calculated log likelihood.
+    Returns
+    -------
+    :return: float
+        The calculated log likelihood.
 
-    Notes:
+    Notes
+    -----
     - This function calculates the log likelihood based on the two highest order statistics in different ways.
     - The high_order_statistics array should contain the two highest order statistics for each observation.
 
-    Example:
+    Example
+    -------
     >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
     >>> log_likelihoods(hos, gamma=0.5, sigma=2, option=2, corr='ARMAX')
     7.494890426732856
 
     """
+    
     
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
     # split into largest and second largest
@@ -134,7 +147,7 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
     >>> extract_BM(ts, block_size=5, stride='DBM')
     array([ 5, 10, 15])
     """
-    
+
     n = len(timeseries)
     r = block_size
     p = misc.stride2int(stride, block_size)
@@ -144,22 +157,31 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
 def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     r"""Extract high order statistics from a given time series.
 
-    Parameters:
-    - timeseries (list or numpy array): The input time series data.
-    - orderstats (int, optional): The number of highest order statistics to extract. Default is 2.
-    - block_size (int, optional): The size of each block for extracting statistics. Default is 10.
-    - stride (str or int, optional): The stride used to move the window. Can be 'SBM' (Sliding Block Maxima),
-      'DBM' (Disjoint Block Maxima), or an integer specifying the stride size. Default is 'DBM'.
+    Parameters
+    ----------
+    :param timeseries: list or numpy array
+        The input time series data.
+    :param orderstats: int, optional
+        The number of highest order statistics to extract. Default is 2.
+    :param block_size: int, optional
+        The size of each block for extracting statistics. Default is 10.
+    :param stride: str or int, optional
+        The stride used to move the window. Can be 'SBM' (Sliding Block Maxima),
+        'DBM' (Disjoint Block Maxima), or an integer specifying the stride size. Default is 'DBM'.
 
-    Returns:
-    - high_order_stats (numpy array): An array containing the extracted high order statistics.
+    Returns
+    -------
+    :return: numpy array
+        An array containing the extracted high order statistics.
 
-    Notes:
+    Notes
+    -----
     - This function divides the time series into non-overlapping blocks of size 'block_size'.
     - Within each block, the highest 'orderstats' values are extracted as the high order statistics.
     - If the length of the time series is not divisible by 'block_size', the last block may have fewer elements.
 
-    Example:
+    Example
+    -------
     >>> ts = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
     >>> extract_HOS(ts, orderstats=3, block_size=5, stride='DBM')
     array([[ 3,  4,  5],
@@ -167,7 +189,6 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
            [ 9, 10, 11],
            [12, 13, 14],
            [15, 15, 15]])
-    
     """
     n = len(timeseries)
     r = block_size
