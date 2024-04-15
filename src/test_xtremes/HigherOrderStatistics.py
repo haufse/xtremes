@@ -31,9 +31,9 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
         The probability of the second highest order statistic being independent in option 2. Default is 1.
     :param option: int, optional
         Option for calculating the log likelihood:
-            1: Only consider the maximum value.
-            2: Assume the max and the second largest to be independent.
-            3: Consider the correct joint likelihood. Default is 1.
+        - 1: Only consider the maximum value.
+        - 2: Assume the max and the second largest to be independent.
+        - 3: Consider the correct joint likelihood. Default is 1.
     :param ts: float, optional
         A parameter in the ARMAX correlation mode. Default is 1.
     :param corr: str, optional
@@ -260,9 +260,9 @@ def background(f):
 
     Parameters
     ----------
-    - *args: positional arguments
+    - \*args: positional arguments
         Positional arguments passed to the input function.
-    - **kwargs: keyword arguments
+    - \**kwargs: keyword arguments
         Keyword arguments passed to the input function.
 
     Returns
