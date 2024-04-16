@@ -506,22 +506,6 @@ class PWM_estimators:
             warnings.warn('No variance can be computed on only one element!')
 
 class ML_estimators:
-    r""" Sigmoid  of x
-
-    Notes
-    -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    """
     def __init__(self, TimeSeries):
         # TimeSeries object needs high order statistics
         if TimeSeries.high_order_stats == []:
@@ -555,6 +539,14 @@ class ML_estimators:
         self.values = np.array(self.values)
     
     def get_statistics(self, gamma_true):
+        r"""
+        Compute statistics of the ML estimators using a true :math:`\gamma` value.
+
+        Parameters
+        ----------
+        :param gamma_true: float
+            True :math:`\gamma` value for calculating statistics.
+        """
         gammas = self.values.T[0]
         mus = self.values.T[1]
         sigmas = self.values.T[2]

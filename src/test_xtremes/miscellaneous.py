@@ -137,7 +137,7 @@ def mse(gammas, gamma_true):
 
     Raises
     ------
-    :raise test_xtremes.miscellaneous.warning: If `len(gammas)==1`. `NaN`s are returned.
+    :raise test_xtremes.miscellaneous.warning: If ``len(gammas)==1``. ``NaN``s are returned.
 
     """
     
@@ -457,9 +457,9 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     This function allows simulating three different kinds of time series.
 
     - The most basic time series is the IID (independent and identically distributed) case, 
-    where there is no temporal dependence. The distribution from which the random variables 
-    are drawn can be chosen via `distr`, and respective model parameters are passed via 
-    `modelparams`.
+      where there is no temporal dependence. The distribution from which the random variables 
+      are drawn can be chosen via `distr`, and respective model parameters are passed via 
+      `modelparams`.
     - For a stationary time series with temporal dependence, two models are available:
         - ARMAX model: The next value is computed as the maximum of two values: 
           :math:`ts * X_{i-1}` and :math:`(1 - ts) * Z_i`, where :math:`Z_i` is drawn from a GPD (Generalized 
