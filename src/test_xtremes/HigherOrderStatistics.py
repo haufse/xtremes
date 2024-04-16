@@ -506,6 +506,65 @@ class PWM_estimators:
             warnings.warn('No variance can be computed on only one element!')
 
 class ML_estimators:
+    r"""
+    Maximum Likelihood Estimators (MLE) for GEV parameters.
+
+    This class calculates Maximum Likelihood Estimators (MLE) for the parameters of the Generalized Extreme Value (GEV) distribution using the method of maximum likelihood estimation.
+    
+    Parameters
+    ----------
+    TimeSeries : TimeSeries
+        The TimeSeries object containing the data for which MLE estimators will be calculated.
+
+    Attributes
+    ----------
+    values : numpy.ndarray
+        An array containing the MLE estimators for each set of high order statistics.
+    statistics : dict
+        A dictionary containing statistics computed from the MLE estimators.
+
+    Methods
+    -------
+    __len__()
+        Returns the number of MLE estimators calculated.
+    get_ML_estimation(PWM_estimators=None, initParams='auto', option=1, estimate_pi=False)
+        Computes the MLE estimators for the GEV parameters.
+    get_statistics(gamma_true)
+        Computes statistics from the MLE estimators.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from your_module import TimeSeries, ML_estimators, PWM_estimators
+
+    # Example data
+    >>> blockmaxima_data = np.random.normal(loc=10, scale=2, size=100)
+    >>> high_order_stats_data = np.random.normal(loc=5, scale=1, size=(100, 3))
+
+    # Create TimeSeries object
+    >>> ts = TimeSeries(blockmaxima=blockmaxima_data, high_order_stats=high_order_stats_data, corr='IID', ts=0.5)
+
+    # Calculate PWM estimators
+    >>> pwm = PWM_estimators(ts)
+    >>> pwm.get_PWM_estimation()
+
+    # Initialize ML_estimators object
+    >>> ml = ML_estimators(ts)
+
+    # Compute ML estimators
+    >>> ml.get_ML_estimation(PWM_estimators=pwm)
+
+    # Compute statistics
+    >>> ml.get_statistics(gamma_true=0.1)
+
+    # Print ML estimators
+    >>> print("ML Estimators:")
+    >>> print(ml.values)
+
+    # Print statistics
+    >>> print("\nStatistics:")
+    >>> print(ml.statistics)
+    """
     def __init__(self, TimeSeries):
         # TimeSeries object needs high order statistics
         if TimeSeries.high_order_stats == []:
@@ -519,6 +578,20 @@ class ML_estimators:
         return len(self.values)
 
     def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', option=1, estimate_pi=False):
+        r"""
+        Compute ML estimators for each high order statistics series.
+
+        Parameters
+        ----------
+        :param PWM_estimators: PWM_estimators object, optional
+            PWM_estimators object containing PWM estimators for initializing parameters.
+        :param initParams: str or numpy.ndarray, optional
+            Initial parameters for ML estimation. 'auto' to calculate automatically using PWM estimators.
+        :param option: int, optional
+            Option for ML estimation.
+        :param estimate_pi: bool, optional
+            Whether to estimate π parameter or not.
+        """
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
         elif initParams == 'auto':
@@ -580,22 +653,65 @@ class ML_estimators:
             
 
 class TimeSeries:
-    r""" Sigmoid  of x
+    r"""
+    TimeSeries class for simulating and analyzing time series data.
 
-    Notes
-    -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
     Parameters
     ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    n : int
+        Length of the time series.
+    distr : str, optional
+        Distribution to draw from. Default is 'GEV'.
+    correlation : str, optional
+        Correlation type, choose from ['IID', 'ARMAX', 'AR']. Default is 'IID'.
+    modelparams : list, optional
+        Parameters belonging to the specified distribution. Default is [0].
+    ts : float, optional
+        Time series parameter alpha in [0,1]. Default is 0.
+        
+    Attributes
+    ----------
+    values : list
+        List to store simulated time series.
+    distr : str
+        Distribution type.
+    corr : str
+        Correlation type.
+    modelparams : list
+        Model parameters.
+    ts : float
+        Time series parameter.
+    len : int
+        Length of the time series.
+    blockmaxima : list
+        List to store block maxima.
+    high_order_stats : list
+        List to store high order statistics.
+
+    Methods
+    -------
+    simulate(rep=10, seeds='default'):
+        Simulate time series data.
+    get_blockmaxima(block_size=2, stride='DBM', rep=10):
+        Extract block maxima from simulated data.
+    get_HOS(orderstats=2, block_size=2, stride='DBM', rep=10):
+        Extract high order statistics from simulated data.
+
+     Example
+    -------
+    >>> # Create a TimeSeries object
+    >>> ts = TimeSeries(n=100, distr='GEV', correlation='ARMAX', modelparams=[0.5], ts=0.6)
+    >>> 
+    >>> # Simulate time series data
+    >>> ts.simulate(rep=5, seeds=[42, 123, 456, 789, 1011])
+    >>> 
+    >>> # Extract block maxima
+    >>> ts.get_blockmaxima(block_size=5, stride='DBM', rep=5)
+    >>> 
+    >>> # Extract high order statistics
+    >>> ts.get_HOS(orderstats=3, block_size=5, stride='DBM', rep=5)
     """
+    
     def __init__(self, n, distr='GEV', correlation='IID', modelparams=[0], ts=0):
         self.values = []
         self.distr = distr
@@ -610,6 +726,21 @@ class TimeSeries:
         return self.len
     
     def simulate(self, rep=10, seeds='default'):
+        r"""
+        Simulate time series data.
+
+        Parameters
+        ----------
+        rep : int, optional
+            Number of repetitions for simulation. Default is 10.
+        seeds : {str, list}, optional
+            Seed(s) for random number generation. Default is 'default'.
+
+        Raises
+        ------
+        ValueError
+            If the number of given seeds does not match the number of repetitions.
+        """
         # ensure to overwrite existing
         self.values = []
         self.reps = 10
@@ -648,6 +779,18 @@ class TimeSeries:
                     self.values.append(series)
         
     def get_blockmaxima(self, block_size=2, stride='DBM', rep=10):
+        r"""
+        Extract block maxima from simulated data.
+
+        Parameters
+        ----------
+        block_size : int, optional
+            Size of blocks for maxima extraction. Default is 2.
+        stride : str, optional
+            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'.
+        rep : int, optional
+            Number of repetitions for extraction. Default is 10.
+        """
         # ensure to overwrite existing
         self.blockmaxima = []
         if self.values == []:
@@ -661,6 +804,20 @@ class TimeSeries:
     
 
     def get_HOS(self, orderstats = 2, block_size=2, stride='DBM', rep=10):
+        r"""
+        Extract high order statistics from simulated data.
+
+        Parameters
+        ----------
+        orderstats : int, optional
+            Order of statistics. Default is 2.
+        block_size : int, optional
+            Size of blocks for statistics extraction. Default is 2.
+        stride : str, optional
+            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'.
+        rep : int, optional
+            Number of repetitions for extraction. Default is 10.
+        """
         # ensure to overwrite existing
         self.high_order_stats = []
         if self.values == []:
@@ -673,23 +830,68 @@ class TimeSeries:
             self.high_order_stats.append(hos)
 
 class HighOrderStats:
-    r""" Sigmoid  of x
+    r"""HighOrderStats class for calculating and analyzing high-order statistics of time series data.
 
     Notes
     -----
-    Computes the sigmoid of given values.
+    This class provides functionality for calculating Probability Weighted Moment (PWM) estimators and
+    Maximum Likelihood (ML) estimators from a given TimeSeries object.
+
+    Methods
+    -------
+    get_PWM_estimation():
+        Calculate the PWM estimators for the time series data.
     
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
+    get_ML_estimation(initParams='auto', option=1, estimate_pi=False):
+        Calculate the ML estimators for the time series data.
+
+    Attributes
     ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    TimeSeries : TimeSeries
+        The TimeSeries object containing the time series data.
+
+    high_order_stats : list
+        List of high-order statistics extracted from the TimeSeries object.
+
+    blockmaxima : list
+        List of block maxima derived from the high-order statistics.
+
+    gamma_true : float
+        True gamma parameter of the GEV distribution derived from the TimeSeries object.
+
+    PWM_estimators : PWM_estimators
+        Instance of PWM_estimators class for calculating PWM estimators.
+
+    ML_estimators : ML_estimators
+        Instance of ML_estimators class for calculating ML estimators.
+    
+    Example
+    -------
+    >>> # Create a TimeSeries object
+    >>> ts = TimeSeries(n=100, distr='GEV', correlation='ARMAX', modelparams=[0.5], ts=0.6)
+    >>> 
+    >>> # Simulate time series data
+    >>> ts.simulate(rep=5, seeds=[42, 123, 456, 789, 1011])
+    >>> 
+    >>> # Initialize HighOrderStats object
+    >>> hos = HighOrderStats(ts)
+    >>> 
+    >>> # Calculate PWM estimators
+    >>> hos.get_PWM_estimation()
+    >>> 
+    >>> # Calculate ML estimators
+    >>> hos.get_ML_estimation(initParams='auto', option=1, estimate_pi=False)
     """
     def __init__(self, TimeSeries):
+        r"""
+        Initialize the HighOrderStats object.
+
+        Parameters
+        ----------
+        TimeSeries : TimeSeries
+            TimeSeries object containing the time series data.
+
+        """
         self.TimeSeries = TimeSeries
         if TimeSeries.high_order_stats == []:
             warnings.warn('TimeSeries does not have high_order_statistics, I will do it for you. For more flexibility, compute them first!')
@@ -700,12 +902,27 @@ class HighOrderStats:
         self.ML_estimators = ML_estimators(TimeSeries=self.TimeSeries)
     
     def get_PWM_estimation(self):
+        r"""
+        Calculate the Probability Weighted Moment (PWM) estimators.
+        """
         # ensure to overwrite existing
         self.PWM_estimators = PWM_estimators(TimeSeries=self.TimeSeries)
         self.PWM_estimators.get_PWM_estimation()
         self.PWM_estimators.get_statistics(gamma_true=self.gamma_true)
         
     def get_ML_estimation(self, initParams = 'auto', option=1, estimate_pi=False):
+        r"""
+        Calculate the Maximum Likelihood (ML) estimators.
+
+        Parameters
+        ----------
+        initParams : str or array-like, optional
+            Method for initializing parameters. Default is 'auto', which uses automatic parameter initialization.
+        option : int, optional
+            Option for ML estimation. Default is 1.
+        estimate_pi : bool, optional
+            Whether to estimate the pi parameter. Default is False.
+        """
         # ensure to overwrite existing
         self.ML_estimators = ML_estimators(TimeSeries=self.TimeSeries)
         if self.PWM_estimators.values == [] and initParams == 'auto':
