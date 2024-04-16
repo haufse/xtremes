@@ -5,7 +5,7 @@ from scipy.optimize import minimize
 from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
-import asyncio
+# import asyncio
 import pickle
 import warnings
 import test_xtremes.miscellaneous as misc
@@ -275,7 +275,7 @@ def background(f):
 
     return wrapped
 
-@background
+# @background
 def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False):
     r""" Sigmoid  of x
 
@@ -307,7 +307,7 @@ def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 
     res = {gamma_true: out}
     return res
 
-def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False, parallelize=True):
+def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False, parallelize=False):
     r""" Sigmoid  of x
 
     Notes
@@ -325,15 +325,15 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
     :rtype: numpy.ndarray[float]
     """
     
-    if parallelize:
-        loop = asyncio.get_event_loop()
-        looper = asyncio.gather(*[run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi) for gamma_true in gamma_trues])
-        results = loop.run_until_complete(looper) 
-    else:
-        results = []
-        for gamma_true in gamma_trues:
-            rslt = run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi)
-            results.append(rslt)
+#    if parallelize:
+#        loop = asyncio.get_event_loop()
+#        looper = asyncio.gather(*[run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi) for gamma_true in gamma_trues])
+#        results = loop.run_until_complete(looper) 
+#    else:
+    results = []
+    for gamma_true in gamma_trues:
+        rslt = run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi)
+        results.append(rslt)
     # merge list of dicts to single dict
     if len(results) > 1:
         out_dict = results[0]
@@ -450,7 +450,7 @@ class ML_estimators:
         for i, ho_stat in enumerate(self.high_order_stats):
             def cost(params):
                 gamma, mu, sigma, pi = params
-                cst = - log_likelihoods(ho_stat, gamma=gamma, mu=mu, sigma=sigma, pi=pi, option=option, ts=self.TimeSeries.ts)
+                cst = - log_likelihoods(ho_stat, gamma=gamma, mu=mu, sigma=sigma, pi=pi, option=option, ts=self.TimeSeries.ts, corr=self.TimeSeries.corr)
                 return cst
 
             results = misc.minimize(cost, initParams[i], method='Nelder-Mead')

@@ -22,86 +22,124 @@ import warnings
 
 # BASIC FUNTIONS
 def sigmoid(x):
-    r""" Sigmoid  of x
+    """
+    Compute the sigmoid function for the given input.
+
+    Parameters
+    ----------
+    :param x: array_like
+        The input value or array.
+
+    Returns
+    -------
+    :return: numpy.ndarray
+        The sigmoid of the input array. It has the same shape as `x`.
 
     Notes
     -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    - The sigmoid function is defined as:
+
+      .. math::
+         \text{sigmoid}(x) = \frac{1}{1 + e^{-x}}
+
+    - It maps any real-valued number to the range (0, 1).
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> x = np.array([-2, -1, 0, 1, 2])
+    >>> sigmoid(x)
+    array([0.11920292, 0.26894142, 0.5       , 0.73105858, 0.88079708])
     """
     x = np.array(x)
-    return 1/(1+np.exp(-x))
+    return 1 / (1 + np.exp(-x))
 
 def invsigmoid(y):
-    r""" Inverse Sigmoid of x
+    """
+    Compute the inverse sigmoid function for the given input.
+
+    Parameters
+    ----------
+    :param y: float or array_like
+        The input value or array, representing probabilities in the range [0, 1].
+
+    Returns
+    -------
+    :return: float or numpy.ndarray
+        The inverse sigmoid of the input value or array.
+
+    Raises
+    ------
+    ValueError
+        If the input value is outside the range [0, 1].
 
     Notes
     -----
-    Computes the inverse sigmoid :math:`\sigma^{-1}` of given values, where :math:`\sigma` is defined as
-   
-    .. math::
-        \sigma(x) := 1/(1+\exp(-x)).
-    
-    Parameters
-    ----------
-    :param x: input, :math:`x\in [0, 1]`
-    :type x: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    - The inverse sigmoid function finds the input value(s) that would produce the given output probability.
+    - It is the inverse of the sigmoid function: `invsigmoid(sigmoid(x)) = x`.
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> y = np.array([0.1, 0.5, 0.9])
+    >>> invsigmoid(y)
+    array([-1.3652469 ,  0.        ,  1.3652469 ])
     """
     if y < 0 or y > 1:
-        return ValueError('Sigmoid only maps to (0, 1)!')
+        raise ValueError('Sigmoid only maps to (0, 1)!')
     elif y < np.exp(-30):
-        return -30 # exp(-30)=0
-    elif y > 1-np.exp(30):
-        return 30 # exp(30)=infty
+        return -30  # exp(-30) = 0
+    elif y > 1 - np.exp(30):
+        return 30  # exp(30) = infinity
     else:
         return inversefunc(sigmoid, y_values=y).item()
 
 
 def mse(gammas, gamma_true):
-    r""" Mean Squared Error for shape param
+    """
+    Compute Mean Squared Error, Variance, and Bias of estimators.
 
     Notes
     -----
-    Computes the mean squared error, variance and bias of a set of estimators given the true 
-    (theoretical) value. This function is originally intended for estimating the GEV shape parameter
-    :math:`\gamma`, but works for other estimators just as fine
-   
+    Computes the Mean Squared Error (MSE), Variance, and Bias of a set of estimators
+    given the true (theoretical) value. This function is intended for estimating the GEV
+    shape parameter :math:`\gamma`, but works for other estimators as well.
+
     .. math::
+
         \mathrm{MSE}(\hat\gamma) &:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\gamma\right)^2 \\
         \mathrm{Var}(\hat\gamma) &:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\overline\gamma\right)^2 \\
-        \mathrm{Bias}(\hat\gamma) &:= \frac{n}{n-1} \left(\gamma-\overline\gamma\right)^2.
-    
-    Here, :math:`\overline\gamma` denotes the mean 
+        \mathrm{Bias}(\hat\gamma) &:= \frac{n}{n-1} \left(\gamma-\overline\gamma\right)^2
+
+    Here, :math:`\overline\gamma` denotes the mean.
 
     .. math::
-        \overline\gamma := \frac{1}{n}\sum_{i=1}^n \gamma_i .
-    
-    Also note that
+
+        \overline\gamma := \frac{1}{n}\sum_{i=1}^n \gamma_i
+
+    Also note that:
 
     .. math::
-        \mathrm{MSE} := \mathrm{Bias} + \mathrm{Var}. 
+
+        \mathrm{MSE} := \mathrm{Bias} + \mathrm{Var}
 
     Parameters
     ----------
-    :param gammas: list of estimated values
-    :param gamma_true: true / theoretical parameter
-    :type gammas: list or numpy.array
+    :param gammas: array_like
+        Estimated values.
+    :param gamma_true: int or float
+        True/theoretical parameter.
+    :type gammas: list or numpy.ndarray
     :type gamma_true: int or float
-    :return: MSE, variance and bias 
-    :rtype: tuple[float]
-    :raise test_xtremes.miscellaneous.warning: If len(gammas)==1. nans are returned.
+
+    Returns
+    -------
+    :return: tuple[float]
+        MSE, variance, and bias.
+
+    Raises
+    ------
+    :raise test_xtremes.miscellaneous.warning: If len(gammas)==1. NaNs are returned.
     """
     if len(gammas) > 1:
         MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
@@ -113,41 +151,48 @@ def mse(gammas, gamma_true):
         return np.nan, np.nan, np.nan
 
 def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
-    r""" CDF of the GEV
+    """
+    Compute the Cumulative Density Function (CDF) of the Generalized Extreme Value distribution.
 
     Notes
     -----
-    Computes the cumulative density function of the Generalized Extreme Value distribution
-   
-    .. math::
-        G_{\gamma,\mu,\sigma}(x):= \exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
-    
-    For :math:`\gamma=0`, this term can be interpreted as the limit :math:`\lim_{\gamma\to 0}`.:
+    Computes the cumulative density function of the Generalized Extreme Value distribution:
 
     .. math::
-        G_{0,\mu,\sigma}(x):= \exp\left(-\exp\left(-\frac{x-\mu}{\sigma}\right)\right).
-    
-        
+
+        G_{\gamma,\mu,\sigma}(x) = \exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
+
+    For :math:`\gamma=0`, the term can be interpreted as the limit :math:`\lim_{\gamma\to 0}`:
+
+    .. math::
+
+        G_{0,\mu,\sigma}(x) = \exp\left(-\exp\left(-\frac{x-\mu}{\sigma}\right)\right).
+
     This function also allows the usage of an extremal index, another parameter relevant when
-    dealing with stationary time series and its extreme values.
+    dealing with stationary time series and its extreme values:
 
     .. math::
-        G_{\gamma,\mu,\sigma,\vartheta}(x):= \exp\left(-\vartheta\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
-    
+
+        G_{\gamma,\mu,\sigma,\vartheta}(x) = \exp\left(-\vartheta\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).
+
     Parameters
     ----------
-    :param x: input, GEV argument :math:`x\in \mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :param gamma: input, GEV shape parameter :math:`\gamma\in \mathbb{R}`
-    :type gamma: int, float, list or numpy.array
-    :param mu: input, GEV location parameter :math:`\mu\in \mathbb{R}`
-    :type mu: int, float, list or numpy.array
-    :param sigma: input, GEV scale parameter :math:`\sigma>0`
-    :type sigma: int, float, list or numpy.array
-    :param theta: input, extremal index :math:`\vartheta\in [0, 1]`
-    :type theta: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float] or float
+    :param x: int, float, list or numpy.ndarray
+        GEV argument :math:`x\in \mathbb{R}`.
+    :param gamma: int, float, list or numpy.ndarray, optional
+        GEV shape parameter :math:`\gamma\in \mathbb{R}`. Default is 0.
+    :param mu: int, float, list or numpy.ndarray, optional
+        GEV location parameter :math:`\mu\in \mathbb{R}`. Default is 0.
+    :param sigma: int, float, list or numpy.ndarray, optional
+        GEV scale parameter :math:`\sigma>0`. Default is 1.
+    :param theta: int, float, list or numpy.ndarray, optional
+        Extremal index :math:`\vartheta\in [0, 1]`. Default is 1.
+
+    Returns
+    -------
+    :return: numpy.ndarray or float
+        The Cumulative Density Function values corresponding to the input `x`.
+
     """
     x = np.array(x)
     y = (x-mu)/sigma
