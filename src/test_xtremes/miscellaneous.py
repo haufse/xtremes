@@ -128,7 +128,7 @@ def mse(gammas, gamma_true):
     :param gammas: array_like
         Estimated values.
     :param gamma_true: int or float
-        True/theoretical parameter.
+        True (theoretical) parameter.
 
     Returns
     -------
@@ -137,7 +137,7 @@ def mse(gammas, gamma_true):
 
     Raises
     ------
-    :raise test_xtremes.miscellaneous.warning: If ``len(gammas)==1``. ``NaN``s are returned.
+    :raise test_xtremes.miscellaneous.warning: If ``len(gammas)==1``. ``NaN``\s are returned.
 
     """
     
