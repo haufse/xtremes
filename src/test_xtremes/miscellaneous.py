@@ -22,7 +22,7 @@ import warnings
 
 # BASIC FUNTIONS
 def sigmoid(x):
-    """
+    r"""
     Compute the sigmoid function for the given input.
 
     Parameters
@@ -55,8 +55,7 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 def invsigmoid(y):
-    """
-    Compute the inverse sigmoid function for the given input.
+    r"""Compute the inverse sigmoid function for the given input.
 
     Parameters
     ----------
