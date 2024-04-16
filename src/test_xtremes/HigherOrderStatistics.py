@@ -198,21 +198,37 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     
 
 def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
-    r""" Sigmoid  of x
+    r"""
+    Automatic parameter initialization for ML estimation.
 
     Notes
     -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
+    This function is designed for initializing parameters for maximum likelihood estimation (ML) in statistical models.
+    It automatically computes the probability weighted moment (PWM) estimators and adjusts them based on the specified
+    correlation type ('ARMAX', 'IID', etc.). The 'ts' parameter is used to control the strength of temporal dependence
+    in the model.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    :param PWM_estimators: list or numpy.array
+        Probability weighted moment estimators.
+    :param corr: str
+        Correlation type for the model. Supported values are 'ARMAX', 'IID', etc.
+    :param ts: float, optional
+        Time series parameter controlling the strength of temporal dependence (default is 0.5).
+    :return: numpy.ndarray
+        Initial parameters for ML estimation.
+
+    See also
+    --------
+    misc.PWM_estimation : Function for computing probability weighted moment estimators.
+
+    Examples
+    --------
+    >>> from test_xtremes import misc
+    >>> PWM_est = misc.PWM_estimators(data)
+    >>> init_params = automatic_parameter_initialization(PWM_est, 'ARMAX', ts=0.8)
+
     """
     initParams = np.array(PWM_estimators)
     # pi parameter from theory
@@ -277,23 +293,44 @@ def background(f):
 
 # @background
 def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False):
-    r""" Sigmoid  of x
+    r"""
+    Run maximum likelihood estimation (ML) for a given time series file.
 
     Notes
     -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
+    This function reads a time series from a file and performs ML estimation for the specified correlation type, GEV shape parameter, block sizes,
+    and stride type. It iterates over each block size, extracts block maxima, computes high order statistics, and performs ML estimation.
+    The results are stored in a dictionary with the GEV shape parameter as the key and ML estimation results for each block size as the value.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    :param file: str
+        Path to the file containing the time series data.
+    :param corr: str, optional
+        Correlation type for the model (default is 'IID').
+    :param gamma_true: float, optional
+        True value of the GEV shape parameter (default is 0).
+    :param block_sizes: list, optional
+        List of block sizes for extracting block maxima (default is [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]).
+    :param stride: str, optional
+        Stride type for block maxima extraction. Options are 'SBM' (sliding block maxima) or 'DBM' (default block maxima) (default is 'SBM').
+    :param option: int, optional
+        Option for ML estimation (default is 1).
+    :param estimate_pi: bool, optional
+        Flag indicating whether to estimate the pi parameter (default is False).
+        
+    Example
+    -------
+    >>> result = run_ML_estimation("timeseries_data.pkl", corr='ARMAX', gamma_true=0.5, block_sizes=[10, 20, 30], stride='DBM', option=2, estimate_pi=True)
+    >>> print(result)
+    {0.5: {10: HighOrderStats_object, 20: HighOrderStats_object, 30: HighOrderStats_object}}
+
+    Returns
+    -------
+    :return: dict
+        Dictionary containing ML estimation results for each block size.
+
     """
-    
     with open(file, 'rb') as f:
         timeseries = pickle.load(f)
     out = {}
@@ -308,23 +345,39 @@ def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 
     return res
 
 def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False, parallelize=False):
-    r""" Sigmoid  of x
+    r"""
+    Run multiple maximum likelihood estimations (ML) for a range of GEV shape parameter values.
 
     Notes
     -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
+    This function performs ML estimation for a range of GEV shape parameter values specified in 'gamma_trues' and aggregates the results into a single dictionary.
+    It iterates over each gamma value, calls the 'run_ML_estimation' function, and collects the results. If 'parallelize' is set to True, it runs the estimations
+    concurrently using asyncio.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    :param file: str
+        Path to the file containing the time series data.
+    :param corr: str, optional
+        Correlation type for the model (default is 'IID').
+    :param gamma_trues: numpy.ndarray, optional
+        Array of GEV shape parameter values to perform ML estimation for (default is np.arange(-4, 5, 1)/10).
+    :param block_sizes: list, optional
+        List of block sizes for extracting block maxima (default is [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]).
+    :param stride: str, optional
+        Stride type for block maxima extraction. Options are 'SBM' (sliding block maxima) or 'DBM' (default block maxima) (default is 'SBM').
+    :param option: int, optional
+        Option for ML estimation (default is 1).
+    :param estimate_pi: bool, optional
+        Flag indicating whether to estimate the pi parameter (default is False).
+    :param parallelize: bool, optional
+        Flag indicating whether to parallelize the ML estimations using asyncio (default is False).
+
+    Returns
+    -------
+    :return: dict
+        Dictionary containing ML estimation results for each gamma value and block size.
     """
-    
 #    if parallelize:
 #        loop = asyncio.get_event_loop()
 #        looper = asyncio.gather(*[run_ML_estimation(file, corr, gamma_true, block_sizes, stride, option, estimate_pi) for gamma_true in gamma_trues])
@@ -347,21 +400,51 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
 # CLASSES
 
 class PWM_estimators:
-    r""" Sigmoid  of x
+    r"""
+    Calculates Probability Weighted Moment (PWM) estimators from block maxima.
 
     Notes
     -----
-    Computes the sigmoid of given values.
-    
-    .. math::
-        \sigma(x) := \frac{1}{1+\exp(-x)}
-    
+    Probability Weighted Moments (PWMs) are used to estimate the parameters of extreme value distributions. 
+    The first three PWMs (denoted as :math:`\beta_0, \beta_1, \beta_2`) are computed for each block maxima series, 
+    then converted into Generalized Extreme Value (GEV) parameters (:math:`\gamma, \mu, \sigma`) using the PWM2GEV function.
+
     Parameters
     ----------
-    :param x: input, :math:`x\in\mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :return: The sigmoid of the input
-    :rtype: numpy.ndarray[float]
+    :param TimeSeries: TimeSeries object
+        TimeSeries object containing block maxima or high order statistics.
+
+    Attributes
+    ----------
+    :attribute blockmaxima: numpy.ndarray
+        Array of block maxima extracted from the TimeSeries object.
+    :attribute values: numpy.ndarray
+        Array containing the PWM estimators (:math:`\gamma, \mu, \sigma`) for each block maxima series.
+    :attribute statistics: dict
+        Dictionary containing statistics (mean, variance, bias, mse) of the PWM estimators.
+
+    Methods
+    -------
+    :method get_PWM_estimation(): Compute PWM estimators for each block maxima series and convert them into GEV parameters.
+    :method get_statistics(gamma_true): Compute statistics of the PWM estimators using a true gamma value.
+
+    Raises
+    ------
+    :raises ValueError: If block maxima or high order statistics are not available in the TimeSeries object.
+
+    Examples
+    --------
+    >>> from TimeSeries import TimeSeries
+    >>> from PWM_estimators import PWM_estimators
+    >>> ts = TimeSeries(data)  # initialize TimeSeries object with data
+    >>> ts.get_blockmaxima(block_size=10, stride='SBM')  # extract block maxima
+    >>> pwm = PWM_estimators(ts)  # initialize PWM_estimators object
+    >>> pwm.get_PWM_estimation()  # compute PWM estimators
+    >>> pwm.get_statistics(0.1)  # compute statistics with true gamma value 0.1
+    >>> print(pwm.statistics)  # print computed statistics
+    {'mean': 0.099981, 'variance': 0.000186, 'bias': -0.000074, 'mse': 0.000259,
+     'mu_mean': ..., 'mu_variance': ..., 'sigma_mean': ..., 'sigma_variance': ...}
+
     """
     def __init__(self, TimeSeries):
         # TimeSeries object needs blockmaxima
@@ -378,6 +461,9 @@ class PWM_estimators:
         return len(self.values)
     
     def get_PWM_estimation(self):
+        r"""
+        Compute PWM estimators for each block maxima series and convert them into GEV parameters.
+        """
         for bms in self.blockmaxima:
             b0, b1, b2 = misc.PWM_estimation(bms) 
             gamma, mu, sigma = misc.PWM2GEV(b0, b1, b2)
@@ -385,6 +471,14 @@ class PWM_estimators:
         self.values = np.array(self.values)
     
     def get_statistics(self, gamma_true):
+        r"""
+        Compute statistics of the PWM estimators using a true gamma value.
+
+        Parameters
+        ----------
+        :param gamma_true: float
+            True gamma value for calculating statistics.
+        """
         gammas = self.values.T[0]
         mus = self.values.T[1]
         sigmas = self.values.T[2]

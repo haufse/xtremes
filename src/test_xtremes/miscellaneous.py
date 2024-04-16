@@ -138,7 +138,9 @@ def mse(gammas, gamma_true):
     Raises
     ------
     :raise test_xtremes.miscellaneous.warning: If `len(gammas)==1`. `NaN`s are returned.
+
     """
+    
     if len(gammas) > 1:
         MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
         variance = sum((np.array(gammas) - np.mean(gammas))**2)/(len(np.array(gammas))-1)
@@ -458,13 +460,12 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     where there is no temporal dependence. The distribution from which the random variables 
     are drawn can be chosen via `distr`, and respective model parameters are passed via 
     `modelparams`.
-
     - For a stationary time series with temporal dependence, two models are available:
         - ARMAX model: The next value is computed as the maximum of two values: 
-          `ts * X_{i-1}` and `(1 - ts) * Z_i`, where `Z_i` is drawn from a GPD (Generalized 
+          :math:`ts * X_{i-1}` and :math:`(1 - ts) * Z_i`, where :math:`Z_i` is drawn from a GPD (Generalized 
           Pareto Distribution) specified by `modelparams`. The parameter `ts` controls the 
           temporal dependence.
-        - AR (Autoregressive) model: Similar to ARMAX, but `Z_i` is drawn from a Cauchy distribution.
+        - AR (Autoregressive) model: Similar to ARMAX, but :math:`Z_i` is drawn from a Cauchy distribution.
 
     Parameters
     ----------
