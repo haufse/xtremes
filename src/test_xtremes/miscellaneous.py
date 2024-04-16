@@ -55,7 +55,8 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 def invsigmoid(y):
-    r"""Compute the inverse sigmoid function for the given input.
+    r"""
+    Compute the inverse sigmoid function for the given input.
 
     Parameters
     ----------
@@ -95,7 +96,7 @@ def invsigmoid(y):
 
 
 def mse(gammas, gamma_true):
-    """
+    r"""
     Compute Mean Squared Error, Variance, and Bias of estimators.
 
     Notes
@@ -150,7 +151,7 @@ def mse(gammas, gamma_true):
         return np.nan, np.nan, np.nan
 
 def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
-    """
+    r"""
     Compute the Cumulative Density Function (CDF) of the Generalized Extreme Value distribution.
 
     Notes
