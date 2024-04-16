@@ -697,7 +697,7 @@ class TimeSeries:
     get_HOS(orderstats=2, block_size=2, stride='DBM', rep=10):
         Extract high order statistics from simulated data.
 
-     Example
+    Example
     -------
     >>> # Create a TimeSeries object
     >>> ts = TimeSeries(n=100, distr='GEV', correlation='ARMAX', modelparams=[0.5], ts=0.6)
