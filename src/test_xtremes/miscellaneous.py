@@ -129,8 +129,6 @@ def mse(gammas, gamma_true):
         Estimated values.
     :param gamma_true: int or float
         True/theoretical parameter.
-    :type gammas: list or numpy.ndarray
-    :type gamma_true: int or float
 
     Returns
     -------
@@ -139,7 +137,7 @@ def mse(gammas, gamma_true):
 
     Raises
     ------
-    :raise test_xtremes.miscellaneous.warning: If len(gammas)==1. NaNs are returned.
+    :raise test_xtremes.miscellaneous.warning: If `len(gammas)==1`. `NaN`s are returned.
     """
     if len(gammas) > 1:
         MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
@@ -192,6 +190,13 @@ def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
     -------
     :return: numpy.ndarray or float
         The Cumulative Density Function values corresponding to the input `x`.
+    
+    Example
+    -------
+    >>> import numpy as np
+    >>> x = np.array([1, 2, 3, 4, 5])
+    >>> GEV_cdf(x, gamma=0.5, mu=2, sigma=1, theta=0.8)
+    array([0.54610814, 0.62171922, 0.69703039, 0.77196099, 0.84644106])
 
     """
     x = np.array(x)
@@ -206,28 +211,42 @@ def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
 
 
 def GEV_pdf(x, gamma=0, mu=0, sigma=1):
-    r""" PDF of the GEV
+    r"""
+    Compute the Probability Density Function (PDF) of the Generalized Extreme Value distribution.
 
     Notes
     -----
-    Computes the probability density function of the Generalized Extreme Value distribution
-   
+    Computes the probability density function of the Generalized Extreme Value distribution:
+
     .. math::
-        g(x) := \exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right)\cdot\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1-1/\gamma}/\sigma
-    
+
+        g(x) = \frac{\exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right)\cdot
+                \left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1-1/\gamma}}{\sigma}
+
     Parameters
     ----------
-    :param x: input, GEV argument :math:`x\in \mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :param gamma: input, GEV shape parameter :math:`\gamma\in \mathbb{R}`
-    :type gamma: int, float, list or numpy.array
-    :param mu: input, GEV location parameter :math:`\mu\in \mathbb{R}`
-    :type mu: int, float, list or numpy.array
-    :param sigma: input, GEV scale parameter :math:`\sigma>0`
-    :type sigma: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float] or float
+    :param x: int, float, list or numpy.ndarray
+        GEV argument :math:`x\in \mathbb{R}`.
+    :param gamma: int, float, list or numpy.ndarray, optional
+        GEV shape parameter :math:`\gamma\in \mathbb{R}`. Default is 0.
+    :param mu: int, float, list or numpy.ndarray, optional
+        GEV location parameter :math:`\mu\in \mathbb{R}`. Default is 0.
+    :param sigma: int, float, list or numpy.ndarray, optional
+        GEV scale parameter :math:`\sigma>0`. Default is 1.
+
+    Returns
+    -------
+    :return: numpy.ndarray or float
+        The Probability Density Function values corresponding to the input `x`.
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> x = np.array([1, 2, 3, 4, 5])
+    >>> GEV_pdf(x, gamma=0.5, mu=2, sigma=1)
+    array([0.17603266, 0.23254416, 0.28556358, 0.33477888, 0.37960368])
     """
+
     x = np.array(x)
     y = (x-mu)/sigma #standard
     if gamma == 0:
@@ -240,27 +259,41 @@ def GEV_pdf(x, gamma=0, mu=0, sigma=1):
 
 
 def GEV_ll(x, gamma=0, mu=0, sigma=1):
-    r""" log-likelihood of the GEV
+    r"""
+    Compute the log-likelihood function of the Generalized Extreme Value distribution.
 
     Notes
     -----
-    Computes the log-likelihood function of the Generalized Extreme Value distribution
-   
+    Computes the log-likelihood function of the Generalized Extreme Value distribution:
+
     .. math::
-        l(x) := -\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}-\frac{\gamma+1}{\gamma}\log\left(1+\gamma \frac{x-\mu}{\sigma}\right)-\log\sigma
-    
+
+        l(x) = -\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}
+               -\frac{\gamma+1}{\gamma}\log\left(1+\gamma \frac{x-\mu}{\sigma}\right)
+               -\log\sigma
+
     Parameters
     ----------
-    :param x: input, GEV argument :math:`x\in \mathbb{R}`
-    :type x: int, float, list or numpy.array
-    :param gamma: input, GEV shape parameter :math:`\gamma\in \mathbb{R}`
-    :type gamma: int, float, list or numpy.array
-    :param mu: input, GEV location parameter :math:`\mu\in \mathbb{R}`
-    :type mu: int, float, list or numpy.array
-    :param sigma: input, GEV scale parameter :math:`\sigma>0`
-    :type sigma: int, float, list or numpy.array
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float] or float
+    :param x: int, float, list or numpy.ndarray
+        GEV argument :math:`x\in \mathbb{R}`.
+    :param gamma: int, float, list or numpy.ndarray, optional
+        GEV shape parameter :math:`\gamma\in \mathbb{R}`.
+    :param mu: int, float, list or numpy.ndarray, optional
+        GEV location parameter :math:`\mu\in \mathbb{R}`.
+    :param sigma: int, float, list or numpy.ndarray, optional
+        GEV scale parameter :math:`\sigma>0`.
+
+    Returns
+    -------
+    :return: numpy.ndarray or float
+        The log-likelihood values corresponding to the input `x`.
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> x = np.array([1, 2, 3, 4, 5])
+    >>> GEV_ll(x, gamma=0.5, mu=2, sigma=1)
+    array([-3.11578562, -2.23851549, -1.85551157, -1.57084383, -1.33403504])
     """
     x = np.array(x)
     sigma = np.abs(sigma)
@@ -275,28 +308,44 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
 
 # PWM Estimation
 def PWM_estimation(maxima):
-    r""" PWM Estimation of GEV params
+    r"""
+    PWM Estimation of GEV parameters.
 
     Notes
     -----
     Computes the first three Probability Weighted Moments :math:`\beta_0,\beta_1,\beta_2`
-    on given block maxima, as introduced in :cite:`Greenwood1979`.
+    on given block maxima, as introduced in Greenwood et al. (1979).
 
     Let :math:`M_{(1)} \leq M_{(2)} \leq \cdots \leq M_{(n)}` be increasingly sorted block maxima.
-    Then the first three PWMs are defined as
-   
+    Then the first three PWMs are defined as:
+
     .. math::
         \beta_0 &:= \frac{1}{n}\sum_{i=1}^n M_{(i)},\\
         \beta_1 &:= \frac{1}{n(n-1)}\sum_{i=1}^n (i-1) M_{(i)},\\
-        \beta_2 &:= \frac{1}{n(n-1)(n-2)}\sum_{i=1}^n (i-1)(i-2)M_{(i)},\\
-    
+        \beta_2 &:= \frac{1}{n(n-1)(n-2)}\sum_{i=1}^n (i-1)(i-2)M_{(i)}.
+
     Parameters
     ----------
-    :param x: sequence of maxima
-    :type x: list or numpy.array, `len(x)` :math:`\geq3`
-    :return: the first three PWMs
-    :rtype: tuple[float]
-    :raise test_xtremes.miscellaneous.warning: If less than three maxima are given as input
+    :param maxima: list or numpy.array
+        Sequence of maxima. `len(maxima)` must be greater than or equal to 3.
+
+    Returns
+    -------
+    :return: tuple of floats
+        The first three PWMs: :math:`\beta_0`, :math:`\beta_1`, and :math:`\beta_2`.
+
+    References
+    ----------
+    Greenwood, J. A., Landwehr, J. M., Matalas, N. C., & Wallis, J. R. (1979). Probability weighted moments: 
+    Definition and relation to parameters of several distributions expressible in inverse form. 
+    Water Resources Research, 15(5), 1049–1054. https://doi.org/10.1029/wr015i005p01049
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> maxima = np.array([5, 8, 12, 15, 18])
+    >>> PWM_estimation(maxima)
+    (11.6, 11.2, 39.2)
     """
     n = len(maxima)
     if n > 2:
@@ -310,39 +359,62 @@ def PWM_estimation(maxima):
         return np.nan, np.nan, np.nan
 
 def PWM2GEV(b_0, b_1, b_2):
-    r"""GEV params from PWM 
+    r"""
+    Compute estimators for the parameters of the GEV distribution from given PWM estimators.
 
     Notes
     -----
-    Computes estimators for the parameters of the GEV distribution from given PWM estimators.
-    As shown in :cite:`Hosking1985`, they follow the relationship
-   
+    Computes estimators for the parameters of the Generalized Extreme Value (GEV) distribution from given Probability 
+    Weighted Moment (PWM) estimators. As shown in Hosking et al. (1985), they follow the relationship:
+
     .. math::
-        \gamma &= g_1^{-1}\left(\frac{3\beta_2-\beta_0}{2\beta_1-\beta_0}\right) \\
-        \sigma &= g_2(\gamma)\cdot (2\beta_1-\beta_0) \\
+        \gamma &= g_1^{-1}\left(\frac{3\beta_2-\beta_0}{2\beta_1-\beta_0}\right), \\
+        \sigma &= g_2(\gamma)\cdot (2\beta_1-\beta_0), \\
         \mu &= \beta_0+\sigma\cdot g_3(\gamma),
-    
-    where
-    
+
+    where:
+
     .. math::
-        g_1(\gamma) &:= \frac{3^\gamma-1}{2^\gamma-1} \\
-        g_2(\gamma) &:= \frac{\gamma}{\Gamma(1-\gamma)(2^\gamma-1)} \\
+        g_1(\gamma) &:= \frac{3^\gamma-1}{2^\gamma-1}, \\
+        g_2(\gamma) &:= \frac{\gamma}{\Gamma(1-\gamma)(2^\gamma-1)}, \\
         g_3(\gamma) &:= \frac{1-\Gamma(1-\gamma)}{\gamma}.
 
     Note that :math:`\Gamma` denotes the gamma function. The values for :math:`g_\bullet(0)` 
-    are defined by continuity to result in  
+    are defined by continuity to result in:
 
     .. math::
-        g_1(0)= \frac{\log 3}{\log 2}, \qquad g_2(0) = \frac{1}{\log 2}, \qquad g_3(0) = -\gamma_\mathrm{EM}
-    
+        g_1(0)= \frac{\log 3}{\log 2}, \quad g_2(0) = \frac{1}{\log 2}, \quad g_3(0) = -\gamma_\mathrm{EM},
+
     with :math:`\gamma_\mathrm{EM}` being the Euler-Mascheroni constant.
 
     Parameters
     ----------
-    :param b_0, b_1, b_2: PWM estimators, as output from ``PWM_estimators``
-    :type b_0, b_1, b_2: int or float
-    :return: Estimators for the GEV params
-    :rtype: tuple[float]
+    :param b_0: int or float
+        PWM estimator for the first moment.
+    :param b_1: int or float
+        PWM estimator for the second moment.
+    :param b_2: int or float
+        PWM estimator for the third moment.
+
+    Returns
+    -------
+    :return: tuple of floats
+        Estimators for the GEV parameters: shape parameter (:math:`\gamma`), location parameter (:math:`\mu`), 
+        and scale parameter (:math:`\sigma`).
+
+    References
+    ----------
+    Hosking, J. R. M., Wallis, J. R., & Wood, E. F. (1985). Estimation of the Generalized Extreme-Value Distribution 
+    by the Method of Probability-Weighted Moments. Technometrics, 27(3), 251–261. 
+    https://doi.org/10.1080/00401706.1985.10488049
+
+    Example
+    -------
+    >>> b_0 = 10
+    >>> b_1 = 20
+    >>> b_2 = 30
+    >>> PWM2GEV(b_0, b_1, b_2)
+    (0.289510206281886, 10.446586187753782, 15.207496500178042)
     """
     def g1(x):
         if x == 0:
@@ -375,57 +447,62 @@ def PWM2GEV(b_0, b_1, b_2):
 
 
 def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0, seed=None):
-    r""" Simulate a Time Series for GEV
+    r"""
+    Simulate a Time Series for GEV.
 
     Notes
     -----
-    This function allows to simulate three different kind of time series. 
+    This function allows simulating three different kinds of time series.
 
-    The most basic time series is the IID case, in which there is no temporal dependence.
-    The distribution from which the random variables are drawn can be chosen via ``distr``, 
-    respective model parameters are passed via ``modelparams``.
+    - The most basic time series is the IID (independent and identically distributed) case, 
+    where there is no temporal dependence. The distribution from which the random variables 
+    are drawn can be chosen via `distr`, and respective model parameters are passed via 
+    `modelparams`.
 
-    One model for a stationary time series with temporal dependence is the ARMAX model.
-    here, the next value is computed via
-    
-    .. math::
-        X_0&:=Z_0 \\
-        X_i&:=\max\{\alpha\cdot X_{i-1}, (1-\alpha)\cdot Z_i\}
-    
-    where :math:`Z_i` is drawn from a GPD distribution. The time series parameter :math:`\alpha`
-    is passed via ``ts``. By specifying the ``distr``, the values are afterwards transformed to 
-    follow the specified distribution.
+    - For a stationary time series with temporal dependence, two models are available:
+        - ARMAX model: The next value is computed as the maximum of two values: 
+          `ts * X_{i-1}` and `(1 - ts) * Z_i`, where `Z_i` is drawn from a GPD (Generalized 
+          Pareto Distribution) specified by `modelparams`. The parameter `ts` controls the 
+          temporal dependence.
+        - AR (Autoregressive) model: Similar to ARMAX, but `Z_i` is drawn from a Cauchy distribution.
 
-    The second model for a stationary time series with temporal dependence is the AR model.
-    here, the next value is computed via
-    
-    .. math::
-        X_0&:=Z_0 \\
-        X_i&:=\max\{\alpha\cdot X_{i-1} + (1-\alpha)\cdot Z_i\}
-    
-    where :math:`Z_i` is drawn from a Cauchy distribution. The time series parameter :math:`\alpha`
-    is passed via ``ts``. By specifying the ``distr``, the values are afterwards transformed to 
-    follow the specified distribution.
-
-    See also
-    --------
-    It is highly recommended to see the associated Tutorial.
-    
     Parameters
     ----------
-    :param n: length of time series to simulate
-    :type n: int
-    :param distr: distribution to draw from
-    :type distr: str
-    :param correllation: correllation to specify, choose from ``['IID', 'ARMAX', 'AR']``
-    :type correllation: str
-    :param modelparams: parameters belonging to ``distr``
-    :type modelparams: list
-    :param ts: time series parameter :math:`\alpha\in[0,1]`
-    :type ts: float
-    :return: The inverse sigmoid of the input
-    :rtype: numpy.ndarray[float]
-    :raise test_xtremes.miscellaneous.ValueError: If values outside [0,1] are given as input
+    :param n: int
+        Length of time series to simulate.
+    :param distr: str, optional
+        Distribution to draw from. Default is 'GEV'.
+    :param correlation: str, optional
+        Correlation type to specify, choose from ['IID', 'ARMAX', 'AR']. Default is 'IID'.
+    :param modelparams: list, optional
+        Parameters belonging to `distr`. Default is [0].
+    :param ts: float, optional
+        Time series parameter :math:`\alpha\in[0,1]`. Default is 0.
+    :param seed: int, optional
+        Random seed for reproducibility. Default is None.
+
+    Returns
+    -------
+    :return: numpy.ndarray[float]
+        Simulated time series.
+
+    Raises
+    ------
+    ValueError
+        If an invalid model is specified.
+
+    See Also
+    --------
+    Tutorial: Link to the associated tutorial.
+
+    Example
+    -------
+    >>> import numpy as np
+    >>> simulated_ts = simulate_timeseries(n=100, distr='GPD', correlation='ARMAX', modelparams=[0.5], ts=0.7, seed=42)
+    >>> simulated_ts[:10]
+    array([0.5791584 , 0.71057555, 0.55079821, 0.61636037, 0.63544943,
+           0.74830653, 0.66283107, 0.69929097, 0.75026675, 0.69214764])
+
     """
     if seed is not None:
         np.random.seed(seed)
@@ -476,52 +553,90 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     return s
     
 def stride2int(stride, block_size):
-    r""" Integer from Stride
+    r"""
+    Integer from Stride.
 
     Notes
     -----
     This function is a utility when handling Block maxima (disjoint, sliding, striding).
     Apart from giving the stride directly, it is handy to have the additional options
-    `'SBM'` and `'DBM'` for sliding and disjoint BM, respectively. This funtion converts exactly this.
+    'SBM' and 'DBM' for sliding and disjoint BM, respectively. This function converts exactly this.
 
     Parameters
     ----------
-    :param stride: stride to be converted
-    :type stride: int or str
-    :param block_size: block size for conversion, ignored if ``stride=='SBM'``
-    :type block_size: int
-    :return: The converted stride
-    :rtype: int
+    :param stride: int or str
+        Stride to be converted.
+    :param block_size: int
+        Block size for conversion, ignored if stride=='SBM'.
+    :return: int
+        The converted stride.
+
+    Raises
+    ------
+    TypeError
+        If stride is not an integer or string.
+
+    Examples
+    --------
+    >>> stride2int(2, 10)
+    2
+    >>> stride2int('SBM', 10)
+    1
+    >>> stride2int('DBM', 10)
+    10
+
     """
     if stride == 'SBM':
         return 1
     elif stride == 'DBM':
-        return int(block_size) 
+        return int(block_size)
+    elif isinstance(stride, int):
+        return stride
     else:
-        return int(stride)
+        raise TypeError("Stride must be an integer or 'SBM'/'DBM'.")
+
 
 def modelparams2gamma_true(distr, correllation, modelparams):
-    r""" Extract gamma_true from model params
+    r"""
+    Extract gamma_true from model parameters.
 
     Notes
     -----
-    For some few models, it is possible to extract the true value
+    For some models, it is possible to extract the true value
     of gamma theoretically. Whenever this is possible, the conversion
     should be subject to this function.
 
     Parameters
     ----------
-    :param distr: valid distribution type
-    :type distr: str
-    :param correllation: valid correllation type, currently ``['IID', 'ARMAX', 'AR']``
-    :type correllation: str
-    :param modelparams: valid modelparam
-    :type modelparams: list
-    :return: gamma_true, if applicable
-    :rtype: numpy.ndarray[float]
+    :param distr: str
+        Valid distribution type.
+    :param correllation: str
+        Valid correlation type, currently ['IID', 'ARMAX', 'AR'].
+    :param modelparams: list
+        Valid model parameters.
+    :return: numpy.ndarray[float]
+        Gamma_true, if applicable. Returns None if gamma_true cannot be extracted.
+    
+    Raises
+    ------
+    ValueError
+        If the distribution or correlation type is not supported.
+
+    Examples
+    --------
+    >>> modelparams2gamma_true('GEV', 'IID', [0.5])
+    0.5
+    >>> modelparams2gamma_true('GPD', 'ARMAX', [0.3])
+    0.3
+    >>> modelparams2gamma_true('Normal', 'IID', [0.5])
+    Traceback (most recent call last):
+        ...
+    ValueError: Distribution type 'Normal' is not supported.
     """
-    if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: # NOT PROVEN FOR AR, or find source
+    if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: 
         return modelparams[0]
+    else:
+        raise ValueError("Distribution type '{}' or correlation type '{}' is not supported.".format(distr, correllation))
 
 
 
