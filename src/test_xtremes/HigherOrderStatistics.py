@@ -9,6 +9,7 @@ from pynverse import inversefunc
 import pickle
 import warnings
 import test_xtremes.miscellaneous as misc
+import matplotlib.pyplot as plt
 
 # FUNCTIONS
 
@@ -74,7 +75,7 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
 
     out = np.zeros_like(y_max)
     
-    if option == 1:
+    if option == 1: # ONLY MAX
         if np.abs(gamma) < 0.0001:
             out=  -np.log(sigma)-np.exp(-y_max)-y_max
         else:
@@ -82,32 +83,57 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
             out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
             out[np.invert(mask)] = -1000
 
-    elif option == 2:
+    elif option == 2: # 2 HOS, JOINT LL + IID ASSUMPTION
+        if np.abs(gamma) < 0.0001:
+            out = - 2 * np.log(sigma) - np.exp(-y_sec) - y_max - y_sec 
+        mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
+        out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
+        out[np.invert(mask)] = -1000 # ln(0)
+    
+    elif option == 3: # 2 HOS, PRODUCT LL + correct TimeSeries ASSUMPTION
         # forcing pi to live in [0,1]
         spi = misc.sigmoid(pi)
+        if corr == 'IID':
+            # here, pi = 1
+            spi = 1
         if np.abs(gamma) < 0.0001:
-            mask = 1-spi+spi*(1+gamma*y_sec)**(-1/gamma)>0
+            mask = 1-spi+spi*np.exp(-y_sec)>0
             out[mask] = - 2 * np.log(sigma) - np.exp(-y_max[mask]) - np.exp(-y_sec[mask]) - y_max[mask] - y_sec[mask] - np.log(1-spi+spi*np.exp(-y_sec[mask]))
             out[np.invert(mask)] = -1000 # ln(0)
         else:
-            mask = np.bitwise_and(np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0)), (1-spi+spi*(1+gamma*y_sec)**(-1/gamma)>0))
+            mask = np.bitwise_and(np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0)), (1-spi+spi*(np.abs(1+gamma*y_sec))**(-1/gamma)>0))
             out[mask] += -2 * np.log(sigma)
             out[mask] += -(1+gamma*y_max[mask])**(-1/gamma)-(1+gamma*y_sec[mask])**(-1/gamma)
             out[mask] += -np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
             out[mask] +=- np.log(1-spi+spi*(1+gamma*y_sec[mask])**(-1/gamma))
             out[np.invert(mask)] = -1000 # ln(0)
-    
-    elif option == 3:
-        if np.abs(gamma) < 0.0001:
-            out = - 2 * np.log(sigma) - np.exp(-second) - y_max - y_sec 
-        elif corr == 'IID':
-            mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
-            out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
-            out[np.invert(mask)] = -1000 # ln(0)
+
+    elif option == 4: # 2 HOS, JOINT LL + correct TimeSeries ASSUMPTION
+        if corr == 'IID': # corresponds to option 2
+            if np.abs(gamma) < 0.0001:
+                out = - 2 * np.log(sigma) - np.exp(-second) - y_max - y_sec 
+            else:
+                mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
+                out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
+                out[np.invert(mask)] = -1000 # ln(0)
         elif corr == 'ARMAX':
-            mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec > ts**gamma*(1+gamma*y_max)))
-            out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
-            out[np.invert(mask)] = -1000
+            if np.abs(gamma) < 0.0001:
+                eta = np.exp(gamma*y_sec-gamma*y_max)
+                mask = (eta>ts)
+                out[mask] = - 2 * np.log(sigma) - np.exp(-y_sec[mask]) - y_max[mask] - y_sec[mask] 
+                mask = (eta <= ts)
+                out[mask] = -np.log(sigma)-np.exp(-y_max[mask])-y_max[mask]
+            else:
+                eta = np.zeros_like(y_max)
+                eta_mask = np.bitwise_or(np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0)), np.bitwise_and((1+gamma*y_max<0), (1+gamma*y_sec<0)))
+                eta[eta_mask] = ((1+ gamma*y_max[eta_mask])/(1+ gamma*y_sec[eta_mask]))**(-1/gamma)
+                mask = np.bitwise_and(np.bitwise_and((1+gamma*y_max>0),(1+gamma*y_max>0)), (eta>ts))
+                out[mask] = -2*np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)+np.log(1+gamma*y_sec[mask])*(-1/gamma-1)
+                mask = np.bitwise_and((1+gamma*y_max>0), (eta<=ts))
+                out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
+                mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
+                out[np.invert(mask)] = -1000
+
 
 
     
@@ -743,7 +769,7 @@ class TimeSeries:
         """
         # ensure to overwrite existing
         self.values = []
-        self.reps = 10
+        self.reps = rep
         if seeds == 'default':
             for i in range(rep):
                 series = misc.simulate_timeseries(self.len,
@@ -828,6 +854,7 @@ class TimeSeries:
         for series in self.values:
             hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
             self.high_order_stats.append(hos)
+
 
 class HighOrderStats:
     r"""HighOrderStats class for calculating and analyzing high-order statistics of time series data.

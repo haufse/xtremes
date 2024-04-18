@@ -530,7 +530,18 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             xi = np.max([ts * X[-1], (1 - ts) * f])
             X.append(xi)
         # transforming model to desired distribution
-        if distr == 'GPD':
+        if distr == 'GEV':
+            if modelparams[0] == 0:
+                # gumbel case
+                s = gumbel_r.ppf(invweibull.cdf(X, c=1))
+            if modelparams[0] > 0:
+                # frechet case
+                s = invweibull.ppf(invweibull.cdf(X, c=1),c=1/modelparams[0])
+            if modelparams[0] < 0:
+                # weibull case
+                s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0])
+
+        elif distr == 'GPD':
             s = genpareto.ppf(invweibull.cdf(X, c=1), c=modelparams[0])
         else:
             raise ValueError('Other distributions yet to be implemented')
@@ -542,7 +553,9 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             xi = np.max([ts * X[-1], (1 - ts) * f])
             X.append(xi)
         # transforming model to desired distribution
-        if distr == 'GPD':
+        if distr == 'Cauchy':
+            s = X
+        elif distr == 'GPD':
             s = genpareto.ppf(cauchy.cdf(X), c=modelparams[0])
         else:
             raise ValueError('Other distributions yet to be implemented')

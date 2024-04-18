@@ -7,3 +7,4 @@ from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
 import warnings
+import matplotlib
