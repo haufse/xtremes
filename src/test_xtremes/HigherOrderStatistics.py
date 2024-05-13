@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+import scipy
 from scipy import stats
 from scipy.optimize import minimize
 from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r
@@ -62,8 +63,8 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
     
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
     # split into largest and second largest
-    maxima = unique_hos.T[0]
-    second = unique_hos.T[1]
+    maxima = unique_hos.T[1]
+    second = unique_hos.T[0]
     sigma = np.abs(sigma)
     if sigma < 0.01:
         # ensure no division by 0
@@ -72,7 +73,6 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
 
     y_max = (maxima-mu)/sigma 
     y_sec = (second-mu)/sigma
-
     out = np.zeros_like(y_max)
     
     if option == 1: # ONLY MAX
@@ -91,8 +91,9 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
         out[np.invert(mask)] = -1000 # ln(0)
     
     elif option == 3: # 2 HOS, PRODUCT LL + correct TimeSeries ASSUMPTION
-        # forcing pi to live in [0,1]
-        spi = misc.sigmoid(pi)
+        # forcing pi to live in [0,1]# NOTE: may be done by constraint
+        #spi = misc.sigmoid(pi)
+        spi=pi
         if corr == 'IID':
             # here, pi = 1
             spi = 1
@@ -105,7 +106,7 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
             out[mask] += -2 * np.log(sigma)
             out[mask] += -(1+gamma*y_max[mask])**(-1/gamma)-(1+gamma*y_sec[mask])**(-1/gamma)
             out[mask] += -np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
-            out[mask] +=- np.log(1-spi+spi*(1+gamma*y_sec[mask])**(-1/gamma))
+            out[mask] += -np.log(1-spi+spi*(1+gamma*y_sec[mask])**(-1/gamma))
             out[np.invert(mask)] = -1000 # ln(0)
 
     elif option == 4: # 2 HOS, JOINT LL + correct TimeSeries ASSUMPTION
@@ -118,7 +119,7 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
                 out[np.invert(mask)] = -1000 # ln(0)
         elif corr == 'ARMAX':
             if np.abs(gamma) < 0.0001:
-                eta = np.exp(gamma*y_sec-gamma*y_max)
+                eta = np.exp(y_sec-y_max)
                 mask = (eta>ts)
                 out[mask] = - 2 * np.log(sigma) - np.exp(-y_sec[mask]) - y_max[mask] - y_sec[mask] 
                 mask = (eta <= ts)
@@ -132,9 +133,8 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
                 mask = np.bitwise_and((1+gamma*y_max>0), (eta<=ts))
                 out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
                 mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
+                #print(sum(mask))
                 out[np.invert(mask)] = -1000
-
-
 
     
     joint_ll = np.dot(out, counts)
@@ -259,7 +259,7 @@ def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
     initParams = np.array(PWM_estimators)
     # pi parameter from theory
     if corr == 'ARMAX':
-        pis = np.ones(shape=(1,len(PWM_estimators))) * misc.invsigmoid(1-ts)
+        pis = np.ones(shape=(1,len(PWM_estimators))) *(0.5)#* misc.invsigmoid(1-ts)
     elif corr == 'IID':
         pis = np.ones(shape=(1,len(PWM_estimators)))
     else:
@@ -627,10 +627,15 @@ class ML_estimators:
         for i, ho_stat in enumerate(self.high_order_stats):
             def cost(params):
                 gamma, mu, sigma, pi = params
+                if not estimate_pi:
+                	pi = 1 - self.TimeSeries.ts
+                    # pi = misc.invsigmoid(1 - self.TimeSeries.ts)
                 cst = - log_likelihoods(ho_stat, gamma=gamma, mu=mu, sigma=sigma, pi=pi, option=option, ts=self.TimeSeries.ts, corr=self.TimeSeries.corr)
                 return cst
-
-            results = misc.minimize(cost, initParams[i], method='Nelder-Mead')
+            
+            #results = misc.minimize(cost, initParams[i], method='Nelder-Mead')
+            constr = scipy.optimize.LinearConstraint(np.array([[0,0,0,1]]), lb=0, ub=1, keep_feasible=False)
+            results = misc.minimize(cost, initParams[i], method='COBYLA', constraints=constr)
     
             gamma, mu, sigma, pi = results.x
             
