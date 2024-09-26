@@ -7,12 +7,19 @@ Welcome to xtremes!
 **xtremes** is a Python library for various utilities useful in Extreme Value Statistics. It is created within the ClimXtreme project 
 and will provide supplementary code and simulations for the papers yet to come.
 
+So far, it has one submodule of larger importance
+```python
+   import xtremes.HighOrderStatistics as hos
+```
+It covers auxiliary functions to support the paper [add title], also see the repository containing supplementary material https://github.com/haufse/Top-Two [to be made public]
+
+
 Installation:
 -------------
-.. code-block:: console
+```bash
 
    (.venv) $ pip install xtremes
-
+```
 
 Documentation:
 --------------
@@ -20,4 +27,4 @@ Check out <https://xtremes.readthedocs.io/en/latest/> for further information!
 
 Note:
 -----
-   This project is under active & heavy development.
+   This project will be updated throughout the project phase. It will be used to provide code
