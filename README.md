@@ -20,6 +20,7 @@ Installation:
 
    (.venv) $ pip install xtremes
 ```
+Also view it on PyPi, https://pypi.org/project/xtremes/.
 
 Documentation:
 --------------
