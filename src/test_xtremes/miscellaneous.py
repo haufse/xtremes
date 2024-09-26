@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 from scipy import stats
 from scipy.optimize import minimize
-from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy
+from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
@@ -507,8 +507,8 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     """
     if seed is not None:
         np.random.seed(seed)
-    # draw from GEV
     if correlation.upper() == 'IID':
+        # draw from GEV
         if distr == 'GEV':
             if modelparams[0] == 0:
                 # gumbel case
@@ -519,8 +519,14 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             if modelparams[0] < 0:
                 # weibull case
                 s = weibull_max.rvs(-1/modelparams[0], size=n)
+        if distr == 'Frechet':
+            if modelparams[0] > 0:
+                # frechet case
+                s = invweibull.rvs(modelparams[0], size=n)
         if distr == 'GPD':
             s = genpareto.rvs(c=modelparams[0], size=n)
+        if distr == 'normal':
+            s = norm.rvs(loc=modelparams[0], scale=modelparams[1], size=n)
 
     elif correlation == 'ARMAX':
         # creating Frechet(1)-AMAX model
@@ -540,6 +546,10 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             if modelparams[0] < 0:
                 # weibull case
                 s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0])
+        if distr == 'Frechet':
+            if modelparams[0] > 0:
+                # frechet case
+                s = invweibull.ppf(invweibull.cdf(X, c=1),c=modelparams[0])
 
         elif distr == 'GPD':
             s = genpareto.ppf(invweibull.cdf(X, c=1), c=modelparams[0])
@@ -557,6 +567,20 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             s = X
         elif distr == 'GPD':
             s = genpareto.ppf(cauchy.cdf(X), c=modelparams[0])
+        elif distr == 'GEV':
+            if modelparams[0] == 0:
+                # gumbel case
+                s = gumbel_r.ppf(cauchy.cdf(X))
+            if modelparams[0] > 0:
+                # frechet case
+                s = invweibull.ppf(cauchy.cdf(X),c=1/modelparams[0])
+            if modelparams[0] < 0:
+                # weibull case
+                s = weibull_max.ppf(cauchy.cdf(X),c=-1/modelparams[0])
+        elif distr == 'Frechet':
+            if modelparams[0] > 0:
+                # frechet case
+                s = invweibull.ppf(cauchy.cdf(X),c=modelparams[0])
         else:
             raise ValueError('Other distributions yet to be implemented')
         
@@ -649,6 +673,8 @@ def modelparams2gamma_true(distr, correllation, modelparams):
     """
     if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: 
         return modelparams[0]
+    if distr in ['Frechet'] and correllation in ['IID', 'ARMAX', 'AR']: 
+        return 1 / modelparams[0]
     else:
         raise ValueError("Distribution type '{}' or correlation type '{}' is not supported.".format(distr, correllation))
 
