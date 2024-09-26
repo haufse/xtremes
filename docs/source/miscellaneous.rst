@@ -7,26 +7,26 @@ This module is a collection for non-specialized, frequently used or basic functi
 Basic functions
 ---------------
 
-``test_xtremes.miscellaneous.sigmoid``
-``test_xtremes.miscellaneous.invsigmoid``
-``test_xtremes.miscellaneous.mse``
+``xtremes.miscellaneous.sigmoid``
+``xtremes.miscellaneous.invsigmoid``
+``xtremes.miscellaneous.mse``
 
 The GEV and its Likelihood
 --------------------------
 
-``test_xtremes.miscellaneous.GEV_pdf``
-``test_xtremes.miscellaneous.GEV_cdf``
-``test_xtremes.miscellaneous.GEV_ll``
+``xtremes.miscellaneous.GEV_pdf``
+``xtremes.miscellaneous.GEV_cdf``
+``xtremes.miscellaneous.GEV_ll``
 
 Piece Wise Moment Estimation 
 ----------------------------
 
-``test_xtremes.miscellaneous.PWM_estimation``
-``test_xtremes.miscellaneous.PWM2GEV``
+``xtremes.miscellaneous.PWM_estimation``
+``xtremes.miscellaneous.PWM2GEV``
 
 Simulating Time Series
 ----------------------
 
-``test_xtremes.miscellaneous.simulate_timeseries``
-``test_xtremes.miscellaneous.stride2int``
-``test_xtremes.miscellaneous.modelparams2gamma_true``
+``xtremes.miscellaneous.simulate_timeseries``
+``xtremes.miscellaneous.stride2int``
+``xtremes.miscellaneous.modelparams2gamma_true``

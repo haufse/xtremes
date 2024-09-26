@@ -6,24 +6,24 @@ This module is a specialized on analyzing the influence of higher order statisti
 
 The ``TimeSeries`` Class and its Functionalities
 ------------------------------------------------
-``test_xtremes.HigherOrderStatistics.TimeSeries``
-``test_xtremes.HigherOrderStatistics.extract_BM``
-``test_xtremes.HigherOrderStatistics.extract_HOS``
+``xtremes.HigherOrderStatistics.TimeSeries``
+``xtremes.HigherOrderStatistics.extract_BM``
+``xtremes.HigherOrderStatistics.extract_HOS``
 
 The ``HighOrderStats`` Class and its Functionalities
 ----------------------------------------------------
-``test_xtremes.HigherOrderStatistics.HighOrderStats``
+``xtremes.HigherOrderStatistics.HighOrderStats``
 
 
 The ``ML_estimators`` and ``PWM_estimators`` Classes
 ----------------------------------------------------
-``test_xtremes.HigherOrderStatistics.PWM_estimators``
-``test_xtremes.HigherOrderStatistics.ML_estimators``
-``test_xtremes.HigherOrderStatistics.automatic_parameter_initialization``
-``test_xtremes.HigherOrderStatistics.cost_function``
+``xtremes.HigherOrderStatistics.PWM_estimators``
+``xtremes.HigherOrderStatistics.ML_estimators``
+``xtremes.HigherOrderStatistics.automatic_parameter_initialization``
+``xtremes.HigherOrderStatistics.cost_function``
 
 Running Extensive Simulations
 -----------------------------
-``test_xtremes.HigherOrderStatistics.background``
-``test_xtremes.HigherOrderStatistics.run_ML_estimation``
-``test_xtremes.HigherOrderStatistics.run_multiple_ML_estimations``
+``xtremes.HigherOrderStatistics.background``
+``xtremes.HigherOrderStatistics.run_ML_estimation``
+``xtremes.HigherOrderStatistics.run_multiple_ML_estimations``

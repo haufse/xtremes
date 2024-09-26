@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'test-xtremes'
+project = 'xtremes'
 copyright = '2024, Erik Haufs'
 author = 'Erik Haufs'
 

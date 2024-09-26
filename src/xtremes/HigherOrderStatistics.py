@@ -9,7 +9,7 @@ from pynverse import inversefunc
 # import asyncio
 import pickle
 import warnings
-import test_xtremes.miscellaneous as misc
+import xtremes.miscellaneous as misc
 import matplotlib.pyplot as plt
 
 # FUNCTIONS

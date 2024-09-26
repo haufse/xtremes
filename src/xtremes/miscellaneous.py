@@ -1,10 +1,10 @@
 """
-test_xtremes.miscellaneous - Python sublibrary for diverse functions.
+xtremes.miscellaneous - Python sublibrary for diverse functions.
 
 .. code-block:: python
 
     # Import test_xtremes
-    import test_xtremes.miscellaneous as misc
+    import xtremes.miscellaneous as misc
 
     # Call an arbitray function
     misc.sigmoid(1)
