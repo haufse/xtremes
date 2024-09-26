@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "test-xtremes"
-version = "0.2.8"
+name = "xtremes"
+version = "0.0.1"
 dependencies = [
   "numpy",
   "scipy",
@@ -15,7 +15,7 @@ dependencies = [
 authors = [
   { name="Erik Haufs", email="erik.haufs@rub.de" },
 ]
-description = "Testing publication of xtremes"
+description = "Some utilities to perform Extreme Value Analysis"
 readme = "README.md"
 requires-python = ">=3.6"
 classifiers = [
