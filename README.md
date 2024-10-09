@@ -28,4 +28,4 @@ Check out <https://xtremes.readthedocs.io/en/latest/> for further information!
 
 Note:
 -----
-   This project will be updated throughout the project phase. It will be used to provide code
+   This project will be updated throughout the project phase. It will be used to provide code supporting theoretical advances.
