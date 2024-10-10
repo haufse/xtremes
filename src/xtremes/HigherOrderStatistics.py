@@ -17,37 +17,40 @@ import matplotlib.pyplot as plt
 # log-likelihood
 
 def log_likelihood(high_order_statistics, gamma=0, mu=0, sigma=1, r=None):
-    r"""Calculate the GEV log likelihood based on the two highest order statistics in three different ways.
+    r"""
+    Calculate the GEV log likelihood based on the two highest order statistics in three different ways.
 
     Parameters
     ----------
-    :param high_order_statistics: numpy array
-        Array containing the two highest order statistics.
-    :param gamma: float, optional
-        The shape parameter for the Generalized Extreme Value (GEV) distribution. Default is 0.
-    :param mu: float, optional
-        The location parameter for the GEV distribution. Default is 0.
-    :param sigma: float, optional
-        The scale parameter for the GEV distribution. Default is 1.
-    :param r: int, optional
-        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
+    high_order_statistics : numpy.ndarray
+        A 2D array where each row contains the two highest order statistics for each observation.
+    gamma : float, optional
+        The shape parameter (γ) for the Generalized Extreme Value (GEV) distribution. Default is 0.
+    mu : float, optional
+        The location parameter (μ) for the GEV distribution. Default is 0.
+    sigma : float, optional
+        The scale parameter (σ) for the GEV distribution. Must be positive. Default is 1.
+    r : int, optional
+        The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.
 
     Returns
     -------
-    :return: float
+    float
         The calculated log likelihood.
 
     Notes
     -----
-    - This function calculates the log likelihood based on the two highest order statistics in different ways.
-    - The high_order_statistics array should contain the two highest order statistics for each observation.
+    - This function computes the log likelihood using the two highest order statistics and supports both the classical 
+      Gumbel case (γ = 0) and the generalized case (γ ≠ 0).
+    - The `high_order_statistics` array should be structured with the two highest order statistics per observation as rows.
+    - The shape parameter γ controls the tail behavior of the distribution. When γ = 0, the distribution becomes the Gumbel type.
+    - The `r` parameter controls how many order statistics are used for the likelihood calculation, typically `r=2` for two order statistics.
 
     Example
     -------
     >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
-    >>> log_likelihood(hos, gamma=0.5, sigma=2, option=2)
+    >>> log_likelihood(hos, gamma=0.5, mu=0, sigma=2, r=2)
     7.494890426732856
-
     """
     
     if r == None:
@@ -81,32 +84,38 @@ def log_likelihood(high_order_statistics, gamma=0, mu=0, sigma=1, r=None):
     return joint_ll
 
 def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
-    r"""Calculate the 2-parametric Frechet log likelihood based either on the maximum or on the two highest order statistics. 
-    We distinguish between maximizing the correctly specified joint Likelihood of the Top Two or simply the product of their marginals.
+    r"""
+    Calculate the 2-parameter Frechet log likelihood based on the highest order statistics. 
+    The calculation can be done using either the joint likelihood of the top two order statistics or the product of their marginals.
 
     Parameters
     ----------
-    :param high_order_statistics: numpy array
-        Array containing the two highest order statistics.
-    :param alpha: float, optional
-        The shape parameter for the Frechet distribution. Default is 1.
-    :param sigma: float, optional
-        The scale parameter for the Frechet distribution. Default is 1.
-    :param r: int, optional
-        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
+    high_order_statistics : numpy.ndarray
+        A 2D array where each row contains the two highest order statistics for each observation.
+    alpha : float, optional
+        The shape parameter (α) for the Frechet distribution. Default is 1. Controls the tail behavior of the distribution.
+    sigma : float, optional
+        The scale parameter (σ) for the Frechet distribution. Must be positive. Default is 1.
+    r : int, optional
+        The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.
 
     Returns
     -------
-    :return: float
-        The calculated log likelihood.
+    float
+        The calculated log likelihood for the given data under the Frechet distribution.
 
     Notes
     -----
-    - This function calculates the log likelihood based on the two highest order statistics in different ways.
-    - The high_order_statistics array should contain the two highest order statistics for each observation.
+    - This function computes the log likelihood using the two highest order statistics from each observation, with a focus on the Frechet distribution.
+    - The shape parameter `alpha` determines the heaviness of the tail in the distribution, and the scale parameter `sigma` must be strictly positive.
+    - The `high_order_statistics` array should be structured such that each row represents the two highest order statistics for an observation.
+    - The function can either calculate the joint likelihood of the top two order statistics or consider the product of their marginals, depending on the values used.
 
-    
-
+    Example
+    -------
+    >>> hos = np.array([[0.5, 1.0], [1.5, 2.0], [1.2, 2.2], [2.0, 3.0]])
+    >>> Frechet_log_likelihood(hos, alpha=2, sigma=1.5, r=2)
+    -15.78467219003245
     """
 
     if r == None or r>high_order_statistics.shape[1]:
@@ -550,17 +559,44 @@ class ML_estimators:
 
     def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None):
         r"""
-        Compute ML estimators for each high order statistics series.
+    Compute Maximum Likelihood (ML) estimators for each series of high order statistics within the `ML_estimators` class.
 
-        Parameters
-        ----------
-        :param PWM_estimators: PWM_estimators object, optional
-            PWM_estimators object containing PWM estimators for initializing parameters.
-        :param initParams: str or numpy.ndarray, optional
-            Initial parameters for ML estimation. 'auto' to calculate automatically using PWM estimators.
-        :param r: int, optional
-            Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
-        """
+    This method fits the Generalized Extreme Value (GEV) distribution to each series of high order statistics
+    using Maximum Likelihood Estimation (MLE) by optimizing the log-likelihood function.
+
+    Parameters
+    ----------
+    PWM_estimators : PWM_estimators object, optional
+        An object containing PWM (Probability Weighted Moments) estimators. This is used for initializing the 
+        parameters in the ML estimation if `initParams` is set to 'auto'. Required if `initParams` is 'auto'.
+    initParams : str or numpy.ndarray, optional
+        Initial parameters for the ML estimation. If 'auto', the initial parameters will be computed automatically 
+        using the `PWM_estimators` object. If a NumPy array is provided, these will be used as initial parameter values.
+        Default is 'auto'.
+    r : int, optional
+        The number of order statistics to calculate the log-likelihood on. If not specified, all provided 
+        order statistics will be used.
+
+    Returns
+    -------
+    None
+        This method updates the `self.values` attribute of the `ML_estimators` object with the estimated parameters 
+        (gamma, mu, sigma) for each series of high order statistics.
+
+    Raises
+    ------
+    ValueError
+        If `initParams` is set to 'auto' and no `PWM_estimators` are provided, a ValueError is raised.
+
+    Notes
+    -----
+    - This method performs Maximum Likelihood Estimation (MLE) to fit the Generalized Extreme Value (GEV) distribution 
+      to the high order statistics within the `ML_estimators` class.
+    - The method uses optimization techniques such as Nelder-Mead (and optionally COBYLA) to minimize the negative log-likelihood.
+    - If `initParams` is set to 'auto', the initial parameters for the optimization are derived using the `PWM_estimators` object.
+    - The optimization results (gamma, mu, sigma) are stored in the `self.values` list for each series of high order statistics.
+
+    """
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
         elif initParams == 'auto':
@@ -573,9 +609,9 @@ class ML_estimators:
                 cst = - log_likelihood(ho_stat, gamma=gamma, mu=mu, sigma=sigma, r=r)
                 return cst
             
-            # COBYLA und Nelder-Mead agree
-            #results = misc.minimize(cost, initParams[i], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, initParams[i], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            # COBYLA und Nelder-Mead agree, in some versions cobyla does not want bounds
+            results = misc.minimize(cost, initParams[i], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            # results = misc.minimize(cost, initParams[i], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
             #constr1 = scipy.optimize.LinearConstraint(np.array([[1,0,0]]), lb=0, keep_feasible=False)
             #constr2 = scipy.optimize.LinearConstraint(np.array([[0,0,1]]), lb=0, keep_feasible=False)
             #results = misc.minimize(cost, initParams[i], method='COBYLA', constraints=[constr1, constr2])
@@ -624,33 +660,34 @@ class Frechet_ML_estimators:
     r"""
     Maximum Likelihood Estimators (MLE) for Frechet parameters.
 
-    This class calculates Maximum Likelihood Estimators (MLE) for the parameters of the 2-parameter Frechet distribution using the method of maximum likelihood estimation.
-    
+    This class calculates Maximum Likelihood Estimators (MLE) for the parameters of the 2-parameter Frechet 
+    distribution using the method of maximum likelihood estimation on a series of high order statistics.
+
     Parameters
     ----------
     TimeSeries : TimeSeries
-        The TimeSeries object containing the data for which MLE estimators will be calculated.
+        The TimeSeries object containing the data (high order statistics) for which MLE estimators will be calculated.
 
     Attributes
     ----------
     values : numpy.ndarray
-        An array containing the MLE estimators for each set of high order statistics.
+        An array containing the MLE estimators (alpha, sigma) for each set of high order statistics.
     statistics : dict
-        A dictionary containing statistics computed from the MLE estimators.
+        A dictionary containing computed statistics from the MLE estimators such as mean, variance, bias, and MSE.
 
     Methods
     -------
     __len__()
         Returns the number of MLE estimators calculated.
-    get_ML_estimation(PWM_estimators=None, initParams='auto', option=1, estimate_pi=False)
-        Computes the MLE estimators for the GEV parameters.
-    get_statistics(gamma_true)
-        Computes statistics from the MLE estimators.
+    get_ML_estimation(PWM_estimators=None, initParams='auto', r=None)
+        Computes the MLE estimators for the Frechet parameters (alpha, sigma).
+    get_statistics(alpha_true)
+        Computes statistics (mean, variance, bias, and MSE) of the MLE estimators using a true alpha value.
 
     Examples
     --------
     >>> import numpy as np
-    >>> from your_module import TimeSeries, ML_estimators, PWM_estimators
+    >>> from your_module import TimeSeries, Frechet_ML_estimators, PWM_estimators
 
     # Example data
     >>> blockmaxima_data = np.random.normal(loc=10, scale=2, size=100)
@@ -663,7 +700,7 @@ class Frechet_ML_estimators:
     >>> pwm = PWM_estimators(ts)
     >>> pwm.get_PWM_estimation()
 
-    # Initialize ML_estimators object
+    # Initialize Frechet_ML_estimators object
     >>> ml = Frechet_ML_estimators(ts)
 
     # Compute ML estimators
@@ -680,6 +717,7 @@ class Frechet_ML_estimators:
     >>> print("\nStatistics:")
     >>> print(ml.statistics)
     """
+
     def __init__(self, TimeSeries):
         # TimeSeries object needs high order statistics
         if TimeSeries.high_order_stats == []:
@@ -690,20 +728,42 @@ class Frechet_ML_estimators:
         self.statistics = {}
     
     def __len__(self):
+        """
+        Return the number of MLE estimators calculated.
+
+        Returns
+        -------
+        int
+            The number of sets of high order statistics for which MLE estimators have been calculated.
+        """
         return len(self.values)
 
     def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None):
         r"""
-        Compute ML estimators for each high order statistics series.
+        Compute ML estimators (alpha, sigma) for each high order statistics series using Frechet distribution.
 
         Parameters
         ----------
-        :param PWM_estimators: PWM_estimators object, optional
-            PWM_estimators object containing PWM estimators for initializing parameters.
-        :param initParams: str or numpy.ndarray, optional
+        PWM_estimators : PWM_estimators object, optional
+            PWM_estimators object containing PWM estimators for initializing parameters. Required if `initParams` 
+            is set to 'auto'.
+        initParams : str or numpy.ndarray, optional
             Initial parameters for ML estimation. 'auto' to calculate automatically using PWM estimators.
-    :param r: int, optional
-        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
+            If a numpy array is provided, these will be used as initial parameter values. Default is 'auto'.
+        r : int, optional
+            Number of order statistics to calculate the log-likelihood on. If not specified, all provided order 
+            statistics will be used.
+
+        Returns
+        -------
+        None
+            Updates the `self.values` attribute with the estimated parameters (alpha, sigma) for each series 
+            of high order statistics.
+
+        Raises
+        ------
+        ValueError
+            If `initParams` is set to 'auto' and no `PWM_estimators` are provided.
         """
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
@@ -732,12 +792,24 @@ class Frechet_ML_estimators:
 
     def get_statistics(self, alpha_true):
         r"""
-        Compute statistics of the ML estimators using a true :math:`\alpha` value.
+        Compute statistics (mean, variance, bias, and MSE) of the ML estimators using the true :math:`\alpha` value.
 
         Parameters
         ----------
-        :param alpha_true: float
-            True :math:`\alpha` value for calculating statistics.
+        alpha_true : float
+            The true value of :math:`\alpha` to calculate bias, MSE, and other statistics.
+
+        Returns
+        -------
+        None
+            Updates the `self.statistics` dictionary with calculated statistics such as mean, variance, bias, 
+            and MSE for both :math:`\alpha` and :math:`\sigma`.
+
+        Notes
+        -----
+        The statistics include:
+        - Mean and variance for the estimated alpha and sigma values.
+        - Bias and mean squared error (MSE) for the alpha estimates.
         """
         alphas = self.values.T[0]
         sigmas = self.values.T[1]
@@ -763,61 +835,66 @@ class Frechet_ML_estimators:
 
 class TimeSeries:
     r"""
-    TimeSeries class for simulating and analyzing time series data.
+    TimeSeries class for simulating and analyzing time series data with optional correlation structures.
+
+    This class is designed to simulate time series data based on specified distributions and correlation types. 
+    It also provides methods to extract block maxima and high order statistics from the simulated data.
 
     Parameters
     ----------
     n : int
-        Length of the time series.
+        The length of the time series.
     distr : str, optional
-        Distribution to draw from. Default is 'GEV'.
+        The distribution to simulate the time series data from. Default is 'GEV' (Generalized Extreme Value).
     correlation : str, optional
-        Correlation type, choose from ['IID', 'ARMAX', 'AR']. Default is 'IID'.
+        The type of correlation structure. Options include ['IID', 'ARMAX', 'AR']. Default is 'IID' 
+        (independent and identically distributed).
     modelparams : list, optional
-        Parameters belonging to the specified distribution. Default is [0].
+        The parameters of the specified distribution. Default is [0].
     ts : float, optional
-        Time series parameter alpha in [0,1]. Default is 0.
+        A parameter for controlling the time series characteristics, particularly for correlated series (e.g., in AR models).
+        Must be in the range [0, 1]. Default is 0.
         
     Attributes
     ----------
     values : list
-        List to store simulated time series.
+        A list to store the simulated time series data.
     distr : str
-        Distribution type.
+        The type of distribution used for generating the time series data.
     corr : str
-        Correlation type.
+        The type of correlation structure applied to the time series.
     modelparams : list
-        Model parameters.
+        The parameters of the chosen distribution model.
     ts : float
-        Time series parameter.
+        A parameter controlling the correlation or time series structure, if applicable.
     len : int
-        Length of the time series.
+        The length of the time series.
     blockmaxima : list
-        List to store block maxima.
+        A list storing block maxima extracted from the simulated data.
     high_order_stats : list
-        List to store high order statistics.
+        A list storing the high order statistics extracted from the simulated data.
 
     Methods
     -------
     simulate(rep=10, seeds='default'):
-        Simulate time series data.
+        Simulates time series data based on the given distribution and correlation type.
     get_blockmaxima(block_size=2, stride='DBM', rep=10):
-        Extract block maxima from simulated data.
+        Extracts block maxima from the simulated time series data.
     get_HOS(orderstats=2, block_size=2, stride='DBM', rep=10):
-        Extract high order statistics from simulated data.
+        Extracts high order statistics from the simulated time series data.
 
-    Example
-    -------
+    Examples
+    --------
     >>> # Create a TimeSeries object
     >>> ts = TimeSeries(n=100, distr='GEV', correlation='ARMAX', modelparams=[0.5], ts=0.6)
     >>> 
-    >>> # Simulate time series data
+    >>> # Simulate time series data with 5 repetitions and specific seeds
     >>> ts.simulate(rep=5, seeds=[42, 123, 456, 789, 1011])
     >>> 
-    >>> # Extract block maxima
+    >>> # Extract block maxima using a block size of 5
     >>> ts.get_blockmaxima(block_size=5, stride='DBM', rep=5)
     >>> 
-    >>> # Extract high order statistics
+    >>> # Extract high order statistics (order 3) using the same block size and stride
     >>> ts.get_HOS(orderstats=3, block_size=5, stride='DBM', rep=5)
     """
     
@@ -838,17 +915,21 @@ class TimeSeries:
         r"""
         Simulate time series data.
 
+        This method generates time series data based on the specified distribution, correlation type, and other parameters.
+
         Parameters
         ----------
         rep : int, optional
-            Number of repetitions for simulation. Default is 10.
+            The number of repetitions (simulations) to run. Default is 10.
         seeds : {str, list}, optional
-            Seed(s) for random number generation. Default is 'default'.
+            Seed(s) for random number generation. If 'default', a sequence of seeds is automatically generated 
+            based on the number of repetitions. If a list of seeds is provided, it must match the number of 
+            repetitions (`rep`). Default is 'default'.
 
         Raises
         ------
         ValueError
-            If the number of given seeds does not match the number of repetitions.
+            If the number of provided seeds does not match the number of repetitions.
         """
         # ensure to overwrite existing
         self.values = []
@@ -889,16 +970,19 @@ class TimeSeries:
         
     def get_blockmaxima(self, block_size=2, stride='DBM', rep=10):
         r"""
-        Extract block maxima from simulated data.
+        Extract block maxima from simulated time series data.
+
+        Block maxima are the maximum values extracted from blocks of the time series data.
 
         Parameters
         ----------
         block_size : int, optional
-            Size of blocks for maxima extraction. Default is 2.
-        stride : str or int, optional
-            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'. If is int, defines step (1 = SBM, bs = DBM)
+            The size of blocks from which to extract maxima. Default is 2.
+        stride : {str, int}, optional
+            The stride or step type used for block extraction. Choose from ['SBM' (Sliding Block Maxima), 'DBM' 
+            (Disjoint Block Maxima)] or specify an integer as a step size. Default is 'DBM'.
         rep : int, optional
-            Number of repetitions for extraction. Default is 10.
+            The number of repetitions for maxima extraction. This should match the number of simulations. Default is 10.
         """
         # ensure to overwrite existing
         self.blockmaxima = []
@@ -914,18 +998,20 @@ class TimeSeries:
 
     def get_HOS(self, orderstats = 2, block_size=2, stride='DBM', rep=10):
         r"""
-        Extract high order statistics from simulated data.
+        Extract high order statistics from simulated time series data.
+
+        High order statistics include values such as the second-largest value within each block of the time series.
 
         Parameters
         ----------
         orderstats : int, optional
-            Order of statistics. Default is 2.
+            The order of statistics to extract. Default is 2 (i.e., second-highest value).
         block_size : int, optional
-            Size of blocks for statistics extraction. Default is 2.
+            The size of blocks from which to extract the statistics. Default is 2.
         stride : str, optional
-            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'.
+            The stride or step type used for block extraction. Choose from ['SBM', 'DBM']. Default is 'DBM'.
         rep : int, optional
-            Number of repetitions for extraction. Default is 10.
+            The number of repetitions for extracting high order statistics. Should match the number of simulations. Default is 10.
         """
         # ensure to overwrite existing
         self.high_order_stats = []
@@ -1052,11 +1138,68 @@ class HighOrderStats:
 # classes to analyze real data
 class Data:
     r"""
-    to be documented
+    A class for analyzing data with block maxima and high order statistics.
 
+    This class provides methods to extract block maxima and high order statistics from a given dataset. 
+    It also supports Maximum Likelihood (ML) estimation for the parameters of either the Frechet or GEV distributions.
+
+    Parameters
+    ----------
+    values : list or numpy.ndarray
+        The dataset from which block maxima and high order statistics are extracted. This should be a 1D array 
+        or list of values representing the time series or data.
+
+    Attributes
+    ----------
+    values : list or numpy.ndarray
+        The dataset on which operations are performed.
+    len : int
+        The length of the dataset.
+    blockmaxima : list
+        List to store the block maxima extracted from the dataset.
+    bm_indices : list
+        List of indices corresponding to the positions of the block maxima in the original dataset.
+    high_order_stats : list
+        List to store the high order statistics extracted from the dataset.
+    ML_estimators : ML_estimators_data
+        Object that stores and handles the ML estimation results for the Frechet or GEV parameters.
+
+    Methods
+    -------
+    get_blockmaxima(block_size=2, stride='DBM'):
+        Extracts block maxima from the dataset.
+    get_HOS(orderstats=2, block_size=2, stride='DBM'):
+        Extracts high order statistics from the dataset.
+    get_ML_estimation(r=None, FrechetOrGEV='GEV'):
+        Computes ML estimations for the Frechet or GEV parameters.
+
+    Example
+    -------
+    >>> # Initialize the Data object with a dataset
+    >>> data = Data([2.5, 3.1, 1.7, 4.6, 5.3, 2.2, 6.0])
+    >>> 
+    >>> # Extract block maxima using a block size of 2
+    >>> data.get_blockmaxima(block_size=2, stride='DBM')
+    >>> print(data.blockmaxima)
+    >>> 
+    >>> # Extract second-highest order statistics (HOS) with the same block size and stride
+    >>> data.get_HOS(orderstats=2, block_size=2, stride='DBM')
+    >>> print(data.high_order_stats)
+    >>> 
+    >>> # Perform ML estimation using the extracted HOS, choosing between Frechet and GEV
+    >>> data.get_ML_estimation(FrechetOrGEV='GEV')
+    >>> print(data.ML_estimators.values)
     """
     
     def __init__(self, values):
+        """
+        Initialize the Data class with the dataset.
+
+        Parameters
+        ----------
+        values : list or numpy.ndarray
+            The dataset on which to perform analysis.
+        """
         self.values = values
         self.len = len(values)
         self.blockmaxima = []
@@ -1069,14 +1212,27 @@ class Data:
         
     def get_blockmaxima(self, block_size=2, stride='DBM'):
         r"""
-        Extract block maxima from data.
+        Extract block maxima from the dataset.
+
+        Block maxima are the largest values in each block of the dataset, where the block size 
+        and the stride (step size) determine how the blocks are divided.
 
         Parameters
         ----------
         block_size : int, optional
-            Size of blocks for maxima extraction. Default is 2.
+            The size of blocks for maxima extraction. Default is 2.
         stride : str or int, optional
-            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'. If is int, defines step (1 = SBM, bs = DBM)
+            The type of stride to use when extracting blocks. Choose from:
+            - 'SBM': Sliding Block Maxima (step size 1)
+            - 'DBM': Disjoint Block Maxima (non-overlapping blocks)
+            - int: Specifies the step size directly.
+            Default is 'DBM'.
+
+        Returns
+        -------
+        None
+            The block maxima and their corresponding indices are stored in the `blockmaxima` 
+            and `bm_indices` attributes.
         """
         # ensure to overwrite existing
         self.blockmaxima = []
@@ -1087,16 +1243,28 @@ class Data:
 
     def get_HOS(self, orderstats = 2, block_size=2, stride='DBM'):
         r"""
-        Extract high order statistics from data.
+        Extract high order statistics (HOS) from the dataset.
+
+        High order statistics refer to statistics of interest beyond the maximum (e.g., second-highest, 
+        third-highest). This method extracts these statistics from blocks of the dataset.
 
         Parameters
         ----------
         orderstats : int, optional
-            Order of statistics. Default is 2.
+            The order of the statistic to extract (e.g., 2 for second-highest). Default is 2.
         block_size : int, optional
-            Size of blocks for statistics extraction. Default is 2.
-        stride : str, optional
-            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'.
+            The size of blocks from which to extract the statistics. Default is 2.
+        stride : str or int, optional
+            The type of stride to use when extracting blocks. Choose from:
+            - 'SBM': Sliding Block Maxima (step size 1)
+            - 'DBM': Disjoint Block Maxima (non-overlapping blocks)
+            - int: Specifies the step size directly.
+            Default is 'DBM'.
+
+        Returns
+        -------
+        None
+            The high order statistics are stored in the `high_order_stats` attribute.
         """
         # ensure to overwrite existing
         self.high_order_stats = []
@@ -1105,6 +1273,25 @@ class Data:
         self.high_order_stats = extract_HOS(self.values, orderstats=orderstats, block_size=block_size, stride=stride)
 
     def get_ML_estimation(self, r=None, FrechetOrGEV = 'GEV'):
+        r"""
+        Compute Maximum Likelihood (ML) estimations for the Frechet or GEV parameters.
+
+        This method computes ML estimators for the parameters of either the Frechet or GEV distribution based 
+        on the high order statistics extracted from the data. If no high order statistics are available, it 
+        will first extract them.
+
+        Parameters
+        ----------
+        r : int, optional
+            The number of order statistics to use in the ML estimation. If not specified, it uses all the extracted statistics.
+        FrechetOrGEV : str, optional
+            The type of distribution to use for the ML estimation. Choose between 'Frechet' and 'GEV'. Default is 'GEV'.
+
+        Returns
+        -------
+        None
+            The ML estimators are stored in the `ML_estimators` attribute.
+        """
         if self.high_order_stats == []:
             # potentially use parameters optained by getting blockmaxima
             self.get_HOS(orderstats=1, block_size=self.block_size, stride=self.stride)
@@ -1114,9 +1301,65 @@ class Data:
 
 class ML_estimators_data:
     r"""
-    to be documenzed
+    Class for performing Maximum Likelihood (ML) estimation on high order statistics.
+
+    This class calculates the Maximum Likelihood Estimators (MLE) for either the Generalized Extreme Value (GEV) 
+    distribution or the Frechet distribution based on the provided high order statistics. It also contains methods 
+    to compute relevant statistics from the estimators.
+
+    Parameters
+    ----------
+    high_order_stats : numpy.ndarray
+        The array of high order statistics on which ML estimation will be performed.
+
+    Attributes
+    ----------
+    high_order_stats : numpy.ndarray
+        The high order statistics provided during initialization.
+    values : numpy.ndarray
+        The ML estimators (parameters) calculated for the GEV or Frechet distribution. If `FrechetOrGEV='GEV'`, 
+        the array contains [gamma, mu, sigma]. If `FrechetOrGEV='Frechet'`, the array contains [alpha, sigma].
+    statistics : dict
+        A dictionary to store computed statistics related to the ML estimators.
+
+    Methods
+    -------
+    get_ML_estimation(FrechetOrGEV='GEV', r=None):
+        Computes the ML estimators for either the GEV or Frechet distribution.
+    get_statistics(gamma_true):
+        (Placeholder) Computes additional statistics such as bootstrapped confidence intervals for the estimators.
+
+    Example
+    -------
+    >>> # Assuming you have high order statistics stored in `hos`
+    >>> hos = np.array([[0.5, 1.0], [1.5, 2.0], [1.2, 2.2], [2.0, 3.0]])
+
+    >>> # Create an instance of the ML_estimators_data class
+    >>> ml = ML_estimators_data(hos)
+
+    >>> # Perform ML estimation for the GEV distribution
+    >>> ml.get_ML_estimation(FrechetOrGEV='GEV', r=2)
+
+    >>> # Print the estimated parameters (gamma, mu, sigma)
+    >>> print(ml.values)
+
+    >>> # Perform ML estimation for the Frechet distribution
+    >>> ml.get_ML_estimation(FrechetOrGEV='Frechet', r=2)
+
+    >>> # Print the estimated parameters (alpha, sigma)
+    >>> print(ml.values)
     """
+
     def __init__(self, high_order_stats):
+        r"""
+        Initialize the ML_estimators_data class with high order statistics.
+
+        Parameters
+        ----------
+        high_order_stats : numpy.ndarray
+            The high order statistics on which ML estimation will be performed.
+        """
+
         self.high_order_stats = high_order_stats
         self.values = []
         self.statistics = {}
@@ -1126,7 +1369,31 @@ class ML_estimators_data:
 
     def get_ML_estimation(self, FrechetOrGEV='GEV', r=None):
         r"""
-        to be documented
+        Perform Maximum Likelihood (ML) estimation for the GEV or Frechet distribution.
+
+        This method computes ML estimators for either the Generalized Extreme Value (GEV) or Frechet distribution 
+        based on the provided high order statistics. It minimizes the negative log-likelihood to estimate the 
+        distribution parameters.
+
+        Parameters
+        ----------
+        FrechetOrGEV : str, optional
+            The type of distribution for which the ML estimators are calculated. Options are 'GEV' or 'Frechet'. 
+            Default is 'GEV'.
+        r : int, optional
+            The number of order statistics to use for the ML estimation. If not specified, all available order 
+            statistics are used.
+
+        Returns
+        -------
+        None
+            The estimated parameters are stored in the `values` attribute as a NumPy array. For the GEV distribution, 
+            this will be [gamma, mu, sigma]. For the Frechet distribution, this will be [alpha, sigma].
+
+        Raises
+        ------
+        ValueError
+            If an invalid value is provided for the `FrechetOrGEV` parameter.
         """
         if FrechetOrGEV == 'GEV':
             def cost(params):
@@ -1134,7 +1401,8 @@ class ML_estimators_data:
                 cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
                 return cst
             # for now: hard-coded init params [1,1,1], as it should not matter too much
-            results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
             gamma, mu, sigma = results.x
             self.values = np.array([gamma, mu, sigma])
 
@@ -1144,7 +1412,8 @@ class ML_estimators_data:
                 cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
                 return cst
             # for now: hard-coded init params [1,1], as it should not matter too much
-            results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
+            # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
+            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((0,np.inf),(0,np.inf)))
     
             alpha, sigma = results.x
             
@@ -1153,5 +1422,20 @@ class ML_estimators_data:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
 
     def get_statistics(self, gamma_true):
+        r"""
+        Placeholder for computing statistics for the ML estimators.
+
+        This method is intended to compute additional statistics, such as bootstrapped confidence intervals 
+        or other metrics for the ML estimators. It is not yet implemented.
+
+        Parameters
+        ----------
+        gamma_true : float
+            The true value of the shape parameter (gamma) to use in statistical computations.
+
+        Returns
+        -------
+        None
+        """
         print('In near future, here will be bootstraps for the estimators to be found....')
         pass
