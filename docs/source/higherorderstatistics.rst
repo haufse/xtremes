@@ -24,6 +24,5 @@ The ``ML_estimators`` and ``PWM_estimators`` Classes
 
 Running Extensive Simulations
 -----------------------------
-``xtremes.HigherOrderStatistics.background``
 ``xtremes.HigherOrderStatistics.run_ML_estimation``
 ``xtremes.HigherOrderStatistics.run_multiple_ML_estimations``
