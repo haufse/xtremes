@@ -251,12 +251,12 @@ def GEV_pdf(x, gamma=0, mu=0, sigma=1):
 
     x = np.array(x)
     y = (x-mu)/sigma #standard
-    if gamma == 0:
+    if gamma < 1e-3:
         out = np.exp(-np.exp(-y))*np.exp(-y)/sigma
-    elif 1+gamma*y>0:
-        out = np.exp(-(1+gamma*y)**(-1/gamma))*(1+gamma*y)**(-1/gamma-1)/sigma
-    else:
-        out = np.zeros_like(x)
+    else: 
+        out= np.zeros_like(y)
+        mask = (1+gamma*y>0)
+        out[mask] = np.exp(-(1+gamma*y[mask])**(-1/gamma))*(1+gamma*y[mask])**(-1/gamma-1)/sigma
     return out
 
 

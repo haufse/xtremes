@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 # log-likelihood
 
-def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=1, ts=1, corr='IID'):
+def log_likelihood(high_order_statistics, gamma=0, mu=0, sigma=1, r=None):
     r"""Calculate the GEV log likelihood based on the two highest order statistics in three different ways.
 
     Parameters
@@ -29,18 +29,8 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
         The location parameter for the GEV distribution. Default is 0.
     :param sigma: float, optional
         The scale parameter for the GEV distribution. Default is 1.
-    :param pi: float, optional
-        The probability of the second highest order statistic being independent in option 2. Default is 1.
-    :param option: int, optional
-        Option for calculating the log likelihood:
-        - 1: Only consider the maximum value.
-        - 2: Assume the max and the second largest to be independent.
-        - 3: Consider the correct joint likelihood. Default is 1.
-    :param ts: float, optional
-        A parameter in the ARMAX correlation mode. Default is 1.
-    :param corr: str, optional
-        The correlation mode. Can be 'IID' (Independent and Identically Distributed)
-        or 'ARMAX' (Auto-Regressive Moving Average with eXogenous inputs). Default is 'IID'.
+    :param r: int, optional
+        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
 
     Returns
     -------
@@ -55,93 +45,42 @@ def log_likelihoods(high_order_statistics, gamma=0, mu=0, sigma=1, pi=1, option=
     Example
     -------
     >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
-    >>> log_likelihoods(hos, gamma=0.5, sigma=2, option=2, corr='ARMAX')
+    >>> log_likelihood(hos, gamma=0.5, sigma=2, option=2)
     7.494890426732856
 
     """
     
+    if r == None:
+        r = high_order_statistics.shape[1]
     
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
     # split into largest and second largest
-    maxima = unique_hos.T[1]
-    second = unique_hos.T[0]
+    #maxima = unique_hos.T[1]
+    #second = unique_hos.T[0]
     sigma = np.abs(sigma)
     if sigma < 0.01:
         # ensure no division by 0
         sigma += 0.01
     # standardize both
 
-    y_max = (maxima-mu)/sigma 
-    y_sec = (second-mu)/sigma
-    out = np.zeros_like(y_max)
-    
-    if option == 1: # ONLY MAX
-        if np.abs(gamma) < 0.0001:
-            out=  -np.log(sigma)-np.exp(-y_max)-y_max
-        else:
-            mask = (1+gamma*y_max>0)
-            out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
-            out[np.invert(mask)] = -1000
+    #y_max = (maxima-mu)/sigma 
+    #y_sec = (second-mu)/sigma
+    unique_hos = (unique_hos.T - mu)/sigma
+    out = np.zeros_like(unique_hos[0])
 
-    elif option == 2: # 2 HOS, JOINT LL + IID ASSUMPTION
-        if np.abs(gamma) < 0.0001:
-            out = - 2 * np.log(sigma) - np.exp(-y_sec) - y_max - y_sec 
-        mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
-        out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
+    if np.abs(gamma) < 0.0001:
+        out = - r * np.log(sigma) - np.exp(-unique_hos[-r]) - np.sum(unique_hos[-r:,], axis=0)
+    else:
+        mask = np.bitwise_and((1+gamma*unique_hos[-1]>0), (1+gamma*unique_hos[0]>0)) # ensure all conditions fulfilled
+        f = lambda x: np.log(1+gamma*x[mask])*(1/gamma+1)
+        out[mask] = -r * np.log(sigma) - (1+gamma*unique_hos[-r][mask])**(-1/gamma) - np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0)
         out[np.invert(mask)] = -1000 # ln(0)
-    
-    elif option == 3: # 2 HOS, PRODUCT LL + ARMAX ASSUMPTION
-        # forcing pi to live in [0,1]# NOTE: may be done by constraint
-        #spi = misc.sigmoid(pi)
-        spi=pi
-        if corr == 'IID':
-            # here, pi = 1
-            spi = 1
-        if np.abs(gamma) < 0.0001:
-            mask = 1-spi+spi*np.exp(-y_sec)>0
-            out[mask] = - 2 * np.log(sigma) - np.exp(-y_max[mask]) - np.exp(-y_sec[mask]) - y_max[mask] - y_sec[mask] - np.log(1-spi+spi*np.exp(-y_sec[mask]))
-            out[np.invert(mask)] = -1000 # ln(0)
-        else:
-            mask = np.bitwise_and(np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0)), (1-spi+spi*(np.abs(1+gamma*y_sec))**(-1/gamma)>0))
-            out[mask] += -2 * np.log(sigma)
-            out[mask] += -(1+gamma*y_max[mask])**(-1/gamma)-(1+gamma*y_sec[mask])**(-1/gamma)
-            out[mask] += -np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
-            out[mask] += -np.log(1-spi+spi*(1+gamma*y_sec[mask])**(-1/gamma))
-            out[np.invert(mask)] = -1000 # ln(0)
-
-    elif option == 4: # 2 HOS, JOINT LL + correct TimeSeries ASSUMPTION
-        if corr == 'IID': # corresponds to option 2
-            if np.abs(gamma) < 0.0001:
-                out = - 2 * np.log(sigma) - np.exp(-second) - y_max - y_sec 
-            else:
-                mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
-                out[mask] = -2 * np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)-np.log(1+gamma*y_max[mask])*(1/gamma+1)-np.log(1+gamma*y_sec[mask])*(1/gamma+1)
-                out[np.invert(mask)] = -1000 # ln(0)
-        elif corr == 'ARMAX':
-            if np.abs(gamma) < 0.0001:
-                eta = np.exp(y_sec-y_max)
-                mask = (eta>ts)
-                out[mask] = - 2 * np.log(sigma) - np.exp(-y_sec[mask]) - y_max[mask] - y_sec[mask] 
-                mask = (eta <= ts)
-                out[mask] = -np.log(sigma)-np.exp(-y_max[mask])-y_max[mask]
-            else:
-                eta = np.zeros_like(y_max)
-                eta_mask = np.bitwise_or(np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0)), np.bitwise_and((1+gamma*y_max<0), (1+gamma*y_sec<0)))
-                eta[eta_mask] = ((1+ gamma*y_max[eta_mask])/(1+ gamma*y_sec[eta_mask]))**(-1/gamma)
-                mask = np.bitwise_and(np.bitwise_and((1+gamma*y_max>0),(1+gamma*y_max>0)), (eta>ts))
-                out[mask] = -2*np.log(sigma)-(1+gamma*y_sec[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)+np.log(1+gamma*y_sec[mask])*(-1/gamma-1)
-                mask = np.bitwise_and((1+gamma*y_max>0), (eta<=ts))
-                out[mask] = -np.log(sigma)-(1+gamma*y_max[mask])**(-1/gamma)+np.log(1+gamma*y_max[mask])*(-1/gamma-1)
-                mask = np.bitwise_and((1+gamma*y_max>0), (1+gamma*y_sec>0))
-                #print(sum(mask))
-                out[np.invert(mask)] = -1000
-
     
     joint_ll = np.dot(out, counts)
     
     return joint_ll
 
-def Frechet_log_likelihoods(high_order_statistics, alpha=1, sigma=1, option='max-only'):
+def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
     r"""Calculate the 2-parametric Frechet log likelihood based either on the maximum or on the two highest order statistics. 
     We distinguish between maximizing the correctly specified joint Likelihood of the Top Two or simply the product of their marginals.
 
@@ -153,12 +92,8 @@ def Frechet_log_likelihoods(high_order_statistics, alpha=1, sigma=1, option='max
         The shape parameter for the Frechet distribution. Default is 1.
     :param sigma: float, optional
         The scale parameter for the Frechet distribution. Default is 1.
-    :param option: int, optional
-        Option for calculating the log likelihood:
-        - 'max-only': Only consider the maximum value.
-        - 'TopTwo prod': Assume the max and the second largest to be independent.
-        - 'TopTwo joint': Consider the correct joint likelihood. 
-        Default is 1.
+    :param r: int, optional
+        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
 
     Returns
     -------
@@ -173,52 +108,33 @@ def Frechet_log_likelihoods(high_order_statistics, alpha=1, sigma=1, option='max
     
 
     """
-    
-    
+
+    if r == None or r>high_order_statistics.shape[1]:
+        r = high_order_statistics.shape[1]
+
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
-    # split into largest and second largest
-    maxima = unique_hos.T[1]
-    second = unique_hos.T[0]
     sigma = np.abs(sigma)
+    unique_hos = unique_hos.T 
     if sigma < 0.01:
         # ensure no division by 0
         sigma += 0.01
+    out = np.zeros_like(unique_hos[0])
 
-    out = np.zeros_like(second)
-    
-    if option == 'max-only': 
-        if alpha < 0.00001:
-            out = -1000 * np.ones_like(second)
-        else:
-            mask = (maxima>0)
-            out[mask] = np.log(alpha) + alpha * np.log(sigma) - (alpha+1)*np.log(maxima[mask]) - (maxima[mask]/sigma)**(-alpha)
-            #out[mask] = np.log(alpha) 
-            #out[mask] +=  alpha * np.log(sigma) 
-            #out[mask] +=  - (alpha+1)*np.log(maxima[mask]) - (maxima[mask]/sigma)**(-alpha)
-            out[np.invert(mask)] = -1000
-
-    elif option == 'TopTwo prod': 
-        if alpha < 0.00001:
-            out = -1000 * np.ones_like(second)
-        mask = (second>0)
-        out[mask] = 2 * np.log(alpha) + 3 * alpha * np.log(sigma) - (alpha+1)*np.log(maxima[mask]) - (maxima[mask]/sigma)**(-alpha) - (2*alpha+1)*np.log(second[mask]) - (second[mask]/sigma)**(-alpha)
-        out[np.invert(mask)] = -1000 # ln(0)
-
-    elif option == 'TopTwo joint': 
-        if alpha < 0.00001:
-            out = -1000 * np.ones_like(second)
-        mask = (second>0)
-        out[mask] = 2 * np.log(alpha) + 2 * alpha * np.log(sigma) - (alpha+1)*np.log(maxima[mask]*second[mask]) - (second[mask]/sigma)**(-alpha)
-        out[np.invert(mask)] = -1000 # ln(0)
-
-    
+    if alpha < 0.00001:
+        out = -1000 * np.ones_like(unique_hos[-r])
+    else:
+        mask = (unique_hos[-r]>0)
+        f = lambda x: np.log(x[mask]) 
+        out[mask] = r * np.log(alpha) + r * alpha * np.log(sigma) - (alpha+1)*np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0) - (unique_hos[-r][mask]/sigma)**(-alpha)
+        # out[mask] = - r * np.log(alpha) + r * 1/alpha * np.log(sigma) - (1/alpha+1)*np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0) - (unique_hos[-r][mask]/sigma)**(-1/alpha)
+        out[np.invert(mask)] = -np.inf # ln(0)
     joint_ll = np.dot(out, counts)
     
     return joint_ll
 
 
 
-def extract_BM(timeseries, block_size=10, stride='DBM'):
+def extract_BM(timeseries, block_size=10, stride='DBM', return_indices=False):
     r"""Extract block maxima from a given time series.
 
     Parameters
@@ -253,6 +169,9 @@ def extract_BM(timeseries, block_size=10, stride='DBM'):
     r = block_size
     p = misc.stride2int(stride, block_size)
     out = [np.max(timeseries[i*p:i*p+r]) for i in range((n-r)//p+1)]
+    if return_indices:
+        indices = [np.argmax(timeseries[i*p:i*p+r])+i*p for i in range((n-r)//p+1)]
+        return np.array(indices), np.array(out)
     return np.array(out)
 
 def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
@@ -331,68 +250,19 @@ def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
     >>> init_params = automatic_parameter_initialization(PWM_est, 'ARMAX', ts=0.8)
 
     """
-    initParams = np.array(PWM_estimators)
-    # pi parameter from theory
-    if corr == 'ARMAX':
-        pis = np.ones(shape=(1,len(PWM_estimators))) *(0.5)#* misc.invsigmoid(1-ts)
-    elif corr == 'IID':
-        pis = np.ones(shape=(1,len(PWM_estimators)))
-    else:
-        pis = np.ones(shape=(1,len(PWM_estimators)))
-    return np.append(initParams.T, pis, axis=0).T
+    return  np.array(PWM_estimators)
+    #initParams = np.array(PWM_estimators)
+    ## pi parameter from theory
+    #if corr == 'ARMAX':
+    #    pis = np.ones(shape=(1,len(PWM_estimators))) *(0.5)#* misc.invsigmoid(1-ts)
+    #elif corr == 'IID':
+    #    pis = np.ones(shape=(1,len(PWM_estimators)))
+    #else:
+    #    pis = np.ones(shape=(1,len(PWM_estimators)))
+    #return np.append(initParams.T, pis, axis=0).T
 
 
-# parallel running ML estimations
-def background(f):
-    r"""Decorator for running a function in the background using asyncio.
 
-    Parameters
-    ----------
-    :param f: function
-        The function to be run in the background.
-
-    Returns
-    -------
-    :return: function
-        A wrapped version of the input function that runs in the background.
-
-    Usage
-    -----
-    - Apply this decorator to a function to run it in the background.
-    - The function must be a coroutine function (async def).
-    - Use await keyword to call the decorated function.
-
-    Example
-    -------
-    >>> @background
-    >>> async def my_background_task():
-    >>>     # Your background task logic goes here
-    >>>     await asyncio.sleep(5)
-    >>>     print("Background task completed")
-    >>> # Call the decorated function using await
-    >>> await my_background_task()
-
-
-    Wrapper function that runs the input function in the background.
-
-    Parameters
-    ----------
-    - \*args: positional arguments
-        Positional arguments passed to the input function.
-    - \**kwargs: keyword arguments
-        Keyword arguments passed to the input function.
-
-    Returns
-    -------
-    :return: result
-        The result of running the input function in the background.
-    """
-    def wrapped(*args, **kwargs):
-        return asyncio.get_event_loop().run_in_executor(None, f, *args, **kwargs)
-
-    return wrapped
-
-# @background
 def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50], stride='SBM', option=1, estimate_pi=False):
     r"""
     Run maximum likelihood estimation (ML) for a given time series file.
@@ -415,8 +285,8 @@ def run_ML_estimation(file, corr='IID', gamma_true=0, block_sizes = [5, 10, 15, 
         List of block sizes for extracting block maxima (default is [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]).
     :param stride: str, optional
         Stride type for block maxima extraction. Options are 'SBM' (sliding block maxima) or 'DBM' (default block maxima) (default is 'SBM').
-    :param option: int, optional
-        Option for ML estimation (default is 1).
+    :param r: int, optional
+        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
     :param estimate_pi: bool, optional
         Flag indicating whether to estimate the pi parameter (default is False).
         
@@ -467,8 +337,8 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
         List of block sizes for extracting block maxima (default is [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]).
     :param stride: str, optional
         Stride type for block maxima extraction. Options are 'SBM' (sliding block maxima) or 'DBM' (default block maxima) (default is 'SBM').
-    :param option: int, optional
-        Option for ML estimation (default is 1).
+    :param r: int, optional
+        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
     :param estimate_pi: bool, optional
         Flag indicating whether to estimate the pi parameter (default is False).
     :param parallelize: bool, optional
@@ -588,11 +458,11 @@ class PWM_estimators:
             MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
             mean = np.mean(gammas)
             variance = sum((np.array(gammas) - mean)**2)/(len(np.array(gammas))-1)
-            bias = MSE - variance
-            self.statistics['mean'] = mean
-            self.statistics['variance'] = variance
-            self.statistics['bias'] = bias
-            self.statistics['mse'] = MSE
+            bias = np.sqrt(MSE - variance)
+            self.statistics['gamma_mean'] = mean
+            self.statistics['gamma_variance'] = variance
+            self.statistics['gamma_bias'] = bias
+            self.statistics['gamma_mse'] = MSE
             # mu and sigma-related statistics
             mu_mean = np.mean(mus)
             mu_variance = sum((np.array(mus) - mu_mean)**2)/(len(np.array(mus))-1)
@@ -678,7 +548,7 @@ class ML_estimators:
     def __len__(self):
         return len(self.values)
 
-    def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', option=1, estimate_pi=False):
+    def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None):
         r"""
         Compute ML estimators for each high order statistics series.
 
@@ -688,10 +558,8 @@ class ML_estimators:
             PWM_estimators object containing PWM estimators for initializing parameters.
         :param initParams: str or numpy.ndarray, optional
             Initial parameters for ML estimation. 'auto' to calculate automatically using PWM estimators.
-        :param option: int, optional
-            Option for ML estimation.
-        :param estimate_pi: bool, optional
-            Whether to estimate π parameter or not.
+        :param r: int, optional
+            Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
         """
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
@@ -701,20 +569,20 @@ class ML_estimators:
                                                             ts=self.TimeSeries.ts)
         for i, ho_stat in enumerate(self.high_order_stats):
             def cost(params):
-                gamma, mu, sigma, pi = params
-                if not estimate_pi:
-                	pi = 1 - self.TimeSeries.ts
-                    # pi = misc.invsigmoid(1 - self.TimeSeries.ts)
-                cst = - log_likelihoods(ho_stat, gamma=gamma, mu=mu, sigma=sigma, pi=pi, option=option, ts=self.TimeSeries.ts, corr=self.TimeSeries.corr)
+                gamma, mu, sigma = params
+                cst = - log_likelihood(ho_stat, gamma=gamma, mu=mu, sigma=sigma, r=r)
                 return cst
             
-            #results = misc.minimize(cost, initParams[i], method='Nelder-Mead')
-            constr = scipy.optimize.LinearConstraint(np.array([[0,0,0,1]]), lb=0, ub=1, keep_feasible=False)
-            results = misc.minimize(cost, initParams[i], method='COBYLA', constraints=constr)
+            # COBYLA und Nelder-Mead agree
+            #results = misc.minimize(cost, initParams[i], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            results = misc.minimize(cost, initParams[i], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            #constr1 = scipy.optimize.LinearConstraint(np.array([[1,0,0]]), lb=0, keep_feasible=False)
+            #constr2 = scipy.optimize.LinearConstraint(np.array([[0,0,1]]), lb=0, keep_feasible=False)
+            #results = misc.minimize(cost, initParams[i], method='COBYLA', constraints=[constr1, constr2])
     
-            gamma, mu, sigma, pi = results.x
+            gamma, mu, sigma = results.x
             
-            self.values.append([gamma, mu, sigma, pi])
+            self.values.append([gamma, mu, sigma])
         self.values = np.array(self.values)
 
     def get_statistics(self, gamma_true):
@@ -729,30 +597,25 @@ class ML_estimators:
         gammas = self.values.T[0]
         mus = self.values.T[1]
         sigmas = self.values.T[2]
-        pis = self.values.T[3]
         if len(gammas) > 1:
             # gamma-related statistics
             MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
             mean = np.mean(gammas)
             variance = sum((np.array(gammas) - mean)**2)/(len(np.array(gammas))-1)
-            bias = MSE - variance
-            self.statistics['mean'] = mean
-            self.statistics['variance'] = variance
-            self.statistics['bias'] = bias
-            self.statistics['mse'] = MSE
+            bias = np.sqrt(MSE - variance)
+            self.statistics['gamma_mean'] = mean
+            self.statistics['gamma_variance'] = variance
+            self.statistics['gamma_bias'] = bias
+            self.statistics['gamma_mse'] = MSE
             # mu and sigma-related statistics
             mu_mean = np.mean(mus)
             mu_variance = sum((np.array(mus) - mu_mean)**2)/(len(np.array(mus))-1)
             sigma_mean = np.mean(sigmas)
             sigma_variance = sum((np.array(sigmas) - sigma_mean)**2)/(len(np.array(sigmas))-1)
-            pi_mean = np.mean(pis)
-            pi_variance = sum((np.array(pis) - pi_mean)**2)/(len(np.array(pis))-1)
             self.statistics['mu_mean'] = mu_mean
             self.statistics['mu_variance'] = mu_variance
             self.statistics['sigma_mean'] = sigma_mean
             self.statistics['sigma_variance'] = sigma_variance
-            self.statistics['pi_mean'] = pi_mean
-            self.statistics['pi_variance'] = pi_variance
 
         else:
             warnings.warn('No variance can be computed on only one element!')
@@ -829,7 +692,7 @@ class Frechet_ML_estimators:
     def __len__(self):
         return len(self.values)
 
-    def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', option='max-only'):
+    def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None):
         r"""
         Compute ML estimators for each high order statistics series.
 
@@ -839,8 +702,8 @@ class Frechet_ML_estimators:
             PWM_estimators object containing PWM estimators for initializing parameters.
         :param initParams: str or numpy.ndarray, optional
             Initial parameters for ML estimation. 'auto' to calculate automatically using PWM estimators.
-        :param option: str, optional
-            Option for ML estimation.
+    :param r: int, optional
+        Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
         """
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
@@ -851,10 +714,16 @@ class Frechet_ML_estimators:
         for i, ho_stat in enumerate(self.high_order_stats):
             def cost(params):
                 alpha, sigma = params
-                cst = - Frechet_log_likelihoods(ho_stat, alpha=alpha, sigma=sigma, option=option)
+                cst = - Frechet_log_likelihood(ho_stat, alpha=alpha, sigma=sigma, r=r)
                 return cst
             
-            results = misc.minimize(cost, initParams[i][::2], method='Nelder-Mead')
+            inits = [1/initParams[i][0], initParams[i][2]]
+            #its = initParams[i][::2]
+            results = misc.minimize(cost, inits, method='Nelder-Mead', bounds=((0, np.inf),(0, np.inf)))
+            # results = misc.minimize(cost, inits, method='COBYLA', bounds=((0, np.inf),(0, np.inf)))
+            #constr1 = scipy.optimize.LinearConstraint(np.array([[1,0]]), lb=0, keep_feasible=False)
+            #constr2 = scipy.optimize.LinearConstraint(np.array([[0,1]]), lb=0, keep_feasible=False)
+            #results = misc.minimize(cost, initParams[i], method='COBYLA', constraints=[constr1, constr2])
     
             alpha, sigma = results.x
             
@@ -877,7 +746,7 @@ class Frechet_ML_estimators:
             alpha_MSE = sum((np.array(alphas) - alpha_true)**2)/(len(np.array(alphas))-1)
             alpha_mean = np.mean(alphas)
             alpha_variance = sum((np.array(alphas) - alpha_mean)**2)/(len(np.array(alphas))-1)
-            alpha_bias = alpha_MSE - alpha_variance
+            alpha_bias = np.sqrt(alpha_MSE - alpha_variance)
             self.statistics['alpha_mean'] = alpha_mean
             self.statistics['alpha_variance'] = alpha_variance
             self.statistics['alpha_bias'] = alpha_bias
@@ -1026,8 +895,8 @@ class TimeSeries:
         ----------
         block_size : int, optional
             Size of blocks for maxima extraction. Default is 2.
-        stride : str, optional
-            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'.
+        stride : str or int, optional
+            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'. If is int, defines step (1 = SBM, bs = DBM)
         rep : int, optional
             Number of repetitions for extraction. Default is 10.
         """
@@ -1068,28 +937,6 @@ class TimeSeries:
         for series in self.values:
             hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
             self.high_order_stats.append(hos)
-
-    def bootstrap_HOS(self, factor = None, size = 2):
-        r"""
-        Replace extracted HOS by bootstrapped versions of them.
-
-        Parameters
-        ----------
-        factor: float, optional
-            If factor is given, increase HOS sample size by that factor.
-        size : int, optional
-            Sample size to draw from HOS sample with replacement. Ignored when factor is given. Default is 2.
-        """
-        if self.high_order_stats == []:
-            raise ValueError('Create high order statistics first!')
-        bootstrapped_hos = []
-        if factor != None:
-            size = int(factor*self.high_order_stats[0].shape[0])
-        for seq in self.high_order_stats:
-            indices = np.random.choice(seq.shape[0], size=size, replace=True)
-            bootstrapped_hos.append(seq[indices])
-        # overwrite hos
-        self.high_order_stats = bootstrapped_hos
 
 
 
@@ -1144,7 +991,7 @@ class HighOrderStats:
     >>> hos.get_PWM_estimation()
     >>> 
     >>> # Calculate ML estimators
-    >>> hos.get_ML_estimation(initParams='auto', option=1, estimate_pi=False)
+    >>> hos.get_ML_estimation(initParams='auto', r=1)
     """
     def __init__(self, TimeSeries):
         r"""
@@ -1174,7 +1021,7 @@ class HighOrderStats:
         self.PWM_estimators.get_PWM_estimation()
         self.PWM_estimators.get_statistics(gamma_true=self.gamma_true)
         
-    def get_ML_estimation(self, initParams = 'auto', FrechetOrGEV = 'Frechet', option=1, estimate_pi=False):
+    def get_ML_estimation(self, initParams = 'auto', r=None, FrechetOrGEV = 'Frechet'):
         r"""
         Calculate the Maximum Likelihood (ML) estimators.
 
@@ -1182,24 +1029,129 @@ class HighOrderStats:
         ----------
         initParams : str or array-like, optional
             Method for initializing parameters. Default is 'auto', which uses automatic parameter initialization.
-        option : int, optional
-            Option for ML estimation. Default is 1.
-        estimate_pi : bool, optional
-            Whether to estimate the pi parameter. Default is False.
+        :param r: int, optional
+            Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
+        :param FrechetOrGEV: str, optional
+            Whether to fit the Frechet or GEV distribution.
         """
         # ensure to overwrite existing
         if FrechetOrGEV == 'Frechet':
             self.ML_estimators = Frechet_ML_estimators(TimeSeries=self.TimeSeries)
-            if self.PWM_estimators.values == [] and initParams == 'auto':
+            if np.shape(self.PWM_estimators.values) == np.shape([]) and initParams == 'auto':
                 self.get_PWM_estimation()
-            self.ML_estimators.get_ML_estimation(PWM_estimators=self.PWM_estimators, initParams = initParams, option=option)
+            self.ML_estimators.get_ML_estimation(PWM_estimators=self.PWM_estimators, initParams = initParams, r=r)
             self.ML_estimators.get_statistics(alpha_true=1/self.gamma_true)
 
         if FrechetOrGEV == 'GEV':
             self.ML_estimators = ML_estimators(TimeSeries=self.TimeSeries)
-            if self.PWM_estimators.values == [] and initParams == 'auto':
+            if np.shape(self.PWM_estimators.values) == np.shape([]) and initParams == 'auto':
                 self.get_PWM_estimation()
-            self.ML_estimators.get_ML_estimation(PWM_estimators=self.PWM_estimators, initParams = initParams, option=option, estimate_pi=estimate_pi)
+            self.ML_estimators.get_ML_estimation(PWM_estimators=self.PWM_estimators, initParams = initParams, r=r)
             self.ML_estimators.get_statistics(gamma_true=self.gamma_true)
         
+# classes to analyze real data
+class Data:
+    r"""
+    to be documented
 
+    """
+    
+    def __init__(self, values):
+        self.values = values
+        self.len = len(values)
+        self.blockmaxima = []
+        self.bm_indices = []
+        self.high_order_stats = []
+    
+    def __len__(self):
+        return self.len
+    
+        
+    def get_blockmaxima(self, block_size=2, stride='DBM'):
+        r"""
+        Extract block maxima from data.
+
+        Parameters
+        ----------
+        block_size : int, optional
+            Size of blocks for maxima extraction. Default is 2.
+        stride : str or int, optional
+            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'. If is int, defines step (1 = SBM, bs = DBM)
+        """
+        # ensure to overwrite existing
+        self.blockmaxima = []
+        self.block_size = block_size
+        self.stride = stride
+        self.bm_indices, self.blockmaxima = extract_BM(self.values, block_size=block_size, stride=stride, return_indices=True)
+    
+
+    def get_HOS(self, orderstats = 2, block_size=2, stride='DBM'):
+        r"""
+        Extract high order statistics from data.
+
+        Parameters
+        ----------
+        orderstats : int, optional
+            Order of statistics. Default is 2.
+        block_size : int, optional
+            Size of blocks for statistics extraction. Default is 2.
+        stride : str, optional
+            Type of stride, choose from ['SBM', 'DBM']. Default is 'DBM'.
+        """
+        # ensure to overwrite existing
+        self.high_order_stats = []
+        self.block_size = block_size
+        self.stride = stride
+        self.high_order_stats = extract_HOS(self.values, orderstats=orderstats, block_size=block_size, stride=stride)
+
+    def get_ML_estimation(self, r=None, FrechetOrGEV = 'GEV'):
+        if self.high_order_stats == []:
+            # potentially use parameters optained by getting blockmaxima
+            self.get_HOS(orderstats=1, block_size=self.block_size, stride=self.stride)
+        self.ML_estimators = ML_estimators_data(self.high_order_stats)
+        self.ML_estimators.get_ML_estimation(FrechetOrGEV=FrechetOrGEV, r=r)
+
+
+class ML_estimators_data:
+    r"""
+    to be documenzed
+    """
+    def __init__(self, high_order_stats):
+        self.high_order_stats = high_order_stats
+        self.values = []
+        self.statistics = {}
+    
+    def __len__(self):
+        return len(self.values)
+
+    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None):
+        r"""
+        to be documented
+        """
+        if FrechetOrGEV == 'GEV':
+            def cost(params):
+                gamma, mu, sigma = params
+                cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
+                return cst
+            # for now: hard-coded init params [1,1,1], as it should not matter too much
+            results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            gamma, mu, sigma = results.x
+            self.values = np.array([gamma, mu, sigma])
+
+        elif FrechetOrGEV == 'Frechet':
+            def cost(params):
+                alpha, sigma = params
+                cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
+                return cst
+            # for now: hard-coded init params [1,1], as it should not matter too much
+            results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
+    
+            alpha, sigma = results.x
+            
+            self.values = np.array([alpha, sigma])
+        else:
+            raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
+
+    def get_statistics(self, gamma_true):
+        print('In near future, here will be bootstraps for the estimators to be found....')
+        pass
