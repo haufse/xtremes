@@ -515,33 +515,17 @@ class ML_estimators:
     Examples
     --------
     >>> import numpy as np
-    >>> from your_module import TimeSeries, ML_estimators, PWM_estimators
-
-    # Example data
+    >>> from hos import TimeSeries, ML_estimators, PWM_estimators
     >>> blockmaxima_data = np.random.normal(loc=10, scale=2, size=100)
     >>> high_order_stats_data = np.random.normal(loc=5, scale=1, size=(100, 3))
-
-    # Create TimeSeries object
     >>> ts = TimeSeries(blockmaxima=blockmaxima_data, high_order_stats=high_order_stats_data, corr='IID', ts=0.5)
-
-    # Calculate PWM estimators
     >>> pwm = PWM_estimators(ts)
     >>> pwm.get_PWM_estimation()
-
-    # Initialize ML_estimators object
     >>> ml = ML_estimators(ts)
-
-    # Compute ML estimators
     >>> ml.get_ML_estimation(PWM_estimators=pwm)
-
-    # Compute statistics
     >>> ml.get_statistics(gamma_true=0.1)
-
-    # Print ML estimators
     >>> print("ML Estimators:")
     >>> print(ml.values)
-
-    # Print statistics
     >>> print("\nStatistics:")
     >>> print(ml.statistics)
     """
@@ -687,33 +671,17 @@ class Frechet_ML_estimators:
     Examples
     --------
     >>> import numpy as np
-    >>> from your_module import TimeSeries, Frechet_ML_estimators, PWM_estimators
-
-    # Example data
+    >>> from hos import TimeSeries, Frechet_ML_estimators, PWM_estimators
     >>> blockmaxima_data = np.random.normal(loc=10, scale=2, size=100)
     >>> high_order_stats_data = np.random.normal(loc=5, scale=1, size=(100, 3))
-
-    # Create TimeSeries object
     >>> ts = TimeSeries(blockmaxima=blockmaxima_data, high_order_stats=high_order_stats_data, corr='IID', ts=0.5)
-
-    # Calculate PWM estimators
     >>> pwm = PWM_estimators(ts)
     >>> pwm.get_PWM_estimation()
-
-    # Initialize Frechet_ML_estimators object
     >>> ml = Frechet_ML_estimators(ts)
-
-    # Compute ML estimators
     >>> ml.get_ML_estimation(PWM_estimators=pwm)
-
-    # Compute statistics
     >>> ml.get_statistics(alpha_true=0.1)
-
-    # Print ML estimators
     >>> print("ML Estimators:")
     >>> print(ml.values)
-
-    # Print statistics
     >>> print("\nStatistics:")
     >>> print(ml.statistics)
     """
@@ -887,13 +855,10 @@ class TimeSeries:
     --------
     >>> # Create a TimeSeries object
     >>> ts = TimeSeries(n=100, distr='GEV', correlation='ARMAX', modelparams=[0.5], ts=0.6)
-    >>> 
     >>> # Simulate time series data with 5 repetitions and specific seeds
     >>> ts.simulate(rep=5, seeds=[42, 123, 456, 789, 1011])
-    >>> 
     >>> # Extract block maxima using a block size of 5
     >>> ts.get_blockmaxima(block_size=5, stride='DBM', rep=5)
-    >>> 
     >>> # Extract high order statistics (order 3) using the same block size and stride
     >>> ts.get_HOS(orderstats=3, block_size=5, stride='DBM', rep=5)
     """
@@ -1066,16 +1031,12 @@ class HighOrderStats:
     -------
     >>> # Create a TimeSeries object
     >>> ts = TimeSeries(n=100, distr='GEV', correlation='ARMAX', modelparams=[0.5], ts=0.6)
-    >>> 
     >>> # Simulate time series data
     >>> ts.simulate(rep=5, seeds=[42, 123, 456, 789, 1011])
-    >>> 
     >>> # Initialize HighOrderStats object
     >>> hos = HighOrderStats(ts)
-    >>> 
     >>> # Calculate PWM estimators
     >>> hos.get_PWM_estimation()
-    >>> 
     >>> # Calculate ML estimators
     >>> hos.get_ML_estimation(initParams='auto', r=1)
     """
@@ -1177,15 +1138,12 @@ class Data:
     -------
     >>> # Initialize the Data object with a dataset
     >>> data = Data([2.5, 3.1, 1.7, 4.6, 5.3, 2.2, 6.0])
-    >>> 
     >>> # Extract block maxima using a block size of 2
     >>> data.get_blockmaxima(block_size=2, stride='DBM')
     >>> print(data.blockmaxima)
-    >>> 
     >>> # Extract second-highest order statistics (HOS) with the same block size and stride
     >>> data.get_HOS(orderstats=2, block_size=2, stride='DBM')
     >>> print(data.high_order_stats)
-    >>> 
     >>> # Perform ML estimation using the extracted HOS, choosing between Frechet and GEV
     >>> data.get_ML_estimation(FrechetOrGEV='GEV')
     >>> print(data.ML_estimators.values)
@@ -1333,19 +1291,14 @@ class ML_estimators_data:
     -------
     >>> # Assuming you have high order statistics stored in `hos`
     >>> hos = np.array([[0.5, 1.0], [1.5, 2.0], [1.2, 2.2], [2.0, 3.0]])
-
     >>> # Create an instance of the ML_estimators_data class
     >>> ml = ML_estimators_data(hos)
-
     >>> # Perform ML estimation for the GEV distribution
     >>> ml.get_ML_estimation(FrechetOrGEV='GEV', r=2)
-
     >>> # Print the estimated parameters (gamma, mu, sigma)
     >>> print(ml.values)
-
     >>> # Perform ML estimation for the Frechet distribution
     >>> ml.get_ML_estimation(FrechetOrGEV='Frechet', r=2)
-
     >>> # Print the estimated parameters (alpha, sigma)
     >>> print(ml.values)
     """
