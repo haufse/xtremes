@@ -32,4 +32,3 @@ Simulating Time Series
 .. autofunction:: xtremes.miscellaneous.modelparams2gamma_true
 
 
-.. bibliography:: 
