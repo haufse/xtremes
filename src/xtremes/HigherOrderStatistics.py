@@ -50,7 +50,7 @@ def log_likelihood(high_order_statistics, gamma=0, mu=0, sigma=1, r=None):
     -------
     >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
     >>> log_likelihood(hos, gamma=0.5, mu=0, sigma=2, r=2)
-    7.494890426732856
+    -7.494890426732856
     """
     
     if r == None:
