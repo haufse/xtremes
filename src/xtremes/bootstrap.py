@@ -56,7 +56,7 @@ def circmax(sample, bs=10, stride='DBM'):
         return hos.extract_BM(sample, bs, stride, return_indices=False)
     if stride == 'SBM':
         k = len(sample) // bs
-        resh_s = sample[:k*bs].reshape((k//2,2*bs))
+        resh_s = sample[:(k//2)*2*bs].reshape((k//2,2*bs))
         resh_s_a = np.append(resh_s, resh_s[:,:bs-1],axis=1)
         f = lambda x: hos.extract_BM(x, bs, 'SBM')
         return np.apply_along_axis(f, 1, resh_s_a)
@@ -451,7 +451,7 @@ class FullBootstrap:
             
             estimates.append(estimate)
         
-        self.values = estimates
+        self.values = np.array(estimates)
         self.statistics = {
             'mean': np.mean(estimates,axis=0),
             'std': np.std(estimates,axis=0),
