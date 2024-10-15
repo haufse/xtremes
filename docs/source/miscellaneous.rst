@@ -1,7 +1,7 @@
 
-==========================
+============================================
 Utility Functions for Extreme Value Analysis
-==========================
+============================================
 
 In this tutorial, we will explore the utility functions provided in `miscellaneous.py` that are used in the context of extreme value analysis. These functions include calculating probability-weighted moments, simulating time series, computing GEV distributions, and performing basic statistical tasks like sigmoid and inverse sigmoid transformations.
 

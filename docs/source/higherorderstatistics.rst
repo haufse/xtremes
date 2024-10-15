@@ -1,7 +1,7 @@
 
-==========================
+======================================
 Time Series and Extreme Value Analysis
-==========================
+======================================
 
 In this tutorial, we will explore how to use the functionalities provided in `HigherOrderStatistics.py` to simulate time series data, extract block maxima, and perform Maximum Likelihood Estimation (MLE) for extreme value distributions. We will also see how to work with real data to extract high-order statistics and compute MLE.
 

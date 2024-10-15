@@ -579,7 +579,6 @@ class ML_estimators:
     - The method uses optimization techniques such as Nelder-Mead (and optionally COBYLA) to minimize the negative log-likelihood.
     - If `initParams` is set to 'auto', the initial parameters for the optimization are derived using the `PWM_estimators` object.
     - The optimization results (gamma, mu, sigma) are stored in the `self.values` list for each series of high order statistics.
-
     """
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
@@ -1080,6 +1079,7 @@ class HighOrderStats:
             Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
         :param FrechetOrGEV: str, optional
             Whether to fit the Frechet or GEV distribution.
+        
         """
         # ensure to overwrite existing
         if FrechetOrGEV == 'Frechet':
