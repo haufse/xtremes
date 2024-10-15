@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/haufse/xtremes/branch/main/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/haufse/xtremes)
 
 
-Welcome to xtremes!
+Welcome to xtremes! 
 ===================
 
 **xtremes** is a Python library designed for extreme value analysis, with tools for simulating time series, extracting block maxima, and performing advanced statistical operations, such as bootstrapping estimators for extreme value distributions. It was created as part of the ClimXtreme project and aims to provide supplementary code and simulations for related work.
