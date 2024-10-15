@@ -77,18 +77,21 @@ The following plot shows block maxima extracted from a simulated time series:
 
 ![Block TopTwo Plot](images/MaxPicSBM.png)
 
-Citation:
----------
+Suggested Citation:
+-------------------
 If you use the bootstrapping functionality or methods related to block maxima in this library, please cite the following paper:
 
-@article{bucher2024bootstrapping,  
-  title={Bootstrapping Estimators based on the Block Maxima Method},  
-  author={B{"u}cher, Axel and Staud, Torben},  
-  journal={arXiv preprint arXiv:2409.05529},  
-  year={2024}  
+```bibtex
+@article{tba,  
+  title={tba,  
+  author={B{"u}cher, Axel and Haufs, Erik},  
+  journal={tba},  
+  year={tba}  
 }
 
-This paper provides foundational insights into the methods used in `xtremes.bootstrap`.
+[todo: add DOI (badge)] 
+
+Foundational insights behind the methods used in `xtremes.bootstrap` have been developed by [[BS24]].
 
 Roadmap:
 --------
@@ -99,3 +102,9 @@ Roadmap:
 Note:
 -----
 This project is under active development throughout the project phase and will provide additional code to support theoretical advancements in extreme value statistics.
+
+References:
+-----------
+
+[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529).
+
