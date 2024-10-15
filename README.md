@@ -75,7 +75,7 @@ Example Output:
 ---------------
 The following plot shows block maxima extracted from a simulated time series:
 
-![Block TopTwo Plot](images/MaxPicSBM.pdf)
+![Block TopTwo Plot](images/MaxPicSBM.png)
 
 Citation:
 ---------
