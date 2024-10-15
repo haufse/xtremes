@@ -21,6 +21,9 @@ Until now, only a preliminary test version is avaiable:
 
 The modules
 -----------
-So far, two modules are implemented. The module ``xtremes.miscellaneous`` contains basic functionalities, 
+So far, three modules are implemented. The module ``xtremes.miscellaneous`` contains basic functionalities, 
 whereas ``xtremes.HigherOrderStatistics`` is specialized on the influence of higher order statistics for 
-Maximum Likelihood estimations. For each module, there will be a tutorial and a subsection in the API reference
+Maximum Likelihood estimations. ``xtremes.Bootstrap`` provides a suitable Bootstrap device
+for block maxima.
+
+For each module, there will be a tutorial and a subsection in the API reference.

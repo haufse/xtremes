@@ -22,9 +22,9 @@ Contents
    :maxdepth: 1
 
    usage
+   higherorderstatistics
+   bootstrap
+   miscellaneous
    api_hos
    api_bootstrap
    api_misc
-   miscellaneous
-   higherorderstatistics
-   bootstrap
