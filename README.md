@@ -1,6 +1,9 @@
 
 [![Readthedocs Status](https://readthedocs.org/projects/xtremes/badge/?version=latest)](https://xtremes.readthedocs.io/en/latest/)
-[![PyPI version](https://badge.fury.io/py/xtremes.svg)](https://pypi.org/project/xtremes/) 
+[![PyPI version](https://badge.fury.io/py/xtremes.svg)](https://pypi.org/project/xtremes/)
+![Python Versions](https://img.shields.io/pypi/pyversions/xtremes)
+![License](https://img.shields.io/pypi/l/xtremes)
+![Downloads](https://img.shields.io/pypi/dm/xtremes)
 
 Welcome to xtremes!
 ===================
