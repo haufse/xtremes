@@ -1075,12 +1075,19 @@ class HighOrderStats:
         ----------
         initParams : str or array-like, optional
             Method for initializing parameters. Default is 'auto', which uses automatic parameter initialization.
-        :param r: int, optional
-            Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided
-        :param FrechetOrGEV: str, optional
+        
+        r : int, optional
+            Number of order statistics to calculate the log-likelihood on. If not specified, use all provided.
+        
+        FrechetOrGEV : str, optional
             Whether to fit the Frechet or GEV distribution.
+
+        Notes
+        -----
+        This function performs maximum likelihood estimation based on either the Frechet or GEV distribution.
         
         """
+        
         # ensure to overwrite existing
         if FrechetOrGEV == 'Frechet':
             self.ML_estimators = Frechet_ML_estimators(TimeSeries=self.TimeSeries)

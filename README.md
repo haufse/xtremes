@@ -5,12 +5,13 @@
 Welcome to xtremes!
 ===================
 
-**xtremes** is a Python library designed for extreme value analysis, with tools for simulating time series, extracting block maxima, and performing advanced statistical operations, such as bootstrapping estimators for extreme value distributions. It was created as part of the ClimXtreme project and aims to provide supplementary code and simulations for related academic papers.
+**xtremes** is a Python library designed for extreme value analysis, with tools for simulating time series, extracting block maxima, and performing advanced statistical operations, such as bootstrapping estimators for extreme value distributions. It was created as part of the ClimXtreme project and aims to provide supplementary code and simulations for related work.
 
 Key Features:
 -------------
 - Simulates time series for extreme value distributions (GEV, Frechet, etc.).
 - Extracts Disjoint and Sliding Block Maxima.
+- Extracts Disjoint and Sliding Block High Order Statistics.
 - Provides robust bootstrapping tools for extreme value statistics.
 - Supports advanced MLE and PWM estimation for extreme value distributions.
 
