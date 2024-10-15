@@ -4,6 +4,10 @@
 ![Python Versions](https://img.shields.io/pypi/pyversions/xtremes)
 ![License](https://img.shields.io/pypi/l/xtremes)
 ![Downloads](https://img.shields.io/pypi/dm/xtremes)
+![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
+[![Build Status](https://github.com/haufse/xtremes/actions/workflows/ci.yml/badge.svg)](https://github.com/haufse/xtremes/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/haufse/xtremes/branch/main/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/haufse/xtremes)
+
 
 Welcome to xtremes!
 ===================

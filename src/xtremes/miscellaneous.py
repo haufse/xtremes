@@ -85,14 +85,15 @@ def invsigmoid(y):
     >>> invsigmoid(y)
     array([-1.3652469 ,  0.        ,  1.3652469 ])
     """
-    if y < 0 or y > 1:
+    y = np.array(y)
+    if np.any(y < 0) or np.any(y > 1):
         raise ValueError('Sigmoid only maps to (0, 1)!')
-    elif y < np.exp(-30):
+    elif np.any(y < np.exp(-30)):
         return -30  # exp(-30) = 0
-    elif y > 1 - np.exp(30):
+    elif np.any(y > 1 - np.exp(-30)):
         return 30  # exp(30) = infinity
     else:
-        return inversefunc(sigmoid, y_values=y).item()
+        return inversefunc(sigmoid, y_values=y)
 
 
 def mse(gammas, gamma_true):
@@ -202,13 +203,12 @@ def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
 
     """
     x = np.array(x)
-    y = (x-mu)/sigma
+    y = (x - mu) / sigma
     if gamma == 0:
         tau = -np.exp(-y)
     else:
-        tau = (1+gamma*x)**(-1/gamma)
-    out = np.exp(-theta*tau)
-    return out
+        tau = np.where(1 + gamma * y > 0, (1 + gamma * y) ** (-1 / gamma), 0)
+    return np.exp(-theta * tau)
 
 
 
@@ -250,13 +250,13 @@ def GEV_pdf(x, gamma=0, mu=0, sigma=1):
     """
 
     x = np.array(x)
-    y = (x-mu)/sigma #standard
+    y = (x - mu) / sigma
     if gamma < 1e-3:
-        out = np.exp(-np.exp(-y))*np.exp(-y)/sigma
-    else: 
-        out= np.zeros_like(y)
-        mask = (1+gamma*y>0)
-        out[mask] = np.exp(-(1+gamma*y[mask])**(-1/gamma))*(1+gamma*y[mask])**(-1/gamma-1)/sigma
+        out = np.exp(-np.exp(-y)) * np.exp(-y) / sigma
+    else:
+        mask = (1 + gamma * y > 0)
+        out = np.zeros_like(y)
+        out[mask] = np.exp(-(1 + gamma * y[mask]) ** (-1 / gamma)) * (1 + gamma * y[mask]) ** (-1 / gamma - 1) / sigma
     return out
 
 
@@ -299,13 +299,13 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
     """
     x = np.array(x)
     sigma = np.abs(sigma)
-    y = (x-mu)/sigma #standard
+    y = (x - mu) / sigma
     if np.abs(gamma) < 0.01:
-        out = -np.log(sigma)-np.exp(-y)-y
-    elif 1+gamma*y>0:
-        out = -np.log(sigma)-(1+gamma*y)**(-1/gamma)+np.log(1+gamma*y)*(-1/gamma-1)
+        out = -np.log(sigma) - np.exp(-y) - y
     else:
-        out = -1000 * np.ones_like(x)
+        mask = (1 + gamma * y > 0)
+        out = np.zeros_like(x)
+        out[mask] = -np.log(sigma) - (1 + gamma * y[mask]) ** (-1 / gamma) + np.log(1 + gamma * y[mask]) * (-1 / gamma - 1)
     return out
 
 # PWM Estimation

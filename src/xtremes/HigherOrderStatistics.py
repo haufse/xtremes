@@ -130,7 +130,7 @@ def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
     out = np.zeros_like(unique_hos[0])
 
     if alpha < 0.00001:
-        out = -1000 * np.ones_like(unique_hos[-r])
+        out = -np.inf * np.ones_like(unique_hos[-r])
     else:
         mask = (unique_hos[-r]>0)
         f = lambda x: np.log(x[mask]) 
