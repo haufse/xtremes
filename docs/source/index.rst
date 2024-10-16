@@ -13,14 +13,11 @@ how to :ref:`installation` the project.
 
    This project is under active & heavy development.
 
-.. bibliography:: 
 
-Contents
---------
 
 .. toctree::
    :maxdepth: 1
-   :caption: Chapters  
+   :caption: Chapters   
 
    usage
    higherorderstatistics
