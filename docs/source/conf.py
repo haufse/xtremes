@@ -69,6 +69,7 @@ latex_elements = {
     'maketitle': r'''
     \sphinxmaketitle
     \frontmatter
+    \setcounter{tocdepth}{2}
     \tableofcontents
     \mainmatter
     ''',
