@@ -11,9 +11,7 @@ how to :ref:`installation` the project.
 
 .. note::
 
-   This project is under active & heavy development.
-
-
+   This project is under active and heavy development.
 
 .. toctree::
    :maxdepth: 1
