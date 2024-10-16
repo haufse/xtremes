@@ -51,24 +51,26 @@ latex_documents = [
 latex_toplevel_sectioning = 'chapter'
 
 # Additional LaTeX settings to improve PDF output
+
 latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper')
     'papersize': 'a4paper',
-
-    # The font size ('10pt', '11pt' or '12pt')
     'pointsize': '11pt',
-
-    # Additional stuff for the LaTeX preamble
     'preamble': r'''
     \usepackage{enumitem}
     \setlistdepth{99}
     ''',
-
-    # Grouping the table of contents into chapters
-    'tableofcontents': r'''
-    \begin{flushleft}
-    \sphinxtableofcontents
-    \end{flushleft}
+    # Remove the default table of contents behavior
+    'tableofcontents': '',
+    'sphinxsetup': r'''
+    verbatimwithframe=false,
+    verbatimwrapslines=true
+    ''',
+    # Use the "chapter" directive to start each document in the toctree as a new chapter
+    'maketitle': r'''
+    \sphinxmaketitle
+    \frontmatter
+    \tableofcontents
+    \mainmatter
     ''',
 }
 
