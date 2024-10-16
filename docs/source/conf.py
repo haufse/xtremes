@@ -38,3 +38,40 @@ sphinx_rtd_size_width = "90%"
 
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
+
+# -- Options for LaTeX/PDF output
+
+# Ensure that sections in the toctree appear as separate chapters
+latex_documents = [
+    ('index', 'xtremes.tex', 'Xtremes Documentation',
+     'Erik Haufs', 'manual'),
+]
+
+# Set the top-level sectioning to 'chapter' to ensure chapters appear correctly
+latex_toplevel_sectioning = 'chapter'
+
+# Additional LaTeX settings to improve PDF output
+latex_elements = {
+    # The paper size ('letterpaper' or 'a4paper')
+    'papersize': 'a4paper',
+
+    # The font size ('10pt', '11pt' or '12pt')
+    'pointsize': '11pt',
+
+    # Additional stuff for the LaTeX preamble
+    'preamble': r'''
+    \usepackage{enumitem}
+    \setlistdepth{99}
+    ''',
+
+    # Grouping the table of contents into chapters
+    'tableofcontents': r'''
+    \begin{flushleft}
+    \sphinxtableofcontents
+    \end{flushleft}
+    ''',
+}
+
+# Configure BibTeX to ensure citations are handled correctly
+bibtex_default_style = 'plain'
+bibtex_reference_style = 'label'
