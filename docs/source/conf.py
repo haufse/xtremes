@@ -84,12 +84,12 @@ latex_elements = {
     \vspace{1.5cm}
     {\large Author: Erik Haufs \par}
     \vfill
-    \includegraphics[width=0.4\textwidth]{path/to/logo.png}\par
+    \includegraphics[width=0.4\textwidth]{images/logo.png}\par
     \vfill
     {\large \today \par}
     \end{titlepage}
     \frontmatter
-    \setcounter{tocdepth}{2}
+    \setcounter{tocdepth}{1}
     \tableofcontents
     \mainmatter
     ''',
