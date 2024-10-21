@@ -84,7 +84,7 @@ latex_elements = {
     \vspace{1.5cm}
     {\large Author: Erik Haufs \par}
     \vfill
-    \includegraphics[width=0.4\textwidth]{images/logo.png}\par
+    \includegraphics[width=0.4\textwidth]{images/logo4.png}\par
     \vfill
     {\large \today \par}
     \end{titlepage}
