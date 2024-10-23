@@ -463,43 +463,44 @@ class FullBootstrap:
     
     def get_CI(self, alpha=0.05, method='symmetric'):
         r"""
-    Compute the confidence interval (CI) for the Maximum Likelihood Estimate (MLE) parameters 
-    based on bootstrap samples.
+        Compute the confidence interval (CI) for the Maximum Likelihood Estimate (MLE) parameters 
+        based on bootstrap samples.
 
-    Parameters
-    ----------
-    alpha : float, optional
-        Significance level for the confidence interval. Default is 0.05, 
-        corresponding to a 95% confidence interval.
+        Parameters
+        ----------
+        alpha : float, optional
+            Significance level for the confidence interval. Default is 0.05, 
+            corresponding to a 95% confidence interval.
+            
+        method : str, optional
+            Method to compute the confidence interval. Two options are available:
+            - 'symmetric': The confidence interval is computed using the symmetric quantiles.
+            - 'minimal_width': The confidence interval is computed by finding the minimal-width 
+            interval that contains (1 - alpha) proportion of the bootstrap distribution.
+            The default is 'symmetric'.
+
+        Returns
+        -------
+        numpy.ndarray
+            A 2D array with shape (n_parameters, 2) containing the lower and upper bounds of 
+            the confidence interval for each parameter. The first column represents the lower 
+            bounds, and the second column represents the upper bounds.
+
+        Notes
+        -----
+        The confidence intervals are based on bootstrap estimates of the MLE parameters, which 
+        means the confidence intervals are derived from the empirical distribution of the parameter 
+        estimates obtained from multiple bootstrap samples.
+
+        There are two methods available for calculating the confidence intervals:
+        - 'symmetric': This method takes the alpha/2 and (1 - alpha/2) quantiles of the bootstrap 
+        distribution for each parameter. It is based on the assumption that the distribution 
+        is approximately symmetric and works well when the bootstrap distribution is roughly normal.
+        - 'minimal_width': This method identifies the interval with the minimal width that contains 
+        (1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
+        bootstrap distribution is skewed or not symmetric.
+        """
         
-    method : str, optional
-        Method to compute the confidence interval. Two options are available:
-        - 'symmetric': The confidence interval is computed using the symmetric quantiles.
-        - 'minimal_width': The confidence interval is computed by finding the minimal-width 
-          interval that contains (1 - alpha) proportion of the bootstrap distribution.
-        The default is 'symmetric'.
-
-    Returns
-    -------
-    numpy.ndarray
-        A 2D array with shape (n_parameters, 2) containing the lower and upper bounds of 
-        the confidence interval for each parameter. The first column represents the lower 
-        bounds, and the second column represents the upper bounds.
-
-    Notes
-    -----
-    The confidence intervals are based on bootstrap estimates of the MLE parameters, which 
-    means the confidence intervals are derived from the empirical distribution of the parameter 
-    estimates obtained from multiple bootstrap samples.
-
-    There are two methods available for calculating the confidence intervals:
-    - 'symmetric': This method takes the alpha/2 and (1 - alpha/2) quantiles of the bootstrap 
-      distribution for each parameter. It is based on the assumption that the distribution 
-      is approximately symmetric and works well when the bootstrap distribution is roughly normal.
-    - 'minimal_width': This method identifies the interval with the minimal width that contains 
-      (1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
-      bootstrap distribution is skewed or not symmetric.
-    """
         if method == 'symmetric':
             lower = np.quantile(self.values, alpha/2, axis=0)
             upper = np.quantile(self.values, (1-alpha/2), axis=0)
