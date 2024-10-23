@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from collections import defaultdict
 import xtremes.HigherOrderStatistics as hos
 from scipy.optimize import minimize
@@ -34,7 +35,7 @@ def circmax(sample, bs=10, stride='DBM'):
     -----
     - 'DBM' (Disjoint Block Maxima) extracts block maxima from non-overlapping blocks of size `bs`.
     - 'SBM' (Sliding Block Maxima) creates overlapping blocks, effectively increasing the number of block maxima compared to 'DBM'.
-    - In th 'SBM' setting, the circmax() method introduced by Bücher and Staud 2024 is used.
+    - In the 'SBM' setting, the circmax() method introduced by Bücher and Staud 2024 is used.
 
     References
     ----------
@@ -451,8 +452,110 @@ class FullBootstrap:
             
             estimates.append(estimate)
         
-        self.values = np.array(estimates)
+        self.values = np.array(estimates)[:, [2, 0, 1]]
         self.statistics = {
-            'mean': np.mean(estimates,axis=0),
-            'std': np.std(estimates,axis=0),
+            'mean': np.mean(self.values,axis=0),
+            'std': np.std(self.values,axis=0),
         }
+    
+    def get_CI(self, alpha=0.05, method='symmetric'):
+        r"""
+    Compute the confidence interval (CI) for the Maximum Likelihood Estimate (MLE) parameters 
+    based on bootstrap samples.
+
+    Parameters
+    ----------
+    alpha : float, optional
+        Significance level for the confidence interval. Default is 0.05, 
+        corresponding to a 95% confidence interval.
+        
+    method : str, optional
+        Method to compute the confidence interval. Two options are available:
+        - 'symmetric': The confidence interval is computed using the symmetric quantiles.
+        - 'minimal_width': The confidence interval is computed by finding the minimal-width 
+          interval that contains (1 - alpha) proportion of the bootstrap distribution.
+        The default is 'symmetric'.
+
+    Returns
+    -------
+    numpy.ndarray
+        A 2D array with shape (n_parameters, 2) containing the lower and upper bounds of 
+        the confidence interval for each parameter. The first column represents the lower 
+        bounds, and the second column represents the upper bounds.
+
+    Notes
+    -----
+    The confidence intervals are based on bootstrap estimates of the MLE parameters, which 
+    means the confidence intervals are derived from the empirical distribution of the parameter 
+    estimates obtained from multiple bootstrap samples.
+
+    There are two methods available for calculating the confidence intervals:
+    - 'symmetric': This method takes the alpha/2 and (1 - alpha/2) quantiles of the bootstrap 
+      distribution for each parameter. It is based on the assumption that the distribution 
+      is approximately symmetric and works well when the bootstrap distribution is roughly normal.
+    - 'minimal_width': This method identifies the interval with the minimal width that contains 
+      (1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
+      bootstrap distribution is skewed or not symmetric.
+    """
+        if method == 'symmetric':
+            lower = np.quantile(self.values, alpha/2, axis=0)
+            upper = np.quantile(self.values, (1-alpha/2), axis=0)
+        if method == 'minimal_width':
+            sorted_values = np.sort(self.values, axis=0)
+            n = len(sorted_values)
+            best_interval = np.zeros((2, sorted_values.shape[1]))           
+            for param_idx in range(sorted_values.shape[1]):
+                param_min_width = np.inf
+                param_best_interval = (None, None)
+                
+                for i in range(n):
+                    j = int(np.floor((1 - alpha) * n)) + i
+                    if j >= n:
+                        break
+                    width = sorted_values[j, param_idx] - sorted_values[i, param_idx]
+                    if width < param_min_width:
+                        param_min_width = width
+                        param_best_interval = (sorted_values[i, param_idx], sorted_values[j, param_idx])
+                
+                best_interval[0][param_idx] = param_best_interval[0]
+                best_interval[1][param_idx] = param_best_interval[1]
+            
+            lower, upper = best_interval
+        self.CI = np.stack([lower, upper], axis=1)
+    
+    def plot_bootstrap(self, param_idx=0, param_name='gamma', bins=30, output_file=None, show=True):
+        r"""
+        Plot the bootstrap distribution for a specified parameter.
+
+        Parameters
+        ----------
+        param_idx : int, optional
+            Index of the parameter to plot (0 for the first parameter, 1 for the second, etc.). Default is 0.
+        bins : int, optional
+            Number of bins to use for the histogram. Default is 30.
+
+        Notes
+        -----
+        This method generates a histogram of the bootstrap estimates for the specified parameter and overlays
+        the mean and confidence interval.
+        """
+
+        if not hasattr(self, 'values'):
+            raise RuntimeError("You must run the bootstrap procedure before plotting.")
+
+        param_values = self.values[:,param_idx]
+        mean_value = self.statistics['mean'][param_idx]
+        ci_lower, ci_upper = self.CI[param_idx, :]
+
+        plt.hist(param_values, bins=bins, density=True, alpha=0.5, color='blue', edgecolor='black')
+        plt.axvline(mean_value, color='red', linestyle='dashed', linewidth=2, label='Mean')
+        plt.axvline(ci_lower, color='green', linestyle='dashed', linewidth=2, label='95% CI Lower')
+        plt.axvline(ci_upper, color='green', linestyle='dashed', linewidth=2, label='95% CI Upper')
+        plt.title(f'Bootstrap Distribution for Parameter {param_name}')
+        plt.xlabel('Parameter Value')
+        plt.ylabel('Frequency')
+        plt.legend()
+        if output_file:
+            plt.savefig(output_file)
+        if show:
+            plt.show()
