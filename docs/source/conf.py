@@ -7,7 +7,7 @@ copyright = '2024, Erik Haufs'
 author = 'Erik Haufs'
 
 release = '0.1'
-version = '0.1.0'
+version = '0.1.8'
 
 # -- General configuration
 
@@ -47,8 +47,6 @@ latex_documents = [
      'Erik Haufs', 'manual'),
 ]
 
-# Additional LaTeX files
-latex_additional_files = ['images/logo4.png']
 
 # Set the top-level sectioning to 'chapter' to ensure chapters appear correctly
 latex_toplevel_sectioning = 'chapter'
@@ -87,7 +85,7 @@ latex_elements = {
     \vspace{1.5cm}
     {\large Author: Erik Haufs \par}
     \vfill
-    \includegraphics[width=0.4\textwidth]{images/logo4.png}\par
+    \includegraphics[width=0.4\textwidth]{../../docs/source/images/logo4.png}\par
     \vfill
     {\large \today \par}
     \end{titlepage}

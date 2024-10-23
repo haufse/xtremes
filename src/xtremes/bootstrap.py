@@ -1,8 +1,15 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from collections import defaultdict
 import xtremes.HigherOrderStatistics as hos
 from scipy.optimize import minimize
+import matplotlib.pyplot as plt
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif",
+    "font.serif": ["Computer Modern Roman"],
+    "font.size": 16,
+    "figure.figsize": (10, 6),
+})
 
 def circmax(sample, bs=10, stride='DBM'):
     r"""
@@ -500,7 +507,7 @@ class FullBootstrap:
         (1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
         bootstrap distribution is skewed or not symmetric.
         """
-        
+
         if method == 'symmetric':
             lower = np.quantile(self.values, alpha/2, axis=0)
             upper = np.quantile(self.values, (1-alpha/2), axis=0)
