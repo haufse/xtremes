@@ -63,6 +63,7 @@ def test_ML_Estimator_gev():
 
 # Test FullBootstrap class
 def test_FullBootstrap_frechet():
+    np.random.seed(0)
     sample = np.random.rand(100)
     bootstrap = FullBootstrap(sample, bs=10, stride='DBM', dist_type='Frechet')
     bootstrap.run_bootstrap(num_bootstraps=10)
@@ -71,6 +72,7 @@ def test_FullBootstrap_frechet():
     assert len(bootstrap.values) == 10, "There should be 10 bootstrap estimates"
 
 def test_FullBootstrap_gev():
+    np.random.seed(1)
     sample = np.random.rand(100)
     bootstrap = FullBootstrap(sample, bs=10, stride='DBM', dist_type='GEV')
     bootstrap.run_bootstrap(num_bootstraps=10)
