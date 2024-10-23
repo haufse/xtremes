@@ -452,7 +452,10 @@ class FullBootstrap:
             
             estimates.append(estimate)
         
-        self.values = np.array(estimates)[:, [2, 0, 1]]
+        if self.dist_type == 'GEV':
+            self.values = np.array(estimates)[:, [2, 0, 1]]
+        else:
+            self.values = np.array(estimates)
         self.statistics = {
             'mean': np.mean(self.values,axis=0),
             'std': np.std(self.values,axis=0),
