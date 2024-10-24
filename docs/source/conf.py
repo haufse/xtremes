@@ -56,6 +56,7 @@ latex_toplevel_sectioning = 'chapter'
 latex_elements = {
     'papersize': 'a4paper',
     'pointsize': '11pt',
+    'classoptions': ',openany',
     'preamble': r'''
     \usepackage{enumitem}
     \setlistdepth{99}
