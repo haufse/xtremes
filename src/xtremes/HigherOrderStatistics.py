@@ -381,13 +381,14 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
 
 class PWM_estimators:
     r"""
-    Calculates Probability Weighted Moment (PWM) estimators from block maxima.
+    Calculates Probability Weighted Moment (PWM) estimators from block maxima and computes statistics and confidence intervals for the GEV parameters.
 
     Notes
     -----
-    Probability Weighted Moments (PWMs) are used to estimate the parameters of extreme value distributions. 
-    The first three PWMs (denoted as :math:`\beta_0, \beta_1, \beta_2`) are computed for each block maxima series, 
-    then converted into Generalized Extreme Value (GEV) parameters (:math:`\gamma, \mu, \sigma`) using the PWM2GEV function.
+    This class provides methods to compute the Probability Weighted Moment (PWM) estimators and convert them into Generalized Extreme Value (GEV) 
+    distribution parameters (gamma, mu, sigma). It also allows users to compute confidence intervals for the estimated parameters and assess 
+    the statistical properties (mean, variance, bias, mean squared error) of the estimators compared to a true gamma value. Visualization options 
+    are provided to plot the estimators and confidence intervals.
 
     Parameters
     ----------
@@ -401,31 +402,41 @@ class PWM_estimators:
     :attribute values: numpy.ndarray
         Array containing the PWM estimators (:math:`\gamma, \mu, \sigma`) for each block maxima series.
     :attribute statistics: dict
-        Dictionary containing statistics (mean, variance, bias, mse) of the PWM estimators.
+        Dictionary containing statistics (mean, variance, bias, mse) and confidence intervals of the PWM estimators.
 
     Methods
     -------
-    :method get_PWM_estimation(): Compute PWM estimators for each block maxima series and convert them into GEV parameters.
-    :method get_statistics(gamma_true): Compute statistics of the PWM estimators using a true gamma value.
+    :method get_PWM_estimation():
+        Compute PWM estimators for each block maxima series and convert them into GEV parameters.
+    :method get_statistics(gamma_true):
+        Compute statistics of the PWM estimators using a true gamma value.
+    :method get_CIs(alpha=0.05, method='symmetric'):
+        Compute confidence intervals (CIs) for the GEV parameters using either symmetric quantiles or minimal width intervals.
+    :method plot(param='gamma', show_CI=True, show_true=True, filename=None):
+        Plot the PWM estimators for the GEV parameters (gamma, mu, sigma) with options to display confidence intervals and save the plot as an image.
 
     Raises
     ------
-    :raises ValueError: If block maxima or high order statistics are not available in the TimeSeries object.
+    :raises ValueError: 
+        If block maxima or high order statistics are not available in the TimeSeries object.
 
     Examples
     --------
     >>> from TimeSeries import TimeSeries
     >>> from PWM_estimators import PWM_estimators
-    >>> ts = TimeSeries(data)  # initialize TimeSeries object with data
-    >>> ts.get_blockmaxima(block_size=10, stride='SBM')  # extract block maxima
-    >>> pwm = PWM_estimators(ts)  # initialize PWM_estimators object
-    >>> pwm.get_PWM_estimation()  # compute PWM estimators
-    >>> pwm.get_statistics(0.1)  # compute statistics with true gamma value 0.1
-    >>> print(pwm.statistics)  # print computed statistics
-    {'mean': 0.099981, 'variance': 0.000186, 'bias': -0.000074, 'mse': 0.000259,
-     'mu_mean': ..., 'mu_variance': ..., 'sigma_mean': ..., 'sigma_variance': ...}
-
+    >>> ts = TimeSeries(data)  # Initialize TimeSeries object with data
+    >>> ts.get_blockmaxima(block_size=10, stride='SBM')  # Extract block maxima
+    >>> pwm = PWM_estimators(ts)  # Initialize PWM_estimators object
+    >>> pwm.get_PWM_estimation()  # Compute PWM estimators
+    >>> pwm.get_statistics(0.1)  # Compute statistics with true gamma value 0.1
+    >>> pwm.get_CIs(alpha=0.05, method='minimal_width')  # Compute confidence intervals
+    >>> pwm.plot(param='gamma', show_CI=True, show_true=True, filename='PWM_plot.png')  # Plot the results and save as image
+    >>> print(pwm.statistics)  # Print computed statistics
+    {'gamma_mean': 0.25, 'gamma_variance': 0.005, 'gamma_bias': 0.02, 'gamma_mse': 0.01,
+     'mu_mean': 1.15, 'mu_variance': 0.04, 'sigma_mean': 0.9, 'sigma_variance': 0.02,
+     'gamma_CI': (0.2, 0.5), 'mu_CI': (1.1, 1.5), 'sigma_CI': (0.8, 1.0)}
     """
+
     def __init__(self, TimeSeries):
         # TimeSeries object needs blockmaxima
         if TimeSeries.blockmaxima == [] and TimeSeries.high_order_stats == []:
@@ -442,61 +453,86 @@ class PWM_estimators:
     
     def get_PWM_estimation(self):
         r"""
-        Compute PWM estimators for each block maxima series and convert them into GEV parameters.
+        Compute Probability-Weighted Moment (PWM) estimators and convert them into GEV parameters.
+
+        Notes
+        -----
+        This function iterates over each block maxima series, computes the Probability-Weighted Moments (PWMs), and converts the PWMs into the 
+        Generalized Extreme Value (GEV) distribution parameters: shape (gamma), location (mu), and scale (sigma). The function utilizes the 
+        `misc.PWM_estimation` function to calculate the PWMs and then applies `misc.PWM2GEV` to convert these moments into GEV parameters.
+
+        The results for each block maxima series are stored in the `self.values` attribute, which is a NumPy array where each row corresponds to 
+        the GEV parameters [gamma, mu, sigma] for a specific block maxima series.
+
+        This function clears any previously stored values in `self.values` before appending new estimates.
+
+        Parameters
+        ----------
+        None
+
+        Example
+        -------
+        >>> estimator = PWM_estimators(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> print(estimator.values)
+        array([[0.2, 1.1, 0.8],
+            [0.3, 1.2, 0.9]])
+
+        Returns
+        -------
+        None
+            The results are stored in `self.values`, a NumPy array containing the estimated GEV parameters for each block maxima series.
         """
+
+        # clear values
+        self.values = []
         for bms in self.blockmaxima:
             b0, b1, b2 = misc.PWM_estimation(bms) 
             gamma, mu, sigma = misc.PWM2GEV(b0, b1, b2)
             self.values.append([gamma, mu, sigma])
         self.values = np.array(self.values)
     
-    def get_CIs(self, alpha=0.05, method='symmetric'):
-        r"""Compute the confidence interval (CI) for the PWM estimators.
-
-        Parameters
-        ----------
-        alpha : float, optional
-            Significance level for the confidence interval. Default is 0.05, 
-            corresponding to a 95% confidence interval.
-            
-        method : str, optional
-            Method to compute the confidence interval. Two options are available:
-            - 'symmetric': The confidence interval is computed using the symmetric quantiles.
-            - 'minimal_width': The confidence interval is computed by finding the minimal-width 
-            interval that contains (1 - alpha) proportion of the bootstrap distribution.
-            The default is 'symmetric'.
-
-        Returns
-        -------
-        numpy.ndarray
-            A 2D array with shape (n_parameters, 2) containing the lower and upper bounds of 
-            the confidence interval for each parameter. The first column represents the lower 
-            bounds, and the second column represents the upper bounds.
+    def get_statistics(self, gamma_true):    
+        r"""
+        Compute statistics of the PWM estimators using the true gamma value.
 
         Notes
         -----
-        The confidence intervals are based on bootstrap estimates of the MLE parameters, which 
-        means the confidence intervals are derived from the empirical distribution of the parameter 
-        estimates obtained from multiple bootstrap samples.
+        This function calculates various statistical measures (mean, variance, bias, and mean squared error) for the estimated 
+        Generalized Extreme Value (GEV) shape parameter (gamma) compared to a provided true value (`gamma_true`). It also computes 
+        the mean and variance for the location (mu) and scale (sigma) parameters across all block maxima series.
 
-        There are two methods available for calculating the confidence intervals:
-        - 'symmetric': This method takes the alpha/2 and (1 - alpha/2) quantiles of the bootstrap 
-        distribution for each parameter. It is based on the assumption that the distribution 
-        is approximately symmetric and works well when the bootstrap distribution is roughly normal.
-        - 'minimal_width': This method identifies the interval with the minimal width that contains 
-        (1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
-        bootstrap distribution is skewed or not symmetric.
-        """
-    
-    def get_statistics(self, gamma_true):
-        r"""
-        Compute statistics of the PWM estimators using a true gamma value.
+        - **Mean Squared Error (MSE)**: Measures the average of the squares of the differences between the estimated and true gamma values.
+        - **Bias**: Represents the systematic deviation of the estimated gamma values from the true gamma value.
+        - **Variance**: Describes the spread of the estimated gamma values around their mean.
+
+        If only one block maxima series is available, a warning is raised since variance cannot be computed.
+
+        The computed statistics are stored in the `self.statistics` dictionary with the following keys:
+        - 'gamma_mean', 'gamma_variance', 'gamma_bias', 'gamma_mse'
+        - 'mu_mean', 'mu_variance'
+        - 'sigma_mean', 'sigma_variance'
 
         Parameters
         ----------
         :param gamma_true: float
-            True gamma value for calculating statistics.
+            The true value of the GEV shape parameter (gamma) used to compute bias and MSE.
+
+        Example
+        -------
+        >>> estimator = PWM_estimators(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> estimator.get_statistics(gamma_true=0.2)
+        >>> print(estimator.statistics)
+        {'gamma_mean': 0.25, 'gamma_variance': 0.005, 'gamma_bias': 0.02, 'gamma_mse': 0.01,
+        'mu_mean': 1.15, 'mu_variance': 0.04, 'sigma_mean': 0.9, 'sigma_variance': 0.02}
+
+        Returns
+        -------
+        None
+            The results are stored in `self.statistics`, containing the calculated statistics for gamma, mu, and sigma.
         """
+
         gammas = self.values.T[0]
         mus = self.values.T[1]
         sigmas = self.values.T[2]
@@ -522,6 +558,125 @@ class PWM_estimators:
 
         else:
             warnings.warn('No variance can be computed on only one element!')
+    
+    def get_CIs(self, alpha=0.05, method = 'symmetric'):
+        r"""
+        Compute confidence intervals (CIs) for the GEV parameters using different methods.
+
+        Notes
+        -----
+        This function calculates confidence intervals (CIs) for the Generalized Extreme Value (GEV) parameters (gamma, mu, and sigma) estimated from 
+        Probability-Weighted Moments (PWM). The user can choose between two methods for computing the confidence intervals:
+        
+        - **'symmetric'**: This method uses the quantiles of the distribution of parameter estimates to compute symmetric confidence intervals.
+        - **'minimal_width'**: This method finds the interval with minimal width that contains the desired proportion (1 - alpha) of the sorted parameter estimates.
+
+        For each block maxima series, confidence intervals for the GEV shape (gamma), location (mu), and scale (sigma) parameters are calculated. The results 
+        are stored in the `self.statistics` dictionary, with keys 'gamma_CI', 'mu_CI', and 'sigma_CI' corresponding to the computed confidence intervals.
+
+        Parameters
+        ----------
+        :param alpha: float, optional
+            Significance level for the confidence intervals (default is 0.05, for a 95% CI).
+        :param method: str, optional
+            Method for computing the confidence intervals. Options are:
+            - 'symmetric': Uses quantiles to compute symmetric CIs (default).
+            - 'minimal_width': Computes the minimal width interval containing (1 - alpha) of the estimates.
+            
+        Example
+        -------
+        >>> estimator = GEVEstimator(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
+        >>> print(estimator.statistics)
+        {'gamma_CI': (0.2, 0.5), 'mu_CI': (1.1, 1.5), 'sigma_CI': (0.8, 1.0)}
+
+        Returns
+        -------
+        None
+            The results are stored in `self.statistics`, which contains the confidence intervals for each GEV parameter.
+         """
+
+        if method == 'symmetric':
+            lower = np.quantile(self.values, alpha/2, axis=0)
+            upper = np.quantile(self.values, (1-alpha/2), axis=0)
+            CIs = np.stack([lower, upper], axis=1)
+            for param, CI in zip(['gamma', 'mu', 'sigma'], CIs):
+                self.statistics[param+'_CI'] = CI
+        if method == 'minimal_width':
+            sorted_values = np.sort(self.values, axis=0)
+            n = len(sorted_values)
+            best_interval = np.zeros((2, sorted_values.shape[1]))           
+            for param_idx, param in zip(range(sorted_values.shape[1]),['gamma', 'mu', 'sigma']):
+                param_min_width = np.inf
+                param_best_interval = (None, None)
+                
+                for i in range(n):
+                    j = int(np.floor((1 - alpha) * n)) + i
+                    if j >= n:
+                        break
+                    width = sorted_values[j, param_idx] - sorted_values[i, param_idx]
+                    if width < param_min_width:
+                        param_min_width = width
+                        param_best_interval = (sorted_values[i, param_idx], sorted_values[j, param_idx])
+                
+                self.statistics[param+'_CI'] = param_best_interval
+    
+    def plot(self, param='gamma', show_CI=True, show_true=True, filename=None):
+        r"""
+        Plot the PWM estimators and confidence intervals for the GEV parameters.
+
+        Notes
+        -----
+        This function generates a plot showing the Probability-Weighted Moment (PWM) estimators for the Generalized Extreme Value (GEV) parameters 
+        (gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter and optionally 
+        show the true gamma value used for estimation.
+
+        The plot is saved as a PNG image if the `save` parameter is set to True.
+
+        Parameters
+        ----------
+        :param param: str, optional
+            GEV parameter to plot (default is 'gamma').
+        :param show_CI: bool, optional
+            Flag indicating whether to display confidence intervals (default is True).
+        :param show: bool, optional
+            Flag indicating whether to display the plot.
+        :param save: bool, optional
+            Flag indicating whether to save the plot as a PNG image (default is False).
+        :param filename: str, optional
+            Name of the PNG file to save the plot (default is None).
+
+        Example
+        -------
+        >>> estimator = PWM_estimators(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
+        >>> estimator.plot(show_CI=True, show_true=True, save=True, filename='PWM_estimation.png')
+
+        Returns
+        -------
+        None
+            The plot is displayed in the console and saved as a PNG image if the `save` parameter is set to True.
+        """
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        ax.set_title(f'PWM Estimation for {param}')
+        ax.set_xlabel('Estimation for '+param)
+        ax.set_ylabel('Frequency')
+        idx = ['gamma', 'mu', 'sigma'].index(param)
+        ax.hist(self.values.T[idx], bins=20, color='skyblue', edgecolor='black', alpha=0.7,label='Estimation')
+        if show_CI:
+            CI = self.statistics[param+'_CI']
+            ax.axvline(CI[0], color='red', linestyle='dashed', linewidth=2, label='CI lower bound')
+            ax.axvline(CI[1], color='red', linestyle='dashed', linewidth=2, label='CI upper bound') 
+        plt.legend()
+        if filename:
+            plt.savefig(filename)
+        if show_true:
+            plt.show()
+
+
+                
 
 class ML_estimators:
     r"""
