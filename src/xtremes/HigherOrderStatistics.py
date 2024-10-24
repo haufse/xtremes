@@ -12,7 +12,7 @@ import warnings
 import xtremes.miscellaneous as misc
 import matplotlib.pyplot as plt
 
-# FUNCTIONS
+############################### FUNCTIONS ###############################
 
 # log-likelihood
 
@@ -377,7 +377,8 @@ def run_multiple_ML_estimations(file, corr='IID', gamma_trues=np.arange(-4, 5, 1
         return results[0]
     
 
-# CLASSES
+# ############################### PWM & MLE ESTIMATOR CLASSES ###############################
+
 
 class PWM_estimators:
     r"""
@@ -777,6 +778,7 @@ class ML_estimators:
         - If `initParams` is set to 'auto', the initial parameters for the optimization are derived using the `PWM_estimators` object.
         - The optimization results (gamma, mu, sigma) are stored in the `self.values` list for each series of high order statistics.
         """
+        
         self.values = []
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
@@ -1234,6 +1236,9 @@ class Frechet_ML_estimators:
         if show_true:
             plt.show()
 
+############################### TIMESERIES CLASS ###############################
+
+
 class TimeSeries:
     r"""
     TimeSeries class for simulating and analyzing time series data with optional correlation structures.
@@ -1423,6 +1428,8 @@ class TimeSeries:
             self.high_order_stats.append(hos)
 
 
+############################### HIGHORDERDSTATS CLASS ###############################
+
 
 class HighOrderStats:
     r"""HighOrderStats class for calculating and analyzing high-order statistics of time series data.
@@ -1537,7 +1544,8 @@ class HighOrderStats:
             self.ML_estimators.get_ML_estimation(PWM_estimators=self.PWM_estimators, initParams = initParams, r=r)
             self.ML_estimators.get_statistics(gamma_true=self.gamma_true)
         
-# classes to analyze real data
+
+############################### DATA CLASS ###############################
 class Data:
     r"""
     A class for analyzing data with block maxima and high order statistics.
