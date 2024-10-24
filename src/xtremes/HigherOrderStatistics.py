@@ -772,13 +772,13 @@ class ML_estimators:
 
         Notes
         -----
-        - This method performs Maximum Likelihood Estimation (MLE) to fit the Generalized Extreme Value (GEV) distribution 
-        to the high order statistics within the `ML_estimators` class.
+        - This method performs Maximum Likelihood Estimation (MLE) to fit the Generalized Extreme Value (GEV) distribution to the high order statistics within the `ML_estimators` class.
         - The method uses optimization techniques such as Nelder-Mead (and optionally COBYLA) to minimize the negative log-likelihood.
         - If `initParams` is set to 'auto', the initial parameters for the optimization are derived using the `PWM_estimators` object.
         - The optimization results (gamma, mu, sigma) are stored in the `self.values` list for each series of high order statistics.
-        """
         
+        """
+
         self.values = []
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
@@ -1299,6 +1299,7 @@ class TimeSeries:
     >>> ts.get_blockmaxima(block_size=5, stride='DBM', rep=5)
     >>> # Extract high order statistics (order 3) using the same block size and stride
     >>> ts.get_HOS(orderstats=3, block_size=5, stride='DBM', rep=5)
+
     """
     
     def __init__(self, n, distr='GEV', correlation='IID', modelparams=[0], ts=0):
