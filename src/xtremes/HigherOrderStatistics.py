@@ -585,7 +585,7 @@ class PWM_estimators:
             
         Example
         -------
-        >>> estimator = GEVEstimator(timeseries_data)
+        >>> estimator = PWM_Estimators(timeseries_data)
         >>> estimator.get_PWM_estimation()
         >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
         >>> print(estimator.statistics)
@@ -629,8 +629,7 @@ class PWM_estimators:
         Notes
         -----
         This function generates a plot showing the Probability-Weighted Moment (PWM) estimators for the Generalized Extreme Value (GEV) parameters 
-        (gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter and optionally 
-        show the true gamma value used for estimation.
+        (gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter.
 
         The plot is saved as a PNG image if the `save` parameter is set to True.
 
@@ -725,9 +724,14 @@ class ML_estimators:
     def __init__(self, TimeSeries):
         # TimeSeries object needs high order statistics
         if TimeSeries.high_order_stats == []:
-            raise ValueError('Caluclate high order statistics first!')
+            if TimeSeries.blockmaxima != []:
+                TimeSeries.get_HOS(orderstats = 1, block_size=TimeSeries.block_size, stride=TimeSeries.stride)
+                self.high_order_stats = TimeSeries.high_order_stats
+            else:
+                raise ValueError('Caluclate high order statistics or block maxima first!')
+        else:
+            self.high_order_stats = TimeSeries.high_order_stats
         self.TimeSeries = TimeSeries
-        self.high_order_stats = TimeSeries.high_order_stats
         self.values = []
         self.statistics = {}
     
@@ -736,43 +740,44 @@ class ML_estimators:
 
     def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None):
         r"""
-    Compute Maximum Likelihood (ML) estimators for each series of high order statistics within the `ML_estimators` class.
+        Compute Maximum Likelihood (ML) estimators for each series of high order statistics within the `ML_estimators` class.
 
-    This method fits the Generalized Extreme Value (GEV) distribution to each series of high order statistics
-    using Maximum Likelihood Estimation (MLE) by optimizing the log-likelihood function.
+        This method fits the Generalized Extreme Value (GEV) distribution to each series of high order statistics
+        using Maximum Likelihood Estimation (MLE) by optimizing the log-likelihood function.
 
-    Parameters
-    ----------
-    PWM_estimators : PWM_estimators object, optional
-        An object containing PWM (Probability Weighted Moments) estimators. This is used for initializing the 
-        parameters in the ML estimation if `initParams` is set to 'auto'. Required if `initParams` is 'auto'.
-    initParams : str or numpy.ndarray, optional
-        Initial parameters for the ML estimation. If 'auto', the initial parameters will be computed automatically 
-        using the `PWM_estimators` object. If a NumPy array is provided, these will be used as initial parameter values.
-        Default is 'auto'.
-    r : int, optional
-        The number of order statistics to calculate the log-likelihood on. If not specified, all provided 
-        order statistics will be used.
+        Parameters
+        ----------
+        PWM_estimators : PWM_estimators object, optional
+            An object containing PWM (Probability Weighted Moments) estimators. This is used for initializing the 
+            parameters in the ML estimation if `initParams` is set to 'auto'. Required if `initParams` is 'auto'.
+        initParams : str or numpy.ndarray, optional
+            Initial parameters for the ML estimation. If 'auto', the initial parameters will be computed automatically 
+            using the `PWM_estimators` object. If a NumPy array is provided, these will be used as initial parameter values.
+            Default is 'auto'.
+        r : int, optional
+            The number of order statistics to calculate the log-likelihood on. If not specified, all provided 
+            order statistics will be used.
 
-    Returns
-    -------
-    None
-        This method updates the `self.values` attribute of the `ML_estimators` object with the estimated parameters 
-        (gamma, mu, sigma) for each series of high order statistics.
+        Returns
+        -------
+        None
+            This method updates the `self.values` attribute of the `ML_estimators` object with the estimated parameters 
+            (gamma, mu, sigma) for each series of high order statistics.
 
-    Raises
-    ------
-    ValueError
-        If `initParams` is set to 'auto' and no `PWM_estimators` are provided, a ValueError is raised.
+        Raises
+        ------
+        ValueError
+            If `initParams` is set to 'auto' and no `PWM_estimators` are provided, a ValueError is raised.
 
-    Notes
-    -----
-    - This method performs Maximum Likelihood Estimation (MLE) to fit the Generalized Extreme Value (GEV) distribution 
-      to the high order statistics within the `ML_estimators` class.
-    - The method uses optimization techniques such as Nelder-Mead (and optionally COBYLA) to minimize the negative log-likelihood.
-    - If `initParams` is set to 'auto', the initial parameters for the optimization are derived using the `PWM_estimators` object.
-    - The optimization results (gamma, mu, sigma) are stored in the `self.values` list for each series of high order statistics.
-    """
+        Notes
+        -----
+        - This method performs Maximum Likelihood Estimation (MLE) to fit the Generalized Extreme Value (GEV) distribution 
+        to the high order statistics within the `ML_estimators` class.
+        - The method uses optimization techniques such as Nelder-Mead (and optionally COBYLA) to minimize the negative log-likelihood.
+        - If `initParams` is set to 'auto', the initial parameters for the optimization are derived using the `PWM_estimators` object.
+        - The optimization results (gamma, mu, sigma) are stored in the `self.values` list for each series of high order statistics.
+        """
+        self.values = []
         if initParams == 'auto' and PWM_estimators==None:
             raise ValueError('Automatic calculation of initParams needs PWM_estimators!')
         elif initParams == 'auto':
@@ -786,7 +791,7 @@ class ML_estimators:
                 return cst
             
             # COBYLA und Nelder-Mead agree, in some versions cobyla does not want bounds
-            results = misc.minimize(cost, initParams[i], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            results = misc.minimize(cost, initParams[i], method='Nelder-Mead', bounds=((-np.inf,np.inf),(-np.inf,np.inf),(1e-5,np.inf)))
             # results = misc.minimize(cost, initParams[i], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
             #constr1 = scipy.optimize.LinearConstraint(np.array([[1,0,0]]), lb=0, keep_feasible=False)
             #constr2 = scipy.optimize.LinearConstraint(np.array([[0,0,1]]), lb=0, keep_feasible=False)
@@ -831,6 +836,121 @@ class ML_estimators:
 
         else:
             warnings.warn('No variance can be computed on only one element!')
+
+    def get_CIs(self, alpha=0.05, method = 'symmetric'):
+        r"""
+        Compute confidence intervals (CIs) for the GEV parameters using different methods.
+
+        Notes
+        -----
+        This function calculates confidence intervals (CIs) for the Generalized Extreme Value (GEV) parameters (gamma, mu, and sigma) 
+        estimated from Maximum Likelihood Estimators (MLE). The user can choose between two methods for computing the confidence intervals:
+        
+        - **'symmetric'**: This method uses the quantiles of the distribution of parameter estimates to compute symmetric confidence intervals.
+        - **'minimal_width'**: This method finds the interval with minimal width that contains the desired proportion (1 - alpha) of the sorted parameter estimates.
+
+        For each block maxima series, confidence intervals for the GEV shape (gamma), location (mu), and scale (sigma) parameters are calculated. The results 
+        are stored in the `self.statistics` dictionary, with keys 'gamma_CI', 'mu_CI', and 'sigma_CI' corresponding to the computed confidence intervals.
+
+        Parameters
+        ----------
+        :param alpha: float, optional
+            Significance level for the confidence intervals (default is 0.05, for a 95% CI).
+        :param method: str, optional
+            Method for computing the confidence intervals. Options are:
+            - 'symmetric': Uses quantiles to compute symmetric CIs (default).
+            - 'minimal_width': Computes the minimal width interval containing (1 - alpha) of the estimates.
+            
+        Example
+        -------
+        >>> estimator = ML_stimator(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
+        >>> print(estimator.statistics)
+        {'gamma_CI': (0.2, 0.5), 'mu_CI': (1.1, 1.5), 'sigma_CI': (0.8, 1.0)}
+
+        Returns
+        -------
+        None
+            The results are stored in `self.statistics`, which contains the confidence intervals for each GEV parameter.
+         """
+
+        if method == 'symmetric':
+            lower = np.quantile(self.values, alpha/2, axis=0)
+            upper = np.quantile(self.values, (1-alpha/2), axis=0)
+            CIs = np.stack([lower, upper], axis=1)
+            for param, CI in zip(['gamma', 'mu', 'sigma'], CIs):
+                self.statistics[param+'_CI'] = CI
+        if method == 'minimal_width':
+            sorted_values = np.sort(self.values, axis=0)
+            n = len(sorted_values)
+            best_interval = np.zeros((2, sorted_values.shape[1]))           
+            for param_idx, param in zip(range(sorted_values.shape[1]),['gamma', 'mu', 'sigma']):
+                param_min_width = np.inf
+                param_best_interval = (None, None)
+                
+                for i in range(n):
+                    j = int(np.floor((1 - alpha) * n)) + i
+                    if j >= n:
+                        break
+                    width = sorted_values[j, param_idx] - sorted_values[i, param_idx]
+                    if width < param_min_width:
+                        param_min_width = width
+                        param_best_interval = (sorted_values[i, param_idx], sorted_values[j, param_idx])
+                
+                self.statistics[param+'_CI'] = param_best_interval
+    
+    def plot(self, param='gamma', show_CI=True, show_true=True, filename=None):
+        r"""
+        Plot the ML estimators and confidence intervals for the GEV parameters.
+
+        Notes
+        -----
+        This function generates a plot showing the Maximum Likelihood estimators for the Generalized Extreme Value (GEV) parameters 
+        (gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter
+
+        The plot is saved as a PNG image if the `save` parameter is set to True.
+
+        Parameters
+        ----------
+        :param param: str, optional
+            GEV parameter to plot (default is 'gamma').
+        :param show_CI: bool, optional
+            Flag indicating whether to display confidence intervals (default is True).
+        :param show: bool, optional
+            Flag indicating whether to display the plot.
+        :param save: bool, optional
+            Flag indicating whether to save the plot as a PNG image (default is False).
+        :param filename: str, optional
+            Name of the PNG file to save the plot (default is None).
+
+        Example
+        -------
+        >>> estimator = ML_estimators(timeseries_data)
+        >>> estimator.get_ML_estimation()
+        >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
+        >>> estimator.plot(show_CI=True, show_true=True, save=True, filename='PWM_estimation.png')
+
+        Returns
+        -------
+        None
+            The plot is displayed in the console and saved as a PNG image if the `save` parameter is set to True.
+        """
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        ax.set_title(f'ML Estimation for {param}')
+        ax.set_xlabel('Estimation for '+param)
+        ax.set_ylabel('Frequency')
+        idx = ['gamma', 'mu', 'sigma'].index(param)
+        ax.hist(self.values.T[idx], bins=20, color='skyblue', edgecolor='black', alpha=0.7,label='Estimation')
+        if show_CI:
+            CI = self.statistics[param+'_CI']
+            ax.axvline(CI[0], color='red', linestyle='dashed', linewidth=2, label='CI lower bound')
+            ax.axvline(CI[1], color='red', linestyle='dashed', linewidth=2, label='CI upper bound') 
+        plt.legend()
+        if filename:
+            plt.savefig(filename)
+        if show_true:
+            plt.show()
 
 class Frechet_ML_estimators:
     r"""
@@ -881,9 +1001,14 @@ class Frechet_ML_estimators:
     def __init__(self, TimeSeries):
         # TimeSeries object needs high order statistics
         if TimeSeries.high_order_stats == []:
-            raise ValueError('Caluclate high order statistics first!')
+            if TimeSeries.blockmaxima != []:
+                TimeSeries.get_HOS(orderstats = 1, block_size=TimeSeries.block_size, stride=TimeSeries.stride)
+                self.high_order_stats = TimeSeries.high_order_stats
+            else:
+                raise ValueError('Caluclate high order statistics or block maxima first!')
+        else:
+            self.high_order_stats = TimeSeries.high_order_stats
         self.TimeSeries = TimeSeries
-        self.high_order_stats = TimeSeries.high_order_stats
         self.values = []
         self.statistics = {}
     
@@ -939,7 +1064,7 @@ class Frechet_ML_estimators:
             
             inits = [1/initParams[i][0], initParams[i][2]]
             #its = initParams[i][::2]
-            results = misc.minimize(cost, inits, method='Nelder-Mead', bounds=((0, np.inf),(0, np.inf)))
+            results = misc.minimize(cost, inits, method='Nelder-Mead', bounds=((1e-6, np.inf),(1e-5, np.inf)))
             # results = misc.minimize(cost, inits, method='COBYLA', bounds=((0, np.inf),(0, np.inf)))
             #constr1 = scipy.optimize.LinearConstraint(np.array([[1,0]]), lb=0, keep_feasible=False)
             #constr2 = scipy.optimize.LinearConstraint(np.array([[0,1]]), lb=0, keep_feasible=False)
@@ -991,7 +1116,123 @@ class Frechet_ML_estimators:
 
         else:
             warnings.warn('No variance can be computed on only one element!')
+    
+    def get_CIs(self, alpha=0.05, method = 'symmetric'):
+        r"""
+        Compute confidence intervals (CIs) for the Frechet parameters using different methods.
+
+        Notes
+        -----
+        This function calculates confidence intervals (CIs) for the Frechet parameters (alpha and sigma) 
+        estimated from Maximum Likelihood Estimators (MLE). The user can choose between two methods for computing the confidence intervals:
+        
+        - **'symmetric'**: This method uses the quantiles of the distribution of parameter estimates to compute symmetric confidence intervals.
+        - **'minimal_width'**: This method finds the interval with minimal width that contains the desired proportion (1 - alpha) of the sorted parameter estimates.
+
+        For each block maxima series, confidence intervals for the shape (alpha) and scale (sigma) parameters are calculated. The results 
+        are stored in the `self.statistics` dictionary, with keys 'gamma_CI', 'mu_CI', and 'sigma_CI' corresponding to the computed confidence intervals.
+
+        Do not get confused with alpha being the significance level as well as the shape parameter of the Frechet distribution.
+
+        Parameters
+        ----------
+        :param alpha: float, optional
+            Significance level for the confidence intervals (default is 0.05, for a 95% CI).
+        :param method: str, optional
+            Method for computing the confidence intervals. Options are:
+            - 'symmetric': Uses quantiles to compute symmetric CIs (default).
+            - 'minimal_width': Computes the minimal width interval containing (1 - alpha) of the estimates.
             
+        Example
+        -------
+        >>> estimator = ML_stimator(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
+        >>> print(estimator.statistics)
+
+
+        Returns
+        -------
+        None
+            The results are stored in `self.statistics`, which contains the confidence intervals for each GEV parameter.
+         """
+
+        if method == 'symmetric':
+            lower = np.quantile(self.values, alpha/2, axis=0)
+            upper = np.quantile(self.values, (1-alpha/2), axis=0)
+            CIs = np.stack([lower, upper], axis=1)
+            for param, CI in zip(['alpha', 'sigma'], CIs):
+                self.statistics[param+'_CI'] = CI
+        if method == 'minimal_width':
+            sorted_values = np.sort(self.values, axis=0)
+            n = len(sorted_values)
+            best_interval = np.zeros((2, sorted_values.shape[1]))           
+            for param_idx, param in zip(range(sorted_values.shape[1]),['alpha', 'sigma']):
+                param_min_width = np.inf
+                param_best_interval = (None, None)
+                
+                for i in range(n):
+                    j = int(np.floor((1 - alpha) * n)) + i
+                    if j >= n:
+                        break
+                    width = sorted_values[j, param_idx] - sorted_values[i, param_idx]
+                    if width < param_min_width:
+                        param_min_width = width
+                        param_best_interval = (sorted_values[i, param_idx], sorted_values[j, param_idx])
+                
+                self.statistics[param+'_CI'] = param_best_interval
+    
+    def plot(self, param='alpha', show_CI=True, show_true=True, filename=None):
+        r"""
+        Plot the ML estimators and confidence intervals for the GEV parameters.
+
+        Notes
+        -----
+        This function generates a plot showing the Maximum Likelihood estimators for the Generalized Extreme Value (GEV) parameters 
+        (gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter
+
+        The plot is saved as a PNG image if the `save` parameter is set to True.
+
+        Parameters
+        ----------
+        :param param: str, optional
+            GEV parameter to plot (default is 'gamma').
+        :param show_CI: bool, optional
+            Flag indicating whether to display confidence intervals (default is True).
+        :param show: bool, optional
+            Flag indicating whether to display the plot.
+        :param save: bool, optional
+            Flag indicating whether to save the plot as a PNG image (default is False).
+        :param filename: str, optional
+            Name of the PNG file to save the plot (default is None).
+
+        Example
+        -------
+        >>> estimator = PWM_estimators(timeseries_data)
+        >>> estimator.get_PWM_estimation()
+        >>> estimator.get_CIs(alpha=0.05, method='minimal_width')
+        >>> estimator.plot(show_CI=True, show_true=True, save=True, filename='PWM_estimation.png')
+
+        Returns
+        -------
+        None
+            The plot is displayed in the console and saved as a PNG image if the `save` parameter is set to True.
+        """
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        ax.set_title(f'ML Estimation for {param}')
+        ax.set_xlabel('Estimation for '+param)
+        ax.set_ylabel('Frequency')
+        idx = ['alpha', 'sigma'].index(param)
+        ax.hist(self.values.T[idx], bins=20, color='skyblue', edgecolor='black', alpha=0.7,label='Estimation')
+        if show_CI:
+            CI = self.statistics[param+'_CI']
+            ax.axvline(CI[0], color='red', linestyle='dashed', linewidth=2, label='CI lower bound')
+            ax.axvline(CI[1], color='red', linestyle='dashed', linewidth=2, label='CI upper bound') 
+        plt.legend()
+        if filename:
+            plt.savefig(filename)
+        if show_true:
+            plt.show()
 
 class TimeSeries:
     r"""
