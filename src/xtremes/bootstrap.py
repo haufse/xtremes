@@ -468,6 +468,7 @@ class FullBootstrap:
             'std': np.std(self.values,axis=0),
         }
     
+    
     def get_CI(self, alpha=0.05, method='symmetric'):
         r"""
         Compute the confidence interval (CI) for the Maximum Likelihood Estimate (MLE) parameters 
