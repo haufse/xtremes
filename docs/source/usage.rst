@@ -28,3 +28,6 @@ For each module, there will be a tutorial and a subsection in the API reference.
    :caption: Usage Notebooks
 
    notebooks/timeseries.ipynb
+   notebooks/estimations.ipynb
+   notebooks/real_data.ipynb
+   notebooks/bootstrap.ipynb
