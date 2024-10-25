@@ -1427,6 +1427,95 @@ class TimeSeries:
         for series in self.values:
             hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
             self.high_order_stats.append(hos)
+    
+    def plot(self, rep=1, filename=None):
+        r"""
+        Plot the simulated time series data.
+
+        This method generates a plot showing the simulated time series data. The user can choose to display 
+        data from specific repetitions or all repetitions.
+
+        Parameters
+        ----------
+        rep : int or list, optional
+            The repetition number(s) to plot. If 0, all repetitions are plotted. If a list is provided, 
+            only the specified repetitions are plotted. Default is 1.
+        filename : str, optional
+            The name of the PNG file to save the plot. If None, the plot is displayed but not saved. Default is None.
+        """
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        ax.set_title('Simulated Time Series Data')
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Value')
+        
+        if rep == 0:
+            for i, series in enumerate(self.values):
+                ax.plot(series, label=f'Rep {i+1}')
+        elif isinstance(rep, list):
+            for r in rep:
+                ax.plot(self.values[r-1], label=f'Rep {r}')
+        else:
+            ax.plot(self.values[rep-1], label=f'Rep {rep}')
+        
+        plt.legend()
+        if filename:
+            plt.savefig(filename)
+        plt.show()
+    
+    def plot_blockmaxima(self, rep=1, filename=None, plot_type='line'):
+        r"""
+        Plot the extracted block maxima.
+
+        This method generates a plot showing the extracted block maxima from the simulated time series data. 
+        The user can choose to display block maxima from specific repetitions or all repetitions. The plot 
+        can be either a line plot or a histogram.
+
+        Parameters
+        ----------
+        rep : int or list, optional
+            The repetition number(s) to plot. If 0, all repetitions are plotted. If a list is provided, 
+            only the specified repetitions are plotted. Default is 1.
+        filename : str, optional
+            The name of the PNG file to save the plot. If None, the plot is displayed but not saved. Default is None.
+        plot_type : str, optional
+            The type of plot to generate. Options are 'line' for a line plot and 'hist' for a histogram. Default is 'line'.
+        """
+        fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+        
+        if plot_type == 'line':
+            ax.set_title('Block Maxima (Line Plot)')
+            ax.set_xlabel('Block')
+            ax.set_ylabel('Value')
+            
+            if rep == 0:
+                for i, bms in enumerate(self.blockmaxima):
+                    ax.plot(bms, label=f'Rep {i+1}')
+            elif isinstance(rep, list):
+                for r in rep:
+                    ax.plot(self.blockmaxima[r-1], label=f'Rep {r}')
+            else:
+                ax.plot(self.blockmaxima[rep-1], label=f'Rep {rep}')
+            
+            plt.legend()
+        
+        elif plot_type == 'hist':
+            ax.set_title('Block Maxima (Histogram)')
+            ax.set_xlabel('Value')
+            ax.set_ylabel('Frequency')
+            
+            if rep == 0:
+                all_bms = np.concatenate(self.blockmaxima)
+                ax.hist(all_bms, bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+            elif isinstance(rep, list):
+                for r in rep:
+                    ax.hist(self.blockmaxima[r-1], bins=20, alpha=0.7, label=f'Rep {r}')
+                plt.legend()
+            else:
+                ax.hist(self.blockmaxima[rep-1], bins=20, color='skyblue', edgecolor='black', alpha=0.7)
+        
+        if filename:
+            plt.savefig(filename)
+        plt.show()
 
 
 ############################### HIGHORDERDSTATS CLASS ###############################
