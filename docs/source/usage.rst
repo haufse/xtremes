@@ -21,3 +21,8 @@ Maximum Likelihood estimations. ``xtremes.Bootstrap`` provides a suitable Bootst
 for block maxima.
 
 For each module, there will be a tutorial and a subsection in the API reference.
+
+
+Using the TimeSeries and GEV estimators
+---------------------------------------
+.. nbsphinx:: ../notebooks/timeseries.ipynb

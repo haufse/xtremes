@@ -7,7 +7,7 @@ copyright = '2024, Erik Haufs'
 author = 'Erik Haufs'
 
 release = '0.1'
-version = '0.1.8'
+version = '0.1.9'
 
 # -- General configuration
 
@@ -22,6 +22,8 @@ extensions = [
     'nbsphinx',
     'sphinx.ext.mathjax',
 ]
+
+nbsphinx_execute = 'always'
 
 
 bibtex_bibfiles = ['references.bib']
