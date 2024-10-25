@@ -87,6 +87,7 @@ latex_elements = {
     {\large Author: Erik Haufs \par}
     \vfill
     \begin{figure}[!htp]
+    \centering
     \includegraphics[width=0.4\textwidth]{../../docs/source/images/logo4.png}\par
     \caption{Dall-E's interpretation of the Xtremes package}
     \end{figure}
