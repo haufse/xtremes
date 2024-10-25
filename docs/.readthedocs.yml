@@ -1,0 +1,14 @@
+# .readthedocs.yml configuration file
+
+version: 2  # Use version 2 of the Read the Docs config file format
+
+# Sphinx configuration file location
+sphinx:
+  configuration: docs/conf.py  # Adjust the path if your conf.py is elsewhere
+
+# Specify the Python environment
+python:
+  version: 3.8  # Specify your preferred Python version, or adjust as needed
+  install:
+    - requirements: requirements.txt  # Install dependencies from requirements.txt
+
