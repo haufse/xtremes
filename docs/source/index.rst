@@ -17,7 +17,7 @@ how to :ref:`installation` the project.
    :maxdepth: 2
    :caption: Chapters   
 
-   notebooks/timeseries
+   notebooks/timeseries.ipynb
    usage
    higherorderstatistics
    bootstrap

@@ -25,6 +25,8 @@ extensions = [
 
 nbsphinx_execute = 'always'
 
+epub_exclude_files = ['notebooks/*.ipynb']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 bibtex_bibfiles = ['references.bib']
 
