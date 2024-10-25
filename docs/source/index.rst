@@ -14,9 +14,10 @@ how to :ref:`installation` the project.
    This project is under active and heavy development.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Chapters   
 
+   notebooks/timeseries
    usage
    higherorderstatistics
    bootstrap
