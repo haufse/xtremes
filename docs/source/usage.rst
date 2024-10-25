@@ -23,6 +23,8 @@ for block maxima.
 For each module, there will be a tutorial and a subsection in the API reference.
 
 
-Using the TimeSeries and GEV estimators
----------------------------------------
-.. _subsection: notebooks/timeseries.ipynb
+.. toctree::
+   :maxdepth: 1
+   :caption: Usage Notebooks
+
+   notebooks/timeseries.ipynb
