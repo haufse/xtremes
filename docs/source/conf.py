@@ -19,8 +19,11 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx_rtd_size',
     'sphinxcontrib.bibtex'
+    'nbsphinx',
+    'sphinx.ext.mathjax',
 ]
-    
+
+
 bibtex_bibfiles = ['references.bib']
 
 intersphinx_mapping = {
