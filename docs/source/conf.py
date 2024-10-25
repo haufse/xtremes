@@ -18,7 +18,7 @@ extensions = [
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx_rtd_size',
-    'sphinxcontrib.bibtex'
+    'sphinxcontrib.bibtex',
     'nbsphinx',
     'sphinx.ext.mathjax',
 ]
