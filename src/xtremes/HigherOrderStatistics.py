@@ -1461,6 +1461,45 @@ class TimeSeries:
         if filename:
             plt.savefig(filename)
         plt.show()
+
+    def plot_with_blockmaxima(self, rep=1, plotlim=300, filename=None):
+        r"""
+        Plot the simulated time series data along with block maxima.
+
+        This method generates a plot showing the simulated time series data along with the block maxima. 
+        The user can choose to display data from specific repetitions or all repetitions.
+
+        Parameters
+        ----------
+        rep : int, optional
+            The repetition number to plot. Default is 1.
+        plotlim : int, optional
+            The limit for the number of data points to plot. Default is 300.
+        filename : str, optional
+            The name of the PNG file to save the plot. If None, the plot is displayed but not saved. Default is None.
+        """
+        vals = self.values[rep-1]
+        maxima = self.blockmaxima[rep-1]
+        max_idx = np.where(np.in1d(vals, maxima))[0]  # find indices of maxima in timeseries
+
+        fig = plt.figure(figsize=(16, 9))
+        plt.tight_layout()
+        plt.title('Time Series with Block Maxima')
+        plt.plot(vals[:plotlim], label='Time Series')
+        plt.scatter(max_idx[max_idx < plotlim], maxima[max_idx < plotlim], c='r', s=30, label='Block Maxima')
+        
+        for k in range((self.len + self.block_size) // self.block_size):
+            if k < plotlim // self.block_size:
+                plt.plot([self.block_size * k, self.block_size * k], [0, np.ceil(max(vals[:plotlim]))], c='k', lw=0.4)
+        
+        plt.xlabel('Time')
+        plt.ylabel('Value')
+        plt.legend()
+        
+        if filename:
+            plt.savefig(filename)
+        plt.show()
+    
     
     def plot_blockmaxima(self, rep=1, filename=None, plot_type='line'):
         r"""
