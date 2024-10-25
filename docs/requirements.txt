@@ -7,6 +7,6 @@ tqdm
 asyncio
 sphinx-rtd-size
 sphinxcontrib-bibtex
-nbsphinx
+ipykernel
 jupyter
-
+nbsphinx
