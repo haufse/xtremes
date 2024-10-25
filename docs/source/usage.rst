@@ -25,5 +25,4 @@ For each module, there will be a tutorial and a subsection in the API reference.
 
 Using the TimeSeries and GEV estimators
 ---------------------------------------
-
-.. _link: notebooks/timeseries.ipynb
+.. _subsection: notebooks/timeseries.ipynb
