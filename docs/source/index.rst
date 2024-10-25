@@ -18,7 +18,6 @@ how to :ref:`installation` the project.
    :caption: Chapters   
 
    usage
-   % notebooks/timeseries.ipynb
    higherorderstatistics
    bootstrap
    miscellaneous
