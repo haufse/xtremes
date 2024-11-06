@@ -902,6 +902,7 @@ class ML_estimators:
                 
                 self.statistics[param+'_CI'] = param_best_interval
     
+
     def plot(self, param='gamma', show_CI=True, show_true=True, filename=None):
         r"""
         Plot the ML estimators and confidence intervals for the GEV parameters.
@@ -953,6 +954,7 @@ class ML_estimators:
             plt.savefig(filename)
         if show_true:
             plt.show()
+    
 
 class Frechet_ML_estimators:
     r"""
@@ -1486,8 +1488,10 @@ class TimeSeries:
         plt.tight_layout()
         plt.title('Time Series with Block Maxima')
         plt.plot(vals[:plotlim], label='Time Series')
-        plt.scatter(max_idx[max_idx < plotlim], maxima[max_idx < plotlim], c='r', s=30, label='Block Maxima')
-        
+        if self.stride == 'DBM':
+            plt.scatter(max_idx[max_idx < plotlim], maxima[max_idx < plotlim], c='r', s=30, label='Block Maxima')
+        if self.stride == 'SBM':  
+            plt.scatter(np.arange(0,plotlim,1)+self.block_size/2, maxima[:plotlim], c='r',s=10, label='sliding maxima')
         for k in range((self.len + self.block_size) // self.block_size):
             if k < plotlim // self.block_size:
                 plt.plot([self.block_size * k, self.block_size * k], [0, np.ceil(max(vals[:plotlim]))], c='k', lw=0.4)

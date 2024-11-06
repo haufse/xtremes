@@ -3,13 +3,13 @@ from collections import defaultdict
 import xtremes.HigherOrderStatistics as hos
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
-plt.rcParams.update({
-    "text.usetex": True,
-    "font.family": "serif",
-    "font.serif": ["Computer Modern Roman"],
-    "font.size": 16,
-    "figure.figsize": (10, 6),
-})
+# plt.rcParams.update({
+#     # "text.usetex": True,
+#     "font.family": "serif",
+#     "font.serif": ["Computer Modern Roman"],
+#     "font.size": 16,
+#     "figure.figsize": (10, 6),
+# })
 
 def circmax(sample, bs=10, stride='DBM'):
     r"""
@@ -569,5 +569,6 @@ class FullBootstrap:
         plt.legend()
         if output_file:
             plt.savefig(output_file)
+            plt.close()
         if show:
             plt.show()
