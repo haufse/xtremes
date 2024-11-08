@@ -17,12 +17,7 @@ The ``FullBootstrap`` Class
     :undoc-members:
     :show-inheritance:
 
-The ``ML_Estimator`` Class
---------------------------
-.. autoclass:: xtremes.bootstrap.ML_Estimator
-    :members:
-    :undoc-members:
-    :show-inheritance:
+
 
 Functions
 ---------
@@ -43,6 +38,10 @@ The ``aggregate_boot`` Function
 -------------------------------
 .. autofunction:: xtremes.bootstrap.aggregate_boot
 
+The ``bootstrap_worker`` Function
+-------------------------------
+.. autofunction:: xtremes.bootstrap.bootstrap_worker
+
 Examples
 --------
 
@@ -61,19 +60,9 @@ Here are some examples of how to use the `xtremes.bootstrap` module:
         print("Mean of bootstrap estimates:", bootstrap.statistics['mean'])
         print("Standard deviation of bootstrap estimates:", bootstrap.statistics['std'])
 
-2. **ML_Estimator Class**:
 
-    .. code-block:: python
 
-        import numpy as np
-        from xtremes.bootstrap import ML_Estimator
-
-        aggregated_data = np.array([[5, 2], [10, 3], [15, 4]])
-        estimator = ML_Estimator(aggregated_data)
-        frechet_params = estimator.maximize_frechet()
-        print("Optimized Fréchet parameters:", frechet_params)
-
-3. **circmax Function**:
+2. **circmax Function**:
 
     .. code-block:: python
 
@@ -87,7 +76,7 @@ Here are some examples of how to use the `xtremes.bootstrap` module:
         block_maxima = circmax(sample, bs=3, stride='SBM')
         print("Block Maxima (SBM):", block_maxima)
 
-4. **uniquening Function**:
+3. **uniquening Function**:
 
     .. code-block:: python
 
@@ -98,7 +87,7 @@ Here are some examples of how to use the `xtremes.bootstrap` module:
         unique_values = uniquening(circmaxs)
         print("Unique values and counts:", unique_values)
 
-5. **Bootstrap Function**:
+4. **Bootstrap Function**:
 
     .. code-block:: python
 
@@ -108,7 +97,7 @@ Here are some examples of how to use the `xtremes.bootstrap` module:
         bootstrap_sample = Bootstrap(sample)
         print("Bootstrap sample:", bootstrap_sample)
 
-6. **aggregate_boot Function**:
+5. **aggregate_boot Function**:
 
     .. code-block:: python
 

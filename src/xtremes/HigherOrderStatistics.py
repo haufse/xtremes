@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 # log-likelihood
 
-def log_likelihood(high_order_statistics, gamma=0, mu=0, sigma=1, r=None):
+def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     r"""
     Calculate the GEV log likelihood based on the two highest order statistics in three different ways.
 
@@ -52,7 +52,6 @@ def log_likelihood(high_order_statistics, gamma=0, mu=0, sigma=1, r=None):
     >>> log_likelihood(hos, gamma=0.5, mu=0, sigma=2, r=2)
     -7.494890426732856
     """
-    
     if r == None:
         r = high_order_statistics.shape[1]
     
@@ -1936,8 +1935,10 @@ class ML_estimators_data:
                 cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
                 return cst
             # for now: hard-coded init params [1,1,1], as it should not matter too much
-            results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
             # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            results = misc.minimize(cost, [1,1,1], method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+        
             gamma, mu, sigma = results.x
             self.values = np.array([gamma, mu, sigma])
 
@@ -1948,7 +1949,7 @@ class ML_estimators_data:
                 return cst
             # for now: hard-coded init params [1,1], as it should not matter too much
             # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((0,np.inf),(0,np.inf)))
+            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
     
             alpha, sigma = results.x
             
@@ -1956,21 +1957,40 @@ class ML_estimators_data:
         else:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
 
-    def get_statistics(self, gamma_true):
-        r"""
-        Placeholder for computing statistics for the ML estimators.
+    def bootstrap(self, n_boot=500, set_seed=True, FrechetOrGEV = 'GEV', r=None):
+        bst_samp = []
+        for _ in range(n_boot):
+            if set_seed:
+                np.random.seed(_)
+            l = len(self.high_order_stats)
+            idx = np.random.choice(np.arange(l), size=l,replace=True)
+            new_data = np.array([self.high_order_stats[i] for i in idx])
+            if FrechetOrGEV == 'GEV':
+                def cost(params):
+                    gamma, mu, sigma = params
+                    cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
+                    return cst
+                # for now: hard-coded init params [1,1,1], as it should not matter too much
+                results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+                # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+                gamma, mu, sigma = results.x
+                bst_samp.append(np.array([gamma, mu, sigma]))
 
-        This method is intended to compute additional statistics, such as bootstrapped confidence intervals 
-        or other metrics for the ML estimators. It is not yet implemented.
+            elif FrechetOrGEV == 'Frechet':
+                def cost(params):
+                    alpha, sigma = params
+                    cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
+                    return cst
+                # for now: hard-coded init params [1,1], as it should not matter too much
+                # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
+                results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((0,np.inf),(0,np.inf)))
+        
+                alpha, sigma = results.x
+                
+                bst_samp.append(np.array([alpha, sigma]))
+            else:
+                raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
+        
+        self.bootstrap_sample = np.array(bst_samp)
 
-        Parameters
-        ----------
-        gamma_true : float
-            The true value of the shape parameter (gamma) to use in statistical computations.
 
-        Returns
-        -------
-        None
-        """
-        print('In near future, here will be bootstraps for the estimators to be found....')
-        pass

@@ -1,6 +1,7 @@
 import numpy as np
 from collections import defaultdict
 import xtremes.HigherOrderStatistics as hos
+import xtremes.miscellaneous as misc
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 # plt.rcParams.update({
@@ -71,7 +72,7 @@ def circmax(sample, bs=10, stride='DBM'):
     else:
         raise ValueError('No valid stride specified.')
 
-def uniquening(circmaxs):
+def uniquening(circmaxs, stride = 'DBM'):
     r"""
     Identify unique values and their counts from a list of arrays.
 
@@ -88,8 +89,10 @@ def uniquening(circmaxs):
         - The second array contains the counts of each unique value.
 
     """
-
-    return [np.unique(x,return_counts=True) for x in circmaxs]
+    if stride == 'DBM':
+        return circmaxs
+    if stride == 'SBM':
+        return [np.unique(x,return_counts=True) for x in np.unique(circmaxs)]
 
 def Bootstrap(xx):
     r"""
@@ -123,11 +126,10 @@ def Bootstrap(xx):
     inds = np.random.choice(np.arange(l), size=l, replace=True)
     
     # Create the bootstrapped sample list
-    boot_samp = [xx[i] for i in inds]  # Adjust indexing since Python is 0-based
-    
+    boot_samp = [xx[i] for i in inds] 
     return boot_samp
 
-def aggregate_boot(boot_samp):
+def aggregate_boot(boot_samp, stride='DBM'):
     r"""
     Aggregate counts of unique values from a list of tuples containing values and their counts.
 
@@ -149,203 +151,86 @@ def aggregate_boot(boot_samp):
            [2, 3],
            [3, 3]])
 """
+    if stride == 'DBM':
+        return np.array(np.unique(boot_samp, return_counts=True))
     
-    # Dictionary to store the counts
-    value_counts = defaultdict(int)
+    if stride == 'SBM':
+        # Dictionary to store the counts
+        value_counts = defaultdict(int)
 
-    # Summing the occurrences
-    for values, counts in boot_samp:
-        for value, count in zip(values, counts):
-            value_counts[value] += count
+        # Summing the occurrences
+        for values, counts in boot_samp:
+            for value, count in zip(values, counts):
+                value_counts[value] += count
 
-    # Convert the result into a sorted 2D NumPy array
-    sorted_values = sorted(value_counts.items())
-    result_array = np.array(sorted_values)
-    
-    return result_array
+        # Convert the result into a sorted 2D NumPy array
+        sorted_values = sorted(value_counts.items())
+        result_array = np.array(sorted_values)
+        
+        return result_array
 
-class ML_Estimator:
+
+# auxiliary function to parallelize the bootstrap
+def bootstrap_worker(args):
     r"""
-    A class to perform Maximum Likelihood Estimation (MLE) for the Fréchet and Generalized Extreme Value (GEV) distributions on Bootstrap sample.
+    Auxiliary function to perform a single bootstrap resampling and MLE estimation.
 
-    This class takes aggregated data where each value has a corresponding count and provides methods to compute
-    the MLE of parameters for the 2-parameter Fréchet distribution and the 3-parameter GEV distribution.
+    This function is designed to be used in parallelized bootstrap procedures. It takes arguments for a single 
+    bootstrap iteration, performs resampling on the given block maxima, estimates MLE parameters using the 
+    specified distribution type, and returns the results.
 
     Parameters
     ----------
-    aggregated_data : numpy.ndarray
-        A 2D array where the first column contains unique values and the second column contains their respective counts.
+    args : tuple
+        A tuple containing the following elements:
+        - idx (int): The iteration index, used for setting the random seed if `set_seeds` is True.
+        - set_seeds (bool): Whether to set the random seed for reproducibility.
+        - circmaxs (list or numpy.ndarray): The block maxima dataset to be resampled.
+        - aggregate_boot (callable): A function to aggregate the resampled data.
+        - ML_estimators_data (callable): A function or class to compute MLE parameters on the aggregated data.
+        - dist_type (str): The distribution type for MLE estimation ('Frechet' or 'GEV').
 
-    Attributes
-    ----------
-    data : numpy.ndarray
-        The unique values from the input aggregated data.
-    counts : numpy.ndarray
-        The corresponding counts for the values from the input aggregated data.
-
-    Methods
+    Returns
     -------
-    maximize_frechet(initial_params=[1, 1])
-        Maximizes the log-likelihood for the Fréchet distribution and returns optimized parameters.
-    maximize_gev(initial_params=[1, 1, 1])
-        Maximizes the log-likelihood for the GEV distribution and returns optimized parameters.
+    numpy.ndarray
+        The MLE parameter estimates for the current bootstrap sample.
+
+    Notes
+    -----
+    - This function is designed to be compatible with `ProcessPoolExecutor` or other parallel processing tools.
+    - The random seed is set per iteration to ensure reproducibility when `set_seeds` is True.
 
     Example
     -------
-    >>> aggregated_data = np.array([[5, 2], [10, 3], [15, 4]])
-    >>> estimator = ML_Estimator(aggregated_data)
-    >>> frechet_params = estimator.maximize_frechet()
-    >>> gev_
+    >>> args = (0, True, circmaxs, aggregate_boot, ML_estimators_data, 'GEV')
+    >>> bootstrap_worker(args)
+    array([param1, param2, param3])  # Example output for GEV distribution
     """
 
-    def __init__(self, aggregated_data):
-        r"""
-        Initialize the ML_Estimator with aggregated data.
+    idx, set_seeds, circmaxs, aggregate_boot, ML_estimators_data, dist_type = args
+    if set_seeds:
+        np.random.seed(idx)
+    # Bootstrap sample
+    boot = Bootstrap(circmaxs)
+    aggregated_data = aggregate_boot(boot)
+    # Create an ML_Estimator for the current bootstrap sample
+    d = np.array([np.repeat(aggregated_data[0], aggregated_data[1].astype(int))]).T
+    estimator = ML_estimators_data(d)
+    # estimator = ML_estimators_data((aggregated_data[0], aggregated_data[1].astype(int)))  
+    estimator.get_ML_estimation(FrechetOrGEV=dist_type)
+    return estimator.values
 
-        Parameters
-        ----------
-        aggregated_data : numpy.ndarray
-            A 2D array where the first column contains the unique values and the second column contains the counts.
-        """
-        self.data = aggregated_data[:, 0]  # Values
-        self.counts = aggregated_data[:, 1]  # Counts
-    
-    def _frechet_log_likelihood(self, params):
-        r"""
-        Compute the log-likelihood for the 2-parametric Fréchet distribution.
 
-        Parameters
-        ----------
-        params : list or tuple
-            A list containing [alpha, sigma], the shape and scale parameters of the Fréchet distribution.
-
-        Returns
-        -------
-        float
-            The negative log-likelihood value for the given parameters.
-
-        Notes
-        -----
-        This method computes the log-likelihood for the Fréchet distribution and is used for internal optimization.
-        """
-        alpha, sigma = params
-        if alpha <= 0 or sigma <= 0:
-            return np.inf  # Invalid parameter values
-        
-        values = self.data
-        counts = self.counts
-        
-        # Fréchet log-likelihood
-        log_likelihood = (
-            np.dot(counts, (np.log(alpha/sigma) - (alpha + 1) * np.log(values / sigma) - (values / sigma) ** (-alpha)))
-        )
-        
-        # We negate the log-likelihood for minimization
-        return -log_likelihood
-    
-    def maximize_frechet(self, initial_params= [1,1]):
-        r"""
-        Maximize the log-likelihood for the Fréchet distribution.
-
-        Parameters
-        ----------
-        initial_params : list, optional
-            Initial guess for the [alpha, sigma] parameters. Default is [1, 1].
-
-        Returns
-        -------
-        numpy.ndarray
-            The optimized [alpha, sigma] parameters.
-
-        Notes
-        -----
-        This method uses the `scipy.optimize.minimize` function with the L-BFGS-B algorithm to maximize the 
-        log-likelihood of the Fréchet distribution.
-        """
-        result = minimize(self._frechet_log_likelihood, initial_params, method='L-BFGS-B', bounds=[(1e-5, None), (1e-5, None)])
-        return result.x  # Optimized parameters
-    
-    def _gev_log_likelihood(self, params):
-        r"""
-        Compute the log-likelihood for the 3-parametric Generalized Extreme Value (GEV) distribution.
-
-        Parameters
-        ----------
-        params : list or tuple
-            A list containing [mu, sigma, xi], the location, scale, and shape parameters of the GEV distribution.
-
-        Returns
-        -------
-        float
-            The negative log-likelihood value for the given parameters.
-
-        Notes
-        -----
-        - If the shape parameter xi is close to zero, the distribution is treated as the Gumbel distribution.
-        - This method computes the log-likelihood for the GEV distribution and is used for internal optimization.
-        """
-        mu, sigma, xi = params
-        if sigma <= 0:
-            return np.inf  # Invalid parameter values
-
-        values = self.data
-        counts = self.counts
-
-        # Calculate the scaled values
-        z = (values - mu) / sigma
-
-        # Check if xi is close to zero (Gumbel case)
-        if np.abs(xi) < 1e-3:
-            # Gumbel distribution log-likelihood
-            t = np.exp(-z)
-            log_likelihood = (
-                np.dot(counts, -(np.log(sigma) + z + t))
-            )
-        else:
-
-            t = 1 + xi * z
-
-            if np.any(t <= 0):
-                return np.inf  # Invalid values lead to complex numbers
-
-            # GEV log-likelihood
-            log_likelihood = (
-                np.dot(counts, -(np.log(sigma) + ((1 + 1/xi) * np.log(t)) + t ** (-1/xi)))
-            )
-
-        # We negate the log-likelihood for minimization
-        return -log_likelihood
-    
-    def maximize_gev(self, initial_params=[1,1,1]):
-        r"""
-        Maximize the log-likelihood for the Generalized Extreme Value (GEV) distribution.
-
-        Parameters
-        ----------
-        initial_params : list, optional
-            Initial guess for the [mu, sigma, xi] parameters. Default is [1, 1, 1].
-
-        Returns
-        -------
-        numpy.ndarray
-            The optimized [mu, sigma, xi] parameters.
-
-        Notes
-        -----
-        This method uses the `scipy.optimize.minimize` function with the L-BFGS-B algorithm to maximize the 
-        log-likelihood of the GEV distribution.
-        """
-        result = minimize(self._gev_log_likelihood, initial_params, method='L-BFGS-B', bounds=[(None, None), (1e-5, None), (None, None)])
-        return result.x  # Optimized parameters
 
 
 class FullBootstrap:
     r"""
     A class to perform bootstrapping of Maximum Likelihood Estimates (MLE) for Fréchet or GEV distributions.
 
-    This class takes an initial sample and applies a bootstrap resampling procedure to estimate the variability of
-    the MLE parameters for the specified distribution type (Fréchet or GEV). It uses block maxima extraction methods
-    with disjoint or sliding blocks.
+    This class performs block maxima extraction from an initial sample using either disjoint or sliding blocks.
+    It applies a bootstrap resampling procedure to estimate the variability of the MLE parameters for the specified
+    distribution type (Fréchet or GEV). The bootstrap method is parallelized for efficiency and supports reproducibility
+    through optional seed setting.
 
     Parameters
     ----------
@@ -368,23 +253,28 @@ class FullBootstrap:
     ----------
     circmaxs : list
         The block maxima extracted from the initial sample using the specified block size and stride.
-    values : list
+    data : hos.Data
+        The `hos.Data` object containing the original dataset and its MLE results.
+    MLEvals : numpy.ndarray
+        The MLE estimates from the original dataset before bootstrapping.
+    values : numpy.ndarray
         MLE estimates for each bootstrap sample after running the `run_bootstrap` method.
     statistics : dict
         Dictionary containing summary statistics (mean and standard deviation) of the bootstrap estimates.
 
     Methods
     -------
-    run_bootstrap(num_bootstraps=100)
-        Runs the bootstrap procedure and returns the MLE estimates for each bootstrap sample.
+    run_bootstrap(num_bootstraps=100, set_seeds=False, max_workers=1)
+        Runs the bootstrap procedure in parallel and calculates the MLE estimates for each bootstrap sample.
 
     Example
     -------
     >>> sample = np.random.rand(100)
     >>> bootstrap = FullBootstrap(sample, bs=10, stride='DBM', dist_type='Frechet')
-    >>> bootstrap.run_bootstrap(num_bootstraps=100)
+    >>> bootstrap.run_bootstrap(num_bootstraps=100, set_seeds=True, max_workers=4)
     >>> bootstrap.statistics['mean']  # Mean of bootstrap estimates
     >>> bootstrap.statistics['std']   # Standard deviation of bootstrap estimates
+
     """
 
     def __init__(self, initial_sample, bs=10, stride='DBM', dist_type='Frechet'):
@@ -408,68 +298,66 @@ class FullBootstrap:
         self.dist_type = dist_type
         # Extract block maxima using the predefined `circmax` function
         self.circmaxs = uniquening(circmax(self.initial_sample, bs=self.bs, stride=self.stride))
+        # just for comparison and CIs:
+        self.data = hos.Data(initial_sample)
+        self.data.get_HOS(orderstats = 1, block_size=bs, stride=stride)
+        self.data.get_ML_estimation(FrechetOrGEV='GEV')
+        self.MLEvals = self.data.ML_estimators.values
 
-    def run_bootstrap(self, num_bootstraps=100):
+    def run_bootstrap(self, num_bootstraps=100, set_seeds=False, max_workers=1):
         r"""
-        Run the bootstrap procedure and return the MLE estimates for each bootstrap sample.
+        Run the bootstrap resampling procedure in parallel.
+
+        This method resamples the block maxima dataset, estimates the MLE parameters for each bootstrap sample,
+        and computes summary statistics (mean and standard deviation) of the bootstrap estimates. The computation
+        is parallelized using `ProcessPoolExecutor` with an adjustable number of worker processes.
 
         Parameters
         ----------
         num_bootstraps : int, optional
-            Number of bootstrap iterations to run. Default is 100.
+            Number of bootstrap samples to generate. Default is 100.
+        set_seeds : bool, optional
+            If True, sets the random seed for reproducibility in each bootstrap iteration. Default is False.
+        max_workers : int, optional
+            Maximum number of worker processes to use for parallelization. Default is 1 (no parallelism).
+            Set to `None` to use all available CPU cores.
 
         Returns
         -------
-        list
-            MLE estimates for each bootstrap sample.
-
-        Notes
-        -----
-        The procedure uses bootstrapping to estimate the variability of the MLE parameters based on resampled
-        block maxima. The MLE parameters are estimated for either the Fréchet or GEV distribution depending
-        on the specified distribution type during initialization.
-
-        After running this method, the `values` and `statistics` attributes will contain the results of the bootstrap.
+        None
+            Results are stored in the `values` attribute and summary statistics in the `statistics` attribute.
 
         Example
         -------
-        >>> sample = np.random.rand(100)
-        >>> bootstrap = FullBootstrap(sample, bs=10, stride='DBM', dist_type='Frechet')
-        >>> bootstrap.run_bootstrap(num_bootstraps=100)
-        >>> bootstrap.statistics['mean']  # Mean of bootstrap estimates
-        >>> bootstrap.statistics['std']   # Standard deviation of bootstrap estimates
+        >>> bootstrap.run_bootstrap(num_bootstraps=500, set_seeds=True, max_workers=4)
+        >>> bootstrap.statistics['mean']  # Access the mean of bootstrap estimates
+        >>> bootstrap.statistics['std']   # Access the standard deviation of bootstrap estimates
         """
-        estimates = []
-        
-        for _ in range(num_bootstraps):
 
-            # Bootstrap sample
-            boot = Bootstrap(self.circmaxs)
-            aggregated_data = aggregate_boot(boot)
-            # Create an ML_Estimator for the current bootstrap sample
-            estimator = ML_Estimator(aggregated_data)
-            
-            # Compute MLE based on distribution type (Frechet or GEV)
-            if self.dist_type == 'Frechet':
-                estimate = estimator.maximize_frechet()
-            elif self.dist_type == 'GEV':
-                estimate = estimator.maximize_gev()
-            else:
-                raise ValueError('Invalid distribution type specified.')
-            
-            estimates.append(estimate)
+        # Prepare arguments for the worker function
+        args = [
+            (idx, set_seeds, self.circmaxs, aggregate_boot, hos.ML_estimators_data, self.dist_type)
+            for idx in range(num_bootstraps)
+        ]
         
-        if self.dist_type == 'GEV':
-            self.values = np.array(estimates)[:, [2, 0, 1]]
-        else:
-            self.values = np.array(estimates)
+        estimates = []
+        from tqdm import tqdm
+        from concurrent.futures import ProcessPoolExecutor
+        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+            # Use tqdm for progress bar
+            results = list(tqdm(executor.map(bootstrap_worker, args), total=num_bootstraps))
+        
+        # Collect results
+        estimates.extend(results)
+        self.values = np.array(estimates)
         self.statistics = {
             'mean': np.mean(self.values,axis=0),
             'std': np.std(self.values,axis=0),
         }
+
+   
     
-    
-    def get_CI(self, alpha=0.05, method='symmetric'):
+    def get_CI(self, alpha=0.05, method='bootstrap'):
         r"""
         Compute the confidence interval (CI) for the Maximum Likelihood Estimate (MLE) parameters 
         based on bootstrap samples.
@@ -508,6 +396,13 @@ class FullBootstrap:
         (1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
         bootstrap distribution is skewed or not symmetric.
         """
+        if method == 'bootstrap':
+            # the standard CI reported when performing a bootstrap
+            l = np.quantile(self.values, alpha/2, axis=0)
+            u = np.quantile(self.values, (1-alpha/2), axis=0)
+            lower = 2 * self.MLEvals - u
+            upper = 2 * self.MLEvals - l
+
 
         if method == 'symmetric':
             lower = np.quantile(self.values, alpha/2, axis=0)
