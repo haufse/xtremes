@@ -119,7 +119,6 @@ def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
 
     if r == None or r>high_order_statistics.shape[1]:
         r = high_order_statistics.shape[1]
-
     unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
     sigma = np.abs(sigma)
     unique_hos = unique_hos.T 
@@ -135,7 +134,7 @@ def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
         f = lambda x: np.log(x[mask]) 
         out[mask] = r * np.log(alpha) + r * alpha * np.log(sigma) - (alpha+1)*np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0) - (unique_hos[-r][mask]/sigma)**(-alpha)
         # out[mask] = - r * np.log(alpha) + r * 1/alpha * np.log(sigma) - (1/alpha+1)*np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0) - (unique_hos[-r][mask]/sigma)**(-1/alpha)
-        out[np.invert(mask)] = -np.inf # ln(0)
+        out[np.invert(mask)] = - 1e6 # np.inf # ln(0)
     joint_ll = np.dot(out, counts)
     
     return joint_ll
@@ -1831,7 +1830,7 @@ class Data:
         None
             The ML estimators are stored in the `ML_estimators` attribute.
         """
-        if self.high_order_stats == []:
+        if np.array(self.high_order_stats).shape == (0,):
             # potentially use parameters optained by getting blockmaxima
             self.get_HOS(orderstats=1, block_size=self.block_size, stride=self.stride)
         self.ML_estimators = ML_estimators_data(self.high_order_stats)
@@ -1943,15 +1942,25 @@ class ML_estimators_data:
             self.values = np.array([gamma, mu, sigma])
 
         elif FrechetOrGEV == 'Frechet':
-            def cost(params):
-                alpha, sigma = params
-                cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
-                return cst
-            # for now: hard-coded init params [1,1], as it should not matter too much
-            # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
-    
-            alpha, sigma = results.x
+            # alternative: use Lemma 3.1 for MLE computation if r=2
+            if r==2: 
+                sec, mxm = self.high_order_stats.T[0], self.high_order_stats.T[1]
+                k = len(mxm)
+                mask = sec > 0
+                def Psi(a):
+                    return 2/a + 2 * np.mean(sec[mask]**(-a))**(-1)*np.mean(sec[mask]**(-a)*np.log(sec[mask])) - np.mean(np.log(sec[mask]*mxm[mask]))
+                from scipy.optimize import root_scalar
+                alpha = root_scalar(Psi, bracket=[1e-5, 100]).root
+                sigma = 2**(1/alpha)*np.mean(sec[mask]**(-alpha))**(-1/alpha)
+            else:
+                def cost(params):
+                    alpha, sigma = params
+                    cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
+                    return cst
+                # for now: hard-coded init params [1,1], as it should not matter too much
+                # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
+                results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf)  ,(1e-5,np.inf)))
+                alpha, sigma = results.x
             
             self.values = np.array([alpha, sigma])
         else:
