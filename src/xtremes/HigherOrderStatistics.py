@@ -1900,7 +1900,7 @@ class ML_estimators_data:
     def __len__(self):
         return len(self.values)
 
-    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None):
+    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None, initParams='auto'):
         r"""
         Perform Maximum Likelihood (ML) estimation for the GEV or Frechet distribution.
 
@@ -1936,9 +1936,24 @@ class ML_estimators_data:
             # for now: hard-coded init params [1,1,1], as it should not matter too much
             #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
             # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, [1,1,1], method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
-        
-            gamma, mu, sigma = results.x
+            ## deprecated:
+            # if initParams=='auto':
+            #     inits = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
+            #     results = misc.minimize(cost, inits, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+            # else:
+            #     results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+            if initParams=='auto':
+                initParams = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
+            results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+            if results.success == False:
+                results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
+            if results.success == False:
+                results = misc.minimize(cost, initParams, method='COBYLA', bounds=[(None, None), (None, None), (1e-5, None)])
+
+            if results.success == True:
+                gamma, mu, sigma = results.x
+            else:
+                raise ValueError('Optimization did not converge')
             self.values = np.array([gamma, mu, sigma])
 
         elif FrechetOrGEV == 'Frechet':
@@ -1966,7 +1981,7 @@ class ML_estimators_data:
         else:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
 
-    def bootstrap(self, n_boot=500, set_seed=True, FrechetOrGEV = 'GEV', r=None):
+    def bootstrap(self, n_boot=500, set_seed=True, FrechetOrGEV = 'GEV', r=None, initParams='auto'):
         bst_samp = []
         for _ in range(n_boot):
             if set_seed:
@@ -1977,12 +1992,27 @@ class ML_estimators_data:
             if FrechetOrGEV == 'GEV':
                 def cost(params):
                     gamma, mu, sigma = params
-                    cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
+                    cst = - log_likelihood(new_data,#self.high_order_stats, 
+                    gamma=gamma, mu=mu, sigma=sigma, r=r)
                     return cst
-                # for now: hard-coded init params [1,1,1], as it should not matter too much
-                results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+                    
+                if initParams == 'auto':
+                    initParams = misc.PWM2GEV(*misc.PWM_estimation(new_data[:,-1]))
+
+                results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+                
+                if results.success == False:
+                    results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
+                if results.success == False:
+                    results = misc.minimize(cost, initParams, method='COBYLA', bounds=[(None, None), (None, None), (1e-5, None)])
+                if results.success == True:
+                    gamma, mu, sigma = results.x
+                else:
+                    raise ValueError('Optimization did not converge')
+                #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((None,None),(None,None),(1e-5,None)))
+
                 # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
-                gamma, mu, sigma = results.x
+                # gamma, mu, sigma = results.x
                 bst_samp.append(np.array([gamma, mu, sigma]))
 
             elif FrechetOrGEV == 'Frechet':
