@@ -69,6 +69,8 @@ latex_elements = {
     \setlistdepth{99}
 	% Force the use of Computer Modern
     \usepackage{mathptmx} % This package changes fonts, so we need to reset them back
+    \usepackage{fontspec}
+    \setmainfont{Times New Roman}
     \renewcommand{\rmdefault}{cmr} % Roman font to Computer Modern
     \renewcommand{\sfdefault}{cmss} % Sans-serif font to Computer Modern Sans
     \renewcommand{\ttdefault}{cmtt} % Typewriter font to Computer Modern Typewriter
@@ -87,7 +89,7 @@ latex_elements = {
     'maketitle': r'''
     \begin{titlepage}
     \centering
-    {\Huge \bfseries Xtremes Documentation \par}
+    {\Huge \bfseries \texttt{xtremes} Documentation \par}
     \vspace{1cm}
     {\large Version 0.1.0 \par}
     \vspace{1.5cm}
