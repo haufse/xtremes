@@ -46,7 +46,9 @@ sphinx_rtd_size_width = "90%"
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
 
-# -- Options for LaTeX/PDF output
+
+# -- Options for LaTeX/PDF output ---------------------------------------------
+latex_engine = 'lualatex'
 
 # Ensure that sections in the toctree appear as separate chapters
 latex_documents = [
@@ -68,12 +70,12 @@ latex_elements = {
     \usepackage{enumitem}
     \setlistdepth{99}
 	% Force the use of Computer Modern
-    \usepackage{mathptmx} % This package changes fonts, so we need to reset them back
+    %\usepackage{mathptmx} % This package changes fonts, so we need to reset them back
     \usepackage{fontspec}
     \setmainfont{Times New Roman}
-    \renewcommand{\rmdefault}{cmr} % Roman font to Computer Modern
-    \renewcommand{\sfdefault}{cmss} % Sans-serif font to Computer Modern Sans
-    \renewcommand{\ttdefault}{cmtt} % Typewriter font to Computer Modern Typewriter
+    %\renewcommand{\rmdefault}{cmr} % Roman font to Computer Modern
+    %\renewcommand{\sfdefault}{cmss} % Sans-serif font to Computer Modern Sans
+    %\renewcommand{\ttdefault}{cmtt} % Typewriter font to Computer Modern Typewriter
     \usepackage{amsmath,amsfonts,amssymb} % For math symbols in Computer Modern
     ''',
 
