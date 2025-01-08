@@ -1,6 +1,6 @@
 Reference: topt
 ================================
-This module is specialized in implementing a Top-t based Maximum Likelihood Estimatiors.
+This module is specialized in implementing Top-t based Maximum Likelihood Estimators.
 
 Overview
 --------

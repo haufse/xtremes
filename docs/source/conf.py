@@ -93,7 +93,7 @@ latex_elements = {
     \centering
     {\Huge \bfseries \texttt{xtremes} Documentation \par}
     \vspace{1cm}
-    {\large Version 0.1.0 \par}
+    {\large Version 0.3.0 \par}
     \vspace{1.5cm}
     {\large Author: Erik Haufs \par}
     \vfill
