@@ -1,6 +1,6 @@
 Reference: topt
 ================================
-This module is specialized in analyzing the influence of higher order statistics for Maximum Likelihood estimations. 
+This module is specialized in implementing a Top-t based Maximum Likelihood Estimatiors.
 
 Overview
 --------
