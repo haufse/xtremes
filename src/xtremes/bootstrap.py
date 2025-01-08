@@ -1,6 +1,6 @@
 import numpy as np
 from collections import defaultdict
-import xtremes.HigherOrderStatistics as hos
+import xtremes.topt as hos
 import xtremes.miscellaneous as misc
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
