@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from xtremes.bootstrap import circmax, uniquening, Bootstrap, aggregate_boot, ML_Estimator, FullBootstrap
+from xtremes.bootstrap import circmax, uniquening, Bootstrap, aggregate_boot, FullBootstrap, #ML_Estimator, ##deprecated
 
 # Test circmax function
 def test_circmax_dbm():
@@ -44,21 +44,21 @@ def test_aggregate_boot():
     expected = np.array([[1, 1], [2, 3], [3, 3]])
     assert np.array_equal(result, expected), "Aggregate boot result is incorrect"
 
+# deprecated:
+# # Test ML_Estimator class
+# def test_ML_Estimator_frechet():
+#     data = np.array([[5, 2], [10, 3], [15, 4]])
+#     estimator = ML_Estimator(data)
+#     params = estimator.maximize_frechet()
+#     assert len(params) == 2, "Frechet estimator should return two parameters"
+#     assert params[0] > 0 and params[1] > 0, "Frechet parameters should be positive"
 
-# Test ML_Estimator class
-def test_ML_Estimator_frechet():
-    data = np.array([[5, 2], [10, 3], [15, 4]])
-    estimator = ML_Estimator(data)
-    params = estimator.maximize_frechet()
-    assert len(params) == 2, "Frechet estimator should return two parameters"
-    assert params[0] > 0 and params[1] > 0, "Frechet parameters should be positive"
-
-def test_ML_Estimator_gev():
-    data = np.array([[5, 2], [10, 3], [15, 4]])
-    estimator = ML_Estimator(data)
-    params = estimator.maximize_gev()
-    assert len(params) == 3, "GEV estimator should return three parameters"
-    assert params[1] > 0, "GEV scale parameter should be positive"
+# def test_ML_Estimator_gev():
+#     data = np.array([[5, 2], [10, 3], [15, 4]])
+#     estimator = ML_Estimator(data)
+#     params = estimator.maximize_gev()
+#     assert len(params) == 3, "GEV estimator should return three parameters"
+#     assert params[1] > 0, "GEV scale parameter should be positive"
 
 
 # Test FullBootstrap class

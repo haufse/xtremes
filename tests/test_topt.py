@@ -62,7 +62,7 @@ def test_run_ML_estimation():
     assert isinstance(result, dict), "The result should be a dictionary"
 
 # classes
-from xtremes.HigherOrderStatistics import TimeSeries, PWM_estimators, ML_estimators, HighOrderStats, Data
+from xtremes.topt import TimeSeries, PWM_estimators, ML_estimators, HighOrderStats, Data
 
 
 # Test TimeSeries class
