@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from xtremes.HigherOrderStatistics import log_likelihood, Frechet_log_likelihood, extract_BM, extract_HOS, automatic_parameter_initialization, run_ML_estimation
+from xtremes.topt import log_likelihood, Frechet_log_likelihood, extract_BM, extract_HOS, automatic_parameter_initialization, run_ML_estimation
 
 # Test log_likelihood function
 def test_log_likelihood_basic():

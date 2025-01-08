@@ -70,7 +70,7 @@ def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     unique_hos = (unique_hos.T - mu)/sigma
     out = np.zeros_like(unique_hos[0])
 
-    if np.abs(gamma) < 0.0001:
+    if np.abs(gamma) < 1e-7:
         out = - r * np.log(sigma) - np.exp(-unique_hos[-r]) - np.sum(unique_hos[-r:,], axis=0)
     else:
         mask = np.bitwise_and((1+gamma*unique_hos[-1]>0), (1+gamma*unique_hos[0]>0)) # ensure all conditions fulfilled
@@ -1934,13 +1934,26 @@ class ML_estimators_data:
                 gamma, mu, sigma = params
                 cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
                 return cst
-            # for now: hard-coded init params [1,1,1], as it should not matter too much
-            #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
-            # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, [1,1,1], method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
-        
-            gamma, mu, sigma = results.x
+            if initParams=='auto':
+                initParams = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
+            results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+            if results.success == False:
+                results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
+            if results.success == False:
+                results = misc.minimize(cost, initParams, method='COBYLA', bounds=[(None, None), (None, None), (1e-5, None)])
+
+            if results.success == True:
+                gamma, mu, sigma = results.x
+            else:
+                raise ValueError('Optimization did not converge')
             self.values = np.array([gamma, mu, sigma])
+            # # for now: hard-coded init params [1,1,1], as it should not matter too much
+            # #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            # # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+            # results = misc.minimize(cost, [1,1,1], method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+        
+            # gamma, mu, sigma = results.x
+            # self.values = np.array([gamma, mu, sigma])
 
         elif FrechetOrGEV == 'Frechet':
             def cost(params):
@@ -1957,7 +1970,7 @@ class ML_estimators_data:
         else:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
 
-    def bootstrap(self, n_boot=500, set_seed=True, FrechetOrGEV = 'GEV', r=None):
+    def bootstrap(self, n_boot=500, FrechetOrGEV = 'GEV', r=None, set_seed=True, seed=None):
         bst_samp = []
         for _ in range(n_boot):
             if set_seed:
@@ -1970,11 +1983,31 @@ class ML_estimators_data:
                     gamma, mu, sigma = params
                     cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
                     return cst
-                # for now: hard-coded init params [1,1,1], as it should not matter too much
-                results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+                    
+                if initParams == 'auto':
+                    initParams = misc.PWM2GEV(*misc.PWM_estimation(new_data[:,-1]))
+
+                results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+                
+                if results.success == False:
+                    results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
+                if results.success == False:
+                    results = misc.minimize(cost, initParams, method='COBYLA', bounds=[(None, None), (None, None), (1e-5, None)])
+                if results.success == True:
+                    gamma, mu, sigma = results.x
+                else:
+                    raise ValueError('Optimization did not converge')
+                #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((None,None),(None,None),(1e-5,None)))
+
                 # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
-                gamma, mu, sigma = results.x
+                # gamma, mu, sigma = results.x
                 bst_samp.append(np.array([gamma, mu, sigma]))
+
+                # # for now: hard-coded init params [1,1,1], as it should not matter too much
+                # results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+                # # results = misc.minimize(cost, [1,1,1], method='COBYLA', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
+                # gamma, mu, sigma = results.x
+                # bst_samp.append(np.array([gamma, mu, sigma]))
 
             elif FrechetOrGEV == 'Frechet':
                 def cost(params):
