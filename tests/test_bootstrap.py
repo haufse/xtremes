@@ -41,7 +41,7 @@ def test_bootstrap():
 # Test aggregate_boot function
 def test_aggregate_boot():
     boot_samp = [(np.array([1, 2, 3]), np.array([1, 1, 2])), (np.array([2, 3]), np.array([2, 1]))]
-    result = aggregate_boot(boot_samp)
+    result = aggregate_boot(boot_samp, stride='SBM')
     expected = np.array([[1, 1], [2, 3], [3, 3]])
     assert np.array_equal(result, expected), "Aggregate boot result is incorrect"
 
