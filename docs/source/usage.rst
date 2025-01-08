@@ -16,7 +16,7 @@ To use xtremes, it is possible to install it via pip
 The modules
 -----------
 So far, three modules are implemented. The module ``xtremes.miscellaneous`` contains basic functionalities, 
-whereas ``xtremes.HigherOrderStatistics`` is specialized on the influence of higher order statistics for 
+whereas ``xtremes.topt`` is specialized on the influence of higher order statistics for 
 Maximum Likelihood estimations. ``xtremes.Bootstrap`` provides a suitable Bootstrap device
 for block maxima.
 

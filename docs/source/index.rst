@@ -18,9 +18,9 @@ how to :ref:`installation` the project.
    :caption: Chapters   
 
    usage
-   higherorderstatistics
+   topt
    bootstrap
    miscellaneous
-   api_hos
+   api_topt
    api_bootstrap
    api_misc

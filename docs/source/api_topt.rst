@@ -1,11 +1,11 @@
-Reference: HigherOrderStatistics
+Reference: topt
 ================================
 This module is specialized in analyzing the influence of higher order statistics for Maximum Likelihood estimations. 
 
 Overview
 --------
 
-The `xtremes.HigherOrderStatistics` module provides tools for analyzing higher order statistics and their influence on Maximum Likelihood estimations. It includes classes and functions for handling time series data, extracting block maxima, and performing statistical analysis.
+The `xtremes.topt` module provides tools for analyzing higher order statistics and their influence on Maximum Likelihood estimations. It includes classes and functions for handling time series data, extracting block maxima, and performing statistical analysis.
 
 Classes
 -------
@@ -15,7 +15,7 @@ The ``TimeSeries`` Class and its Functionalities
 
 The `TimeSeries` class is used to handle and manipulate time series data. It provides methods for extracting block maxima and high order statistics.
 
-.. autoclass:: xtremes.HigherOrderStatistics.TimeSeries
+.. autoclass:: xtremes.topt.TimeSeries
     :members:
     :undoc-members:
     :show-inheritance:
@@ -27,7 +27,7 @@ Examples
 
     .. code-block:: python
 
-        from xtremes.HigherOrderStatistics import TimeSeries
+        from xtremes.topt import TimeSeries
         import numpy as np
 
         ts_data = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
@@ -39,7 +39,7 @@ Examples
 
     .. code-block:: python
 
-        from xtremes.HigherOrderStatistics import TimeSeries
+        from xtremes.topt import TimeSeries
         import numpy as np
 
         ts_data = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
@@ -52,7 +52,7 @@ The ``HighOrderStats`` Class and its Functionalities
 
 The `HighOrderStats` class is used to compute and analyze higher order statistics from the time series data. It provides methods for calculating log-likelihoods and performing Maximum Likelihood Estimation (MLE).
 
-.. autoclass:: xtremes.HigherOrderStatistics.HighOrderStats
+.. autoclass:: xtremes.topt.HighOrderStats
     :members:
     :undoc-members:
     :show-inheritance:
@@ -64,7 +64,7 @@ Examples
 
     .. code-block:: python
 
-        from xtremes.HigherOrderStatistics import HighOrderStats
+        from xtremes.topt import HighOrderStats
         import numpy as np
 
         hos_data = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
@@ -76,7 +76,7 @@ Examples
 
     .. code-block:: python
 
-        from xtremes.HigherOrderStatistics import HighOrderStats
+        from xtremes.topt import HighOrderStats
         import numpy as np
 
         hos_data = np.array([[0.5, 1.0], [1.5, 2.0], [1.2, 2.2], [2.0, 3.0]])
@@ -89,7 +89,7 @@ The ``Data`` Class and its Functionalities
 
 The `Data` class is used to handle and manipulate real data for analysis.
 
-.. autoclass:: xtremes.HigherOrderStatistics.Data
+.. autoclass:: xtremes.topt.Data
     :members:
     :undoc-members:
     :show-inheritance:
@@ -99,38 +99,38 @@ The ``PWM_estimators`` Class
 
 The `PWM_estimators` class is used to compute Probability Weighted Moment (PWM) estimators.
 
-.. autoclass:: xtremes.HigherOrderStatistics.PWM_estimators
+.. autoclass:: xtremes.topt.PWM_estimators
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: xtremes.HigherOrderStatistics.automatic_parameter_initialization
+.. autofunction:: xtremes.topt.automatic_parameter_initialization
 
 The ``ML_estimators``, ``Frechet_ML_estimators`` and ``ML_estimators_data`` Classes
 -----------------------------------------------------------------------------------
 
 The `ML_estimators`, `Frechet_ML_estimators`, and `ML_estimators_data` classes are used for performing Maximum Likelihood Estimation (MLE) and handling the results.
 
-.. autoclass:: xtremes.HigherOrderStatistics.ML_estimators
+.. autoclass:: xtremes.topt.ML_estimators
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: xtremes.HigherOrderStatistics.Frechet_ML_estimators
+.. autoclass:: xtremes.topt.Frechet_ML_estimators
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autofunction:: xtremes.HigherOrderStatistics.log_likelihood
-.. autofunction:: xtremes.HigherOrderStatistics.Frechet_log_likelihood
+.. autofunction:: xtremes.topt.log_likelihood
+.. autofunction:: xtremes.topt.Frechet_log_likelihood
 
 Running Extensive Simulations
 -----------------------------
 
-The `xtremes.HigherOrderStatistics` module also provides functions for running extensive simulations and performing multiple MLEs.
+The `xtremes.topt` module also provides functions for running extensive simulations and performing multiple MLEs.
 
-.. autofunction:: xtremes.HigherOrderStatistics.run_ML_estimation
-.. autofunction:: xtremes.HigherOrderStatistics.run_multiple_ML_estimations
+.. autofunction:: xtremes.topt.run_ML_estimation
+.. autofunction:: xtremes.topt.run_multiple_ML_estimations
 
 Examples
 --------
@@ -139,7 +139,7 @@ Examples
 
     .. code-block:: python
 
-        from xtremes.HigherOrderStatistics import run_ML_estimation
+        from xtremes.topt import run_ML_estimation
 
         result = run_ML_estimation("timeseries_data.pkl", corr='ARMAX', gamma_true=0.5, block_sizes=[10, 20, 30], stride='DBM', option=2, estimate_pi=True)
         print(result)
@@ -148,7 +148,7 @@ Examples
 
     .. code-block:: python
 
-        from xtremes.HigherOrderStatistics import run_multiple_ML_estimations
+        from xtremes.topt import run_multiple_ML_estimations
         import numpy as np
 
         result = run_multiple_ML_estimations("timeseries_data.pkl", corr='IID', gamma_trues=np.arange(-4, 5, 1)/10, block_sizes=[10, 20, 30], stride='SBM', option=1, estimate_pi=False, parallelize=True)

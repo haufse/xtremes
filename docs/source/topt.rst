@@ -3,7 +3,7 @@
 Time Series and Extreme Value Analysis
 ======================================
 
-In this tutorial, we will explore how to use the functionalities provided in `HigherOrderStatistics.py` to simulate time series data, extract block maxima, and perform Maximum Likelihood Estimation (MLE) for extreme value distributions. We will also see how to work with real data to extract high-order statistics and compute MLE.
+In this tutorial, we will explore how to use the functionalities provided in `topt.py` to simulate time series data, extract block maxima, and perform Maximum Likelihood Estimation (MLE) for extreme value distributions. We will also see how to work with real data to extract high-order statistics and compute MLE.
 
 We will cover:
 - Simulating time series data using the `TimeSeries` class.
@@ -21,7 +21,7 @@ Here’s how you can simulate a GEV-distributed time series:
 
 .. code-block:: python
 
-    from HigherOrderStatistics import TimeSeries
+    from topt import TimeSeries
 
     # Create a time series object with 100 data points, GEV distribution, and IID correlation
     ts = TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5])
@@ -68,7 +68,7 @@ Once block maxima are extracted, you can estimate the parameters of the Generali
 
 .. code-block:: python
 
-    from HigherOrderStatistics import PWM_estimators
+    from topt import PWM_estimators
 
     # Initialize PWM estimator with the time series data
     pwm = PWM_estimators(ts)
@@ -87,7 +87,7 @@ Here’s how to perform MLE for the GEV distribution:
 
 .. code-block:: python
 
-    from HigherOrderStatistics import ML_estimators
+    from topt import ML_estimators
 
     # Initialize MLE estimator with the time series data
     ml = ML_estimators(ts)
@@ -106,7 +106,7 @@ Here’s how to analyze a real dataset:
 
 .. code-block:: python
 
-    from HigherOrderStatistics import Data
+    from topt import Data
 
     # Initialize the Data class with a real dataset
     data = Data([2.5, 3.1, 1.7, 4.6, 5.3, 2.2, 6.0])
