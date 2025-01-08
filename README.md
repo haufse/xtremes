@@ -24,7 +24,7 @@ Key Features:
 
 Submodules:
 -----------
-- **HighOrderStatistics**: Contains functions and classes to compute block maxima, high-order statistics, and perform extreme value analysis.
+- **topt**: Contains functions and classes to compute block maxima, high-order statistics, and perform extreme value analysis.
 - **bootstrap**: Provides methods for bootstrapping block maxima and sliding block maxima, with support for both Disjoint and Sliding Block Maxima methods.
 
 Installation:
@@ -44,7 +44,7 @@ Getting Started:
 
 2. Import the necessary submodules and start exploring extreme value statistics:
    ```python
-   import xtremes.HighOrderStatistics as hos
+   import xtremes.topt as topt
    import xtremes.bootstrap as bst
    ```
 
@@ -55,11 +55,11 @@ Example Usage:
 Here's a simple example to get started with `xtremes`:
 
 ```python
-import xtremes.HighOrderStatistics as hos
+import xtremes.topt as topt
 import xtremes.bootstrap as bst
 
 # Simulate time series data
-ts = hos.TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5])
+ts = topt.TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5])
 ts.simulate(rep=10)
 
 # Extract block maxima
