@@ -39,7 +39,7 @@ The ``aggregate_boot`` Function
 .. autofunction:: xtremes.bootstrap.aggregate_boot
 
 The ``bootstrap_worker`` Function
--------------------------------
+---------------------------------
 .. autofunction:: xtremes.bootstrap.bootstrap_worker
 
 Examples
