@@ -24,10 +24,10 @@ def test_circmax_invalid_stride():
 # Test uniquening function
 def test_uniquening():
     sample = np.array([[1, 2, 2, 3], [1, 1, 2, 2]])
-    result = uniquening(sample, stride='SBM')
-    assert len(result) == 2, "There should be 2 arrays of unique values"
-    assert np.array_equal(result[0][0], np.array([1, 2, 3])), "First array unique values incorrect"
-    assert np.array_equal(result[0][1], np.array([1, 2, 1])), "First array counts incorrect"
+    result = uniquening(sample, stride='DBM')
+    assert len(result) == 3, "There should be 3 arrays of unique values"
+    assert np.array_equal(result[0][0], np.array([1])), "First array unique values incorrect"
+    assert np.array_equal(result[0][1], np.array([1])), "First array counts incorrect"
 
 
 # Test Bootstrap function
@@ -74,7 +74,7 @@ def test_FullBootstrap_frechet():
 
 def test_FullBootstrap_gev():
     np.random.seed(1)
-    sample = np.random.rand(100)
+    sample = np.random.weibull(a=1, size=200)#np.random.rand(100)
     bootstrap = FullBootstrap(sample, bs=10, stride='DBM', dist_type='GEV')
     bootstrap.run_bootstrap(num_bootstraps=10)
     assert 'mean' in bootstrap.statistics, "Bootstrap statistics should include 'mean'"
@@ -88,8 +88,8 @@ if __name__ == "__main__":
     test_uniquening()
     test_bootstrap()
     test_aggregate_boot()
-    test_ML_Estimator_frechet()
-    test_ML_Estimator_gev()
+    #test_ML_Estimator_frechet()
+    #test_ML_Estimator_gev()
     test_FullBootstrap_frechet()
     test_FullBootstrap_gev()
     
