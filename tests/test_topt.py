@@ -141,7 +141,7 @@ def test_ML_estimators_initialization():
 
 def test_ML_estimators_get_ML_estimation():
     ts = TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5], ts=0.6)
-    ts.simulate(rep=1, seeds=[42])
+    ts.simulate(rep=3, seeds=[42])
     ts.get_HOS(orderstats=2, block_size=5, stride='DBM')
     pwm = PWM_estimators(ts)
     pwm.get_PWM_estimation()
@@ -154,7 +154,7 @@ def test_ML_estimators_get_ML_estimation():
 # Test HighOrderStats class
 def test_HighOrderStats_initialization():
     ts = TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5], ts=0.6)
-    ts.simulate(rep=1, seeds=[42])
+    ts.simulate(rep=3, seeds=[42])
     ts.get_HOS(orderstats=2, block_size=5, stride='DBM')
     hos = HighOrderStats(ts)
     assert hos.high_order_stats is not None, "High order stats should be assigned"
@@ -163,7 +163,7 @@ def test_HighOrderStats_initialization():
 
 def test_HighOrderStats_get_PWM_estimation():
     ts = TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5], ts=0.6)
-    ts.simulate(rep=1, seeds=[42])
+    ts.simulate(rep=3, seeds=[42])
     ts.get_HOS(orderstats=2, block_size=5, stride='DBM')
     hos = HighOrderStats(ts)
     hos.get_PWM_estimation()
@@ -173,7 +173,7 @@ def test_HighOrderStats_get_PWM_estimation():
 
 def test_HighOrderStats_get_ML_estimation():
     ts = TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5], ts=0.6)
-    ts.simulate(rep=1, seeds=[42])
+    ts.simulate(rep=3, seeds=[42])
     ts.get_HOS(orderstats=2, block_size=5, stride='DBM')
     hos = HighOrderStats(ts)
     hos.get_PWM_estimation()
