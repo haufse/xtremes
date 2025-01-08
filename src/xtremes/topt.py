@@ -1831,7 +1831,7 @@ class Data:
         None
             The ML estimators are stored in the `ML_estimators` attribute.
         """
-        if self.high_order_stats == []:
+        if np.shape(self.high_order_stats) == np.shape([]):
             # potentially use parameters optained by getting blockmaxima
             self.get_HOS(orderstats=1, block_size=self.block_size, stride=self.stride)
         self.ML_estimators = ML_estimators_data(self.high_order_stats)
