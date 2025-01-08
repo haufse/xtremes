@@ -1962,7 +1962,8 @@ class ML_estimators_data:
                 return cst
             # for now: hard-coded init params [1,1], as it should not matter too much
             # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+            # results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+            results = misc.minimize(cost, [1,1], method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
     
             alpha, sigma = results.x
             
@@ -1981,7 +1982,7 @@ class ML_estimators_data:
             if FrechetOrGEV == 'GEV':
                 def cost(params):
                     gamma, mu, sigma = params
-                    cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
+                    cst = - log_likelihood(new_data, gamma=gamma, mu=mu, sigma=sigma, r=r)
                     return cst
                     
                 if initParams == 'auto':
@@ -2012,14 +2013,19 @@ class ML_estimators_data:
             elif FrechetOrGEV == 'Frechet':
                 def cost(params):
                     alpha, sigma = params
-                    cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
+                    cst = - Frechet_log_likelihood(new_data, alpha=alpha, sigma=sigma, r=r)
                     return cst
                 # for now: hard-coded init params [1,1], as it should not matter too much
                 # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-                results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((0,np.inf),(0,np.inf)))
-        
-                alpha, sigma = results.x
-                
+                results = misc.minimize(cost, [1,1], method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+                if results.success == False:
+                    results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+                if results.success == False:
+                    results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+                if results.success == True:
+                    alpha, sigma = results.x
+                else:
+                    raise ValueError('Optimization did not converge')
                 bst_samp.append(np.array([alpha, sigma]))
             else:
                 raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
