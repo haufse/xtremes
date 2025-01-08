@@ -1901,7 +1901,7 @@ class ML_estimators_data:
     def __len__(self):
         return len(self.values)
 
-    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None):
+    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None, initParams='auto'):
         r"""
         Perform Maximum Likelihood (ML) estimation for the GEV or Frechet distribution.
 
@@ -1970,7 +1970,7 @@ class ML_estimators_data:
         else:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
 
-    def bootstrap(self, n_boot=500, FrechetOrGEV = 'GEV', r=None, set_seed=True, seed=None):
+    def bootstrap(self, n_boot=500, FrechetOrGEV = 'GEV', r=None, set_seed=True, seed=None, initParams='auto'):
         bst_samp = []
         for _ in range(n_boot):
             if set_seed:

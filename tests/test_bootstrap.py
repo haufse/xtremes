@@ -24,7 +24,7 @@ def test_circmax_invalid_stride():
 # Test uniquening function
 def test_uniquening():
     sample = np.array([[1, 2, 2, 3], [1, 1, 2, 2]])
-    result = uniquening(sample)
+    result = uniquening(sample, stride='SBM')
     assert len(result) == 2, "There should be 2 arrays of unique values"
     assert np.array_equal(result[0][0], np.array([1, 2, 3])), "First array unique values incorrect"
     assert np.array_equal(result[0][1], np.array([1, 2, 1])), "First array counts incorrect"
