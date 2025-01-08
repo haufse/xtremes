@@ -48,7 +48,8 @@ epub_show_urls = 'footnote'
 
 
 # -- Options for LaTeX/PDF output ---------------------------------------------
-latex_engine = 'lualatex'
+#latex_engine = 'lualatex' ## somehow destroys title page
+latex_engine = 'xelatex'
 
 # Ensure that sections in the toctree appear as separate chapters
 latex_documents = [
