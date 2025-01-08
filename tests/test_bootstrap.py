@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
-from xtremes.bootstrap import circmax, uniquening, Bootstrap, aggregate_boot, FullBootstrap, #ML_Estimator, ##deprecated
+from xtremes.bootstrap import circmax, uniquening, Bootstrap, aggregate_boot, FullBootstrap 
+#ML_Estimator, ##deprecated
 
 # Test circmax function
 def test_circmax_dbm():
