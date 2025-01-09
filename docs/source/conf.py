@@ -53,7 +53,7 @@ latex_engine = 'xelatex'
 
 # Ensure that sections in the toctree appear as separate chapters
 latex_documents = [
-    ('index', 'xtremes.tex', 'Xtremes Documentation',
+    ('index', 'xtremes.tex', 'xtremes Documentation',
      'Erik Haufs', 'manual'),
 ]
 
@@ -73,8 +73,8 @@ latex_elements = {
 	% Force the use of Computer Modern
     %\usepackage{mathptmx} % This package changes fonts, so we need to reset them back
     \usepackage{fontspec}
-    %\setmainfont{Times New Roman}
-    \setmainfont{TeX Gyre Termes}
+    \setmainfont{Times New Roman} %%if it not working, try to use the following line
+    %\setmainfont{TeX Gyre Termes}
     %\renewcommand{\rmdefault}{cmr} % Roman font to Computer Modern
     %\renewcommand{\sfdefault}{cmss} % Sans-serif font to Computer Modern Sans
     %\renewcommand{\ttdefault}{cmtt} % Typewriter font to Computer Modern Typewriter
@@ -97,12 +97,14 @@ latex_elements = {
     \vspace{1cm}
     {\large Version 0.3.0 \par}
     \vspace{1.5cm}
-    {\large Author: Erik Haufs \par}
+    {\large Author: Erik Haufs \href{mailto:erik.haufs@rub.de}{erik.haufs@rub.de}\par}
+    \vspace{0.5cm}
+    {\large Faculty of Mathematics, Ruhr University Bochum \par}
     \vfill
     \begin{figure}[!htp]
     \centering
     \includegraphics[width=0.4\textwidth]{../../docs/source/images/logo4.png}\par
-    \caption{Dall-E's interpretation of the Xtremes package}
+    \caption{Dall-E's interpretation of the \texttt{xtremes} package}
     \end{figure}
     \vfill
     {\large \today \par}

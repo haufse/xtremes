@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 import scipy
 from scipy import stats
@@ -10,8 +11,7 @@ from pynverse import inversefunc
 import pickle
 import warnings
 import xtremes.miscellaneous as misc
-import matplotlib.pyplot as plt
-
+import xtremes.biascorrection as bc
 ############################### FUNCTIONS ###############################
 
 # log-likelihood
@@ -1901,7 +1901,7 @@ class ML_estimators_data:
     def __len__(self):
         return len(self.values)
 
-    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None, initParams='auto'):
+    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None, initParams='auto', bc_varpi=None):
         r"""
         Perform Maximum Likelihood (ML) estimation for the GEV or Frechet distribution.
 
@@ -1956,6 +1956,9 @@ class ML_estimators_data:
             # self.values = np.array([gamma, mu, sigma])
 
         elif FrechetOrGEV == 'Frechet':
+            if initParams=='auto':
+                initParams_GEV = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
+                initParams = [1/initParams_GEV[0], initParams_GEV[2]]
             def cost(params):
                 alpha, sigma = params
                 cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
@@ -1963,10 +1966,11 @@ class ML_estimators_data:
             # for now: hard-coded init params [1,1], as it should not matter too much
             # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
             # results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
-            results = misc.minimize(cost, [1,1], method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+            results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
     
             alpha, sigma = results.x
-            
+            if bc_varpi != None:
+                alpha /= bc_varpi
             self.values = np.array([alpha, sigma])
         else:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
@@ -2011,17 +2015,20 @@ class ML_estimators_data:
                 # bst_samp.append(np.array([gamma, mu, sigma]))
 
             elif FrechetOrGEV == 'Frechet':
+                if initParams=='auto':
+                    initParams_GEV = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
+                    initParams = [1/initParams_GEV[0], initParams_GEV[2]]
                 def cost(params):
                     alpha, sigma = params
                     cst = - Frechet_log_likelihood(new_data, alpha=alpha, sigma=sigma, r=r)
                     return cst
                 # for now: hard-coded init params [1,1], as it should not matter too much
                 # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-                results = misc.minimize(cost, [1,1], method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+                results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
                 if results.success == False:
-                    results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+                    results = misc.minimize(cost, initParams, method='COBYLA', bounds=((1e-5,np.inf),(1e-5,np.inf)))
                 if results.success == False:
-                    results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+                    results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
                 if results.success == True:
                     alpha, sigma = results.x
                 else:
