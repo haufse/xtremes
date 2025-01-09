@@ -6,7 +6,7 @@ project = 'xtremes'
 copyright = '2025, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.2'
+release = '0.3'
 version = '0.3.0'
 
 # -- General configuration
@@ -71,12 +71,12 @@ latex_elements = {
     \usepackage{enumitem}
     \setlistdepth{99}
     \usepackage{hyperref}
-    \hypersetup{
-        colorlinks=true,
-        linkcolor=blue,
-        filecolor=magenta,      
-        urlcolor=cyan,
-    }
+    %\hypersetup{
+    %    colorlinks=true,
+    %    linkcolor=blue,
+    %    filecolor=magenta,      
+    %    urlcolor=cyan,
+    %}
 	% Force the use of Computer Modern
     %\usepackage{mathptmx} % This package changes fonts, so we need to reset them back
     \usepackage{fontspec}
