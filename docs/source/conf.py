@@ -6,7 +6,7 @@ project = 'xtremes'
 copyright = '2025, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.1'
+release = '0.2'
 version = '0.3.0'
 
 # -- General configuration
