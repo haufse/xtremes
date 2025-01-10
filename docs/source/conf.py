@@ -6,7 +6,7 @@ project = 'xtremes'
 copyright = '2025, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.1'
+release = '0.0'
 version = '0.3.0'
 
 # -- General configuration
@@ -73,8 +73,8 @@ latex_elements = {
 	% Force the use of Computer Modern
     %\usepackage{mathptmx} % This package changes fonts, so we need to reset them back
     \usepackage{fontspec}
-    \setmainfont{Times New Roman} %%if not working, try to use the following line
-    %\setmainfont{TeX Gyre Termes}
+    %\setmainfont{Times New Roman} %%if not working, try to use the following line
+    \setmainfont{TeX Gyre Termes}
     %\renewcommand{\rmdefault}{cmr} % Roman font to Computer Modern
     %\renewcommand{\sfdefault}{cmss} % Sans-serif font to Computer Modern Sans
     %\renewcommand{\ttdefault}{cmtt} % Typewriter font to Computer Modern Typewriter
