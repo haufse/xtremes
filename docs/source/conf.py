@@ -6,7 +6,7 @@ project = 'xtremes'
 copyright = '2025, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.0'
+release = '0.2'
 version = '0.3.0'
 
 # -- General configuration
@@ -79,6 +79,8 @@ latex_elements = {
     %\renewcommand{\sfdefault}{cmss} % Sans-serif font to Computer Modern Sans
     %\renewcommand{\ttdefault}{cmtt} % Typewriter font to Computer Modern Typewriter
     \usepackage{amsmath,amsfonts,amssymb} % For math symbols in Computer Modern
+    \usepackage{hyperref} % For hyperlinks in the PDF
+    \hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue}
     ''',
 
     # Remove the default table of contents behavior
@@ -97,7 +99,7 @@ latex_elements = {
     \vspace{1cm}
     {\large Version 0.3.0 \par}
     \vspace{1.5cm}
-    {\large Author: Erik Haufs \par}
+    {\large Author: Erik Haufs \href{mailto:erik.haufs@rub.de}{erik.haufs@rub.de} \par}
     \vspace{0.5cm}
     {\large Faculty of Mathematics, Ruhr University Bochum \par}
     \vfill
