@@ -6,7 +6,7 @@ project = 'xtremes'
 copyright = '2025, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.2'
+release = '0.1'
 version = '0.3.0'
 
 # -- General configuration
@@ -70,13 +70,6 @@ latex_elements = {
     'preamble': r'''
     \usepackage{enumitem}
     \setlistdepth{99}
-    %\usepackage{hyperref}
-    %\hypersetup{
-    %    colorlinks=true,
-    %    linkcolor=blue,
-    %    filecolor=magenta,      
-    %    urlcolor=cyan,
-    %}
 	% Force the use of Computer Modern
     %\usepackage{mathptmx} % This package changes fonts, so we need to reset them back
     \usepackage{fontspec}
@@ -104,7 +97,7 @@ latex_elements = {
     \vspace{1cm}
     {\large Version 0.3.0 \par}
     \vspace{1.5cm}
-    {\large Author: Erik Haufs \par}%\href{mailto:erik.haufs@rub.de}{erik.haufs@rub.de}\par}
+    {\large Author: Erik Haufs \par}
     \vspace{0.5cm}
     {\large Faculty of Mathematics, Ruhr University Bochum \par}
     \vfill
