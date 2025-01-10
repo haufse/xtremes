@@ -6,7 +6,7 @@ project = 'xtremes'
 copyright = '2025, Erik Haufs'
 author = 'Erik Haufs'
 
-release = '0.3'
+release = '0.2'
 version = '0.3.0'
 
 # -- General configuration
@@ -70,7 +70,7 @@ latex_elements = {
     'preamble': r'''
     \usepackage{enumitem}
     \setlistdepth{99}
-    \usepackage{hyperref}
+    %\usepackage{hyperref}
     %\hypersetup{
     %    colorlinks=true,
     %    linkcolor=blue,
@@ -104,7 +104,7 @@ latex_elements = {
     \vspace{1cm}
     {\large Version 0.3.0 \par}
     \vspace{1.5cm}
-    {\large Author: Erik Haufs \href{mailto:erik.haufs@rub.de}{erik.haufs@rub.de}\par}
+    {\large Author: Erik Haufs \par}%\href{mailto:erik.haufs@rub.de}{erik.haufs@rub.de}\par}
     \vspace{0.5cm}
     {\large Faculty of Mathematics, Ruhr University Bochum \par}
     \vfill
