@@ -141,7 +141,8 @@ def hat_pis(m, data, maxima=None, bs=None, stride='DBM', pbars=None):
     if m == 1:
         return hps
     else:
-        for q in tqdm(range(1,m)):
+        #for q in tqdm(range(1,m)):
+        for q in range(1,m):
             hps.append(4*pbars[q]-2*np.sum([hps[-k]*pbars[k] for k in range(1,q)]))
     return hps
     
@@ -188,6 +189,7 @@ def Pi(x,r,pi):
 # def varpi(r,pi):
 #     sol = root_scalar(Pi, args=(r,pi,), bracket=[0.001, 100])
 #     return sol.root
+
 def varpi(r, pi):
     """
     Attempt to find x in [0.001, 100] s.t. Pi(x, r, pi) = 0.

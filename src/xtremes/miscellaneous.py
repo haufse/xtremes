@@ -145,7 +145,7 @@ def mse(gammas, gamma_true):
     if len(gammas) > 1:
         MSE = sum((np.array(gammas) - gamma_true)**2)/(len(np.array(gammas))-1)
         variance = sum((np.array(gammas) - np.mean(gammas))**2)/(len(np.array(gammas))-1)
-        bias = MSE - variance
+        bias = np.sqrt(MSE - variance)
         return MSE, variance, bias
     else:
         warnings.warn('No variance can be computed on only 1 element!')
