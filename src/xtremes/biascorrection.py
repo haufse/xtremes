@@ -505,6 +505,7 @@ def hat_pis(m, data, maxima=None, bs=None, stride='DBM', pbars=None):
     Notes:
     ------
     - The recursive formula for \( \hat{\pi}(m) \) is given by:
+    
     .. math::
         \hat{\pi}(1) = 4 \bar{p}(1)
         \hat{\pi}(m) = 4 \bar{p}(m) - 2 \sum_{k=1}^{m-1} \hat{\pi}(m-k) \bar{p}(k)
