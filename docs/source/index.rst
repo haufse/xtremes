@@ -20,7 +20,9 @@ how to :ref:`installation` the project.
    usage
    topt
    bootstrap
+   biascorrection
    miscellaneous
    api_topt
    api_bootstrap
    api_misc
+   api_biascorrection
