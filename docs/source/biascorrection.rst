@@ -21,7 +21,7 @@ Here's how to compute the exceedance probabilities:
 .. code-block:: python
 
     import numpy as np
-    from biascorrection import pbar, pbar_dbm_fast
+    from xtremes.biascorrection import pbar, pbar_dbm_fast
 
     # Example dataset
     data = np.random.rand(100)
@@ -44,7 +44,7 @@ Using the exceedance probabilities, we can estimate the probabilities of cluster
 
 .. code-block:: python
 
-    from biascorrection import hat_pis
+    from xtremes.biascorrection import hat_pis
 
     # Estimate cluster size probabilities
     cluster_probs = hat_pis(3, data, maxima=block_maxima, stride='DBM')
@@ -58,7 +58,7 @@ The \( \Upsilon \) function computes weighted sums of cluster size probabilities
 
 .. code-block:: python
 
-    from biascorrection import ups
+    from xtremes.biascorrection import ups
 
     # Compute the Upsilon function for a given x
     x = 0.5
@@ -72,7 +72,7 @@ The \( \Pi(x) \) function is used to determine the bias-corrected parameter. It 
 
 .. code-block:: python
 
-    from biascorrection import Pi
+    from xtremes.biascorrection import Pi
 
     # Compute the Pi function for a given x
     pi_value = Pi(x, r, cluster_probs)
@@ -84,7 +84,7 @@ Finally, we can solve for the bias-corrected parameter \( x \) by finding the ro
 
 .. code-block:: python
 
-    from biascorrection import varpi
+    from xtremes.biascorrection import varpi
 
     # Solve for the bias-corrected parameter
     bias_corrected_param = varpi(r, cluster_probs)

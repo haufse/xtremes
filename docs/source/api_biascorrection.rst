@@ -12,36 +12,36 @@ Functions
 
 The ``pbar`` Function
 ----------------------
-.. autofunction:: biascorrection.pbar
+.. autofunction:: xtremes.biascorrection.pbar
 
 The ``pbar_dbm_fast`` Function
 ------------------------------
-.. autofunction:: biascorrection.pbar_dbm_fast
+.. autofunction:: xtremes.biascorrection.pbar_dbm_fast
 
 The ``hat_pis`` Function
 ------------------------
-.. autofunction:: biascorrection.hat_pis
+.. autofunction:: xtremes.biascorrection.hat_pis
 
 The ``convolve_probabilities`` Function
 ---------------------------------------
-.. autofunction:: biascorrection.convolve_probabilities
+.. autofunction:: xtremes.biascorrection.convolve_probabilities
 
 The ``hat_frakp`` Function
 --------------------------
-.. autofunction:: biascorrection.hat_frakp
+.. autofunction:: xtremes.biascorrection.hat_frakp
 
 The ``ups`` Function
 --------------------
-.. autofunction:: biascorrection.ups
+.. autofunction:: xtremes.biascorrection.ups
 
 The ``ups_d`` Function
 ----------------------
-.. autofunction:: biascorrection.ups_d
+.. autofunction:: xtremes.biascorrection.ups_d
 
 The ``Pi`` Function
 -------------------
-.. autofunction:: biascorrection.Pi
+.. autofunction:: xtremes.biascorrection.Pi
 
 The ``varpi`` Function
 ----------------------
-.. autofunction:: biascorrection.varpi
+.. autofunction:: xtremes.biascorrection.varpi
