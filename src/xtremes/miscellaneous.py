@@ -675,6 +675,8 @@ def modelparams2gamma_true(distr, correllation, modelparams):
         return modelparams[0]
     if distr in ['Frechet'] and correllation in ['IID', 'ARMAX', 'AR']: 
         return 1 / modelparams[0]
+    if distr == 'Cauchy' and correllation == 'AR':
+        return 1
     else:
         raise ValueError("Distribution type '{}' or correlation type '{}' is not supported.".format(distr, correllation))
 

@@ -6,20 +6,21 @@ from scipy import stats
 from scipy.optimize import minimize
 from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r
 from scipy.special import gamma as Gamma
+from scipy.special import comb
+
 from pynverse import inversefunc
 # import asyncio
 import pickle
 import warnings
 import xtremes.miscellaneous as misc
-import xtremes.biascorrection as bc
+import xtremes.biascorrection_erroneous as bc
 ############################### FUNCTIONS ###############################
 
 # log-likelihood
 
 def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     r"""
-    Calculate the GEV log likelihood based on the two highest order statistics in three different ways.
-
+    Calculate the GEV log likelihood based on the two highest order statistics.
     Parameters
     ----------
     high_order_statistics : numpy.ndarray
@@ -32,7 +33,6 @@ def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
         The scale parameter (σ) for the GEV distribution. Must be positive. Default is 1.
     r : int, optional
         The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.
-
     Returns
     -------
     float
@@ -82,7 +82,7 @@ def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     
     return joint_ll
 
-def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
+def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None, weights=None):
     r"""
     Calculate the 2-parameter Frechet log likelihood based on the highest order statistics. 
     The calculation can be done using either the joint likelihood of the top two order statistics or the product of their marginals.
@@ -97,6 +97,8 @@ def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
         The scale parameter (σ) for the Frechet distribution. Must be positive. Default is 1.
     r : int, optional
         The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.
+    weights : numpy.ndarray, optional
+        ABM as stride provides weights. If they are provided, use them instead of counts
 
     Returns
     -------
@@ -119,8 +121,12 @@ def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None):
 
     if r == None or r>high_order_statistics.shape[1]:
         r = high_order_statistics.shape[1]
-
-    unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
+        
+    if weights != None:
+        unique_hos, counts = high_order_statistics, weights
+    else:
+        unique_hos, counts = np.unique(high_order_statistics, axis=0, return_counts=True)
+    
     sigma = np.abs(sigma)
     unique_hos = unique_hos.T 
     if sigma < 0.01:
@@ -152,7 +158,7 @@ def extract_BM(timeseries, block_size=10, stride='DBM', return_indices=False):
     :param block_size: int, optional
         The size of each block for extracting maxima. Default is 10.
     :param stride: str or int, optional
-        The stride used to move the window. Can be 'DBM' (Default Block Maxima)
+        The stride used to move the window. Can be 'DBM' (Disjoint Block Maxima)
         or an integer specifying the stride size. Default is 'DBM'.
 
     Returns
@@ -175,12 +181,17 @@ def extract_BM(timeseries, block_size=10, stride='DBM', return_indices=False):
 
     n = len(timeseries)
     r = block_size
-    p = misc.stride2int(stride, block_size)
-    out = [np.max(timeseries[i*p:i*p+r]) for i in range((n-r)//p+1)]
-    if return_indices:
-        indices = [np.argmax(timeseries[i*p:i*p+r])+i*p for i in range((n-r)//p+1)]
-        return np.array(indices), np.array(out)
-    return np.array(out)
+    if stride == 'ABM':
+        timeseries_srtd = np.sort(timeseries)[::-1]
+        out = [timeseries_srtd[i] for i in range(n-r+1)]# for k in range(comb(n-i-1, r-1, exact=True))]
+        return np.array(out)
+    else:
+        p = misc.stride2int(stride, block_size)
+        out = [np.max(timeseries[i*p:i*p+r]) for i in range((n-r)//p+1)]
+        if return_indices:
+            indices = [np.argmax(timeseries[i*p:i*p+r])+i*p for i in range((n-r)//p+1)]
+            return np.array(indices), np.array(out)
+        return np.array(out)
 
 def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     r"""Extract high order statistics from a given time series.
@@ -220,9 +231,15 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     """
     n = len(timeseries)
     r = block_size
-    p = misc.stride2int(stride, block_size)
-    out = [np.sort(timeseries[i*p:i*p+r])[-orderstats:] for i in range((n-r)//p+1)]
-    return np.array(out)
+    if stride == 'DBM' or stride == 'SBM':
+        p = misc.stride2int(stride, block_size)
+        out = [np.sort(timeseries[i*p:i*p+r])[-orderstats:] for i in range((n-r)//p+1)]
+    elif stride == 'ABM':
+        timeseries_srtd = np.sort(timeseries)[::-1]
+        out = [timeseries_srtd[i] for i in range(n-r+1)]
+    else:
+        raise ValueError('Stride must be one of "DBM", "SBM", or "ABM"')
+    return np.array(out).reshape(-1,1)
     
 
 def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
@@ -1059,10 +1076,14 @@ class Frechet_ML_estimators:
             initParams = automatic_parameter_initialization(PWM_estimators.values, 
                                                             self.TimeSeries.corr, 
                                                             ts=self.TimeSeries.ts)
+        # compute weights in ABM case
+        if self.TimeSeries.stride == 'ABM':
+            weights = self.TimeSeries.get_ABM_weights()
+        
         for i, ho_stat in enumerate(self.high_order_stats):
             def cost(params):
                 alpha, sigma = params
-                cst = - Frechet_log_likelihood(ho_stat, alpha=alpha, sigma=sigma, r=r)
+                cst = - Frechet_log_likelihood(ho_stat, alpha=alpha, sigma=sigma, r=r, weights=weights)
                 return cst
             
             inits = [1/initParams[i][0], initParams[i][2]]
@@ -1429,6 +1450,10 @@ class TimeSeries:
             hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
             self.high_order_stats.append(hos)
     
+    def get_ABM_weights(self):
+        r""""Computes weights for MLE with ABM stride"""
+        return [comb(self.len-i-1, self.block_size-1, exact=True) for i in range(self.len-self.block_size+1)]
+    
     def plot(self, rep=1, filename=None):
         r"""
         Plot the simulated time series data.
@@ -1558,6 +1583,7 @@ class TimeSeries:
         if filename:
             plt.savefig(filename)
         plt.show()
+    
 
 
 ############################### HIGHORDERDSTATS CLASS ###############################
