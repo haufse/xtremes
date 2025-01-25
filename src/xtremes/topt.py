@@ -1043,7 +1043,7 @@ class Frechet_ML_estimators:
         """
         return len(self.values)
 
-    def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None):
+    def get_ML_estimation(self, PWM_estimators=None, initParams = 'auto', r=None, weights=None):
         r"""
         Compute ML estimators (alpha, sigma) for each high order statistics series using Frechet distribution.
 
@@ -1452,7 +1452,7 @@ class TimeSeries:
     
     def get_ABM_weights(self):
         r""""Computes weights for MLE with ABM stride"""
-        return [comb(self.len-i-1, self.block_size-1, exact=True) for i in range(self.len-self.block_size+1)]
+        return [comb(self.len-i-1, self.block_size-1, exact=False) for i in range(self.len-self.block_size+1)]
     
     def plot(self, rep=1, filename=None):
         r"""
