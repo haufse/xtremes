@@ -234,12 +234,15 @@ def extract_HOS(timeseries, orderstats=2, block_size=10, stride='DBM'):
     if stride == 'DBM' or stride == 'SBM':
         p = misc.stride2int(stride, block_size)
         out = [np.sort(timeseries[i*p:i*p+r])[-orderstats:] for i in range((n-r)//p+1)]
+        return np.array(out)
     elif stride == 'ABM':
         timeseries_srtd = np.sort(timeseries)[::-1]
         out = [timeseries_srtd[i] for i in range(n-r+1)]
+        out = np.array(out).reshape(-1,1)
+        return out
     else:
         raise ValueError('Stride must be one of "DBM", "SBM", or "ABM"')
-    return np.array(out).reshape(-1,1)
+    return 
     
 
 def automatic_parameter_initialization(PWM_estimators, corr, ts=0.5):
