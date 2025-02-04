@@ -158,7 +158,8 @@ def extract_BM(timeseries, block_size=10, stride='DBM', return_indices=False):
     :param block_size: int, optional
         The size of each block for extracting maxima. Default is 10.
     :param stride: str or int, optional
-        The stride used to move the window. Can be 'DBM' (Disjoint Block Maxima)
+        The stride used to move the window. Can be 'DBM' (Disjoint Block Maxima), 
+        'SBM' (Sliding Block Maxima), 'ABM' (All Block Maxima),
         or an integer specifying the stride size. Default is 'DBM'.
 
     Returns
@@ -1089,7 +1090,7 @@ class Frechet_ML_estimators:
                 cst = - Frechet_log_likelihood(ho_stat, alpha=alpha, sigma=sigma, r=r, weights=weights)
                 return cst
             
-            inits = [1/initParams[i][0], initParams[i][2]]
+            inits = [np.max([1/initParams[i][0], 0.001]), np.max([initParams[i][2], 0.001])]
             #its = initParams[i][::2]
             results = misc.minimize(cost, inits, method='Nelder-Mead', bounds=((1e-6, np.inf),(1e-5, np.inf)))
             # results = misc.minimize(cost, inits, method='COBYLA', bounds=((0, np.inf),(0, np.inf)))
@@ -1453,9 +1454,16 @@ class TimeSeries:
             hos = extract_HOS(series, orderstats=orderstats, block_size=block_size, stride=stride)
             self.high_order_stats.append(hos)
     
-    def get_ABM_weights(self):
+    def get_ABM_weights(self, recursively=True):
         r""""Computes weights for MLE with ABM stride"""
-        return [comb(self.len-i-1, self.block_size-1, exact=False) for i in range(self.len-self.block_size+1)]
+        if recursively:
+            abm_weights = [self.block_size/self.len]
+            for i in range(self.len-self.block_size):
+                abm_weights.append(abm_weights[-1]*(self.len-self.block_size-i-1)/(self.len-2-i))
+            return abm_weights
+        else:
+            print('caution: using binominal coeffs')
+            return [comb(self.len-i-1, self.block_size-1, exact=False) for i in range(self.len-self.block_size+1)]
     
     def plot(self, rep=1, filename=None):
         r"""

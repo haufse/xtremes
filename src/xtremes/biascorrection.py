@@ -34,7 +34,7 @@ def exceedances(data, maxima, bs, i, j, stride='DBM'):
 def hat_pi0(data, maxima=None, bs=None, stride='DBM'):
     if maxima is not None:
         bs = len(data) // len(maxima)
-        print(bs)
+        #print(bs)
     elif bs is not None:
         maxima = topt.extract_BM(data, bs, stride=stride)
     else:
@@ -53,18 +53,26 @@ def hat_pi0(data, maxima=None, bs=None, stride='DBM'):
                     ])
         return 4 * s/len(D_n(n, bs))
     
-from scipy.special import gamma, digamma
+from scipy.special import gamma, digamma, polygamma
 from scipy.optimize import root_scalar
 
+# Careful! This was redefined from a previous version! Upsilon_now(x) = Upsilon_former(x+1)
+
 def Upsilon(x, rho0):
-    return rho0 * gamma(x+1) + (1-rho0) * gamma(x)
+    return rho0 * gamma(x+2) + (1-rho0) * gamma(x+1)
+
 def Upsilon_derivative(x, rho0):
-    return rho0 * gamma(x+1) * digamma(x+1) + (1-rho0) * gamma(x) * digamma(x)
+    return rho0 * gamma(x+2) * digamma(x+2) + (1-rho0) * gamma(x+1) * digamma(x+1)
+
+def Upsilon_2ndderivative(x, rho0):
+    return rho0 * gamma(x+2) * (digamma(x+2)**2+polygamma(1,2+x)) + (1-rho0) * gamma(x+1) * (digamma(x+2)**2+polygamma(1,2+x))
+
 def Pi(x, rho0):
-    return 1/x - Upsilon_derivative(1+x, rho0)/Upsilon(1+x, rho0)+rho0/2 - np.euler_gamma # 0.5772156649015328606065120#np.euler_gamma
+    return 1/x - Upsilon_derivative(x, rho0)/Upsilon(x, rho0)+rho0/2 - np.euler_gamma # 0.5772156649015328606065120#np.euler_gamma
+
 def Psi(a, a_true, rho0):
-    frc = a/a_true
-    term = 1/frc - Upsilon_derivative(1+frc, rho0)/Upsilon(1+frc, rho0)+rho0/2 - np.euler_gamma#0.5772156649015328606065120#np.euler_gamma
+    vp = a/a_true
+    term = 1/vp - Upsilon_derivative(vp, rho0)/Upsilon(vp, rho0)+rho0/2 - np.euler_gamma#0.5772156649015328606065120#np.euler_gamma
     return 2/a_true * term
 
 def a1_asy(a_true, rho0):
