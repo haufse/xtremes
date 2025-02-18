@@ -22,6 +22,7 @@ In time series analysis, blocks of data are used to analyze cluster sizes and ex
 
 
 .. code-block:: python
+    
     import numpy as np
 
     def I_sb(j, bs):
@@ -55,7 +56,9 @@ In time series analysis, blocks of data are used to analyze cluster sizes and ex
 Step 2: Computing Exceedances
 ==============================
 The `exceedances` function counts values exceeding a given threshold in a block.
+
 .. code-block:: python
+
     def exceedances(data, maxima, bs, i, j, stride='DBM'):
         if stride == 'DBM':
             return np.sum(data[(j-1)*bs:j*bs] > maxima[i-1])
@@ -71,7 +74,9 @@ The `exceedances` function counts values exceeding a given threshold in a block.
 Step 3: Estimating Cluster Size Probability
 ===========================================
 The function `hat_pi0` estimates the probability of cluster size 1.
+
 .. code-block:: python
+
     import xtremes.topt as topt
 
     def hat_pi0(data, maxima=None, bs=None, stride='DBM'):
@@ -97,6 +102,7 @@ Step 4: Using Bias Correction Functions
 We define functions for the `Upsilon`, `Pi`, and `Psi` functions used in bias correction.
 
 .. code-block:: python
+
     from scipy.special import gamma, digamma, polygamma
     from scipy.optimize import root_scalar
 
@@ -120,6 +126,7 @@ Step 5: Solving for Bias-Corrected Parameters
 To obtain bias-corrected parameters, we use numerical root-finding methods.
 
 .. code-block:: python
+
     def varpi(rho0):
         sol = root_scalar(Pi, args=(rho0,), bracket=[0.01, 10])
         return sol.root

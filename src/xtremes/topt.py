@@ -25,14 +25,19 @@ def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     ----------
     high_order_statistics : numpy.ndarray
         A 2D array where each row contains the two highest order statistics for each observation.
+    
     gamma : float, optional
         The shape parameter (γ) for the Generalized Extreme Value (GEV) distribution. Default is 0.
+    
     mu : float, optional
         The location parameter (μ) for the GEV distribution. Default is 0.
+    
     sigma : float, optional
         The scale parameter (σ) for the GEV distribution. Must be positive. Default is 1.
+    
     r : int, optional
         The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.
+    
     Returns
     -------
     float
@@ -51,7 +56,9 @@ def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     >>> hos = np.array([[0.1, 0.2], [0.3, 0.4], [0.2, 0.5], [0.4, 0.6]])
     >>> log_likelihood(hos, gamma=0.5, mu=0, sigma=2, r=2)
     -7.494890426732856
+    
     """
+    
     if r == None:
         r = high_order_statistics.shape[1]
     
