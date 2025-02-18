@@ -25,7 +25,9 @@ Key Features:
 Submodules:
 -----------
 - **topt**: Contains functions and classes to compute block maxima, high-order statistics, and perform extreme value analysis.
-- **bootstrap**: Provides methods for bootstrapping block maxima and sliding block maxima, with support for both Disjoint and Sliding Block Maxima methods.
+- **biascorrection**: Implements tools for bias-correcting Top-$t$ Pseudo-MLEs as described in [[BH25]]
+- **miscellaneous**: Provides supplementary functions for other modules
+- **bootstrap**: Provides methods for bootstrapping block maxima and sliding block maxima, with support for both Disjoint and Sliding Block Maxima methods, developed by [[BS24]].
 
 Installation:
 -------------
@@ -44,8 +46,10 @@ Getting Started:
 
 2. Import the necessary submodules and start exploring extreme value statistics:
    ```python
+   
+   import xtremes as xx
    import xtremes.topt as topt
-   import xtremes.bootstrap as bst
+   ...
    ```
 
 3. For more detailed documentation, check out <https://xtremes.readthedocs.io/en/latest/>.
@@ -56,14 +60,22 @@ Here's a simple example to get started with `xtremes`:
 
 ```python
 import xtremes.topt as topt
-import xtremes.bootstrap as bst
 
 # Simulate time series data
-ts = topt.TimeSeries(n=100, distr='GEV', correlation='IID', modelparams=[0.5])
+k, bs = 100, 100
+ts = topt.TimeSeries(n=k*bs, distr='Pareto', correlation='IID', modelparams=[0.5])
 ts.simulate(rep=10)
 
 # Extract block maxima
-ts.get_blockmaxima(block_size=5)
+ts.get_blockmaxima(block_size=bs)
+# Extract Sliding Top-Two
+ts.get_HOS(orderstats=2, block_size=bs, stride='SBM')
+
+# initialize the HighOrderStats class
+hos = topt.HighOrderStats(ts)
+# perform Maximum Likelihood estimation
+HOS.get_ML_estimation(r=2, FrechetOrGEV='Frechet')
+print(HOS.ML_estimators.values)
 
 # Perform bootstrap analysis
 bootstrap = bst.FullBootstrap(ts.values, block_size=5)
@@ -86,29 +98,30 @@ Foundational insights behind the methods used in `xtremes.bootstrap` have been d
 
 Roadmap:
 --------
-- Add support for additional time series models (ARIMA).
-- Improve documentation with more examples.
-- Optimize bootstrapping methods for large datasets.
+- Implement biascorrection for $t \geq 3$
+- Implement tools to choose number of high order statistics data-adaptively
+- Other projects yet to come! 
 
 Note:
 -----
-This project is under active development throughout the project phase and will provide additional code to support theoretical advancements in extreme value statistics. (todo: add DOI (badge))
+This project is under active development throughout the project phase and will provide additional code to support theoretical advancements in extreme value statistics. The submodules will be sorted to the papers yet to come. (todo: add DOI (badge))
 
 References:
 -----------
 
-[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529).
+[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529)
+[BS26]: Bücher, A., & Haufs, E. (2025). Bootstrapping Estimators based on the Block Maxima Method. *in progress*.
 
 
 Suggested Citation:
 -------------------
-If you use the bootstrapping functionality or methods related to block maxima in this library, please cite the following paper:
+If you use the functionalities related to fitting a MLE to blockwise high order statistics, please cite the following paper:
 
 ```bibtex
-@article{tba,  
-  title={tba,  
+@article{BucherHaufs2025,  
+  title={Extreme Value Analysis based on Blockwise Top-Two Order Statistics,  
   author={B{"u}cher, Axel and Haufs, Erik},  
-  journal={tba},  
-  year={tba}  
+  journal={in progress},  
+  year={2025}  
 }
 
