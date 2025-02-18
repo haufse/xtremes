@@ -221,6 +221,7 @@ def hat_pi0(data, maxima=None, bs=None, stride='DBM'):
     at extreme levels: New estimators for the limiting cluster size distribution. 
     Stochastic Processes and their Applications, 149, 75-106.
     """
+    
     if maxima is not None:
         bs = len(data) // len(maxima)
         #print(bs)
@@ -372,7 +373,7 @@ def a1_asy(a_true, rho0):
     Returns:
     --------
     float
-        The computed root of \( \Pi(x, \rho_0) \).
+        The computed root of \( \Psi(x, \rho_0) \).
 
 
     """
@@ -387,7 +388,6 @@ def varpi(rho0):
     -----------
     rho0 : float
         
-
     Returns:
     --------
     float
