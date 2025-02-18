@@ -1,5 +1,5 @@
-Bias Correction
-================
+Bias Correction (to be fixed!)
+==============================
 This module computes bias corrections for the Maximum Likelihood Estimation (MLE) of cluster size distributions in stationary time series.
 
 Overview

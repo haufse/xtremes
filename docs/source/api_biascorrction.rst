@@ -31,7 +31,7 @@ The ``Upsilon`` Function
 .. autofunction:: xtremes.biascorrection.Upsilon
 
 The ``Upsilon_derivative`` Function
-----------------------
+-----------------------------------
 .. autofunction:: xtremes.biascorrection.Upsilon_derivative
 
 The ``Upsilon_2ndderivative`` Function

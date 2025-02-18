@@ -2,96 +2,138 @@
 Bias Correction Tutorial
 ===============================
 
-In this tutorial, we will explore how to work with the `biascorrection` module to estimate cluster size distributions and apply bias corrections to Maximum Likelihood Estimation (MLE).
+In this tutorial, we will explore how to work with the `topt` module from `xtremes` to apply bias correction techniques in extreme value analysis. Specifically, we will cover:
 
-We will cover:
-- Computing probabilities of exceedances with `pbar` and `pbar_dbm_fast`.
-- Estimating cluster size probabilities with `hat_pis`.
-- Using the \( \Upsilon \) and \( \Pi \) functions for bias correction.
-- Solving for bias-corrected parameters using `varpi`.
+- Generating index ranges for sliding and disjoint block methods (`I_sb` and `D_n`).
+- Computing exceedances using `exceedances`.
+- Estimating cluster size probability using `hat_pi0`.
+- Utilizing the `Upsilon`, `Pi`, and `Psi` functions for bias correction.
+- Solving for bias-corrected parameters with `varpi` and `a1_asy`.
 
-Let's walk through each of these steps with code examples.
+Each section includes code examples for clarity.
 
-Step 1: Computing Probabilities of Exceedances
-==============================================
-The first step in analyzing cluster sizes is to compute the probabilities of exceedances in disjoint or sliding blocks. The `pbar` function (or its optimized variant `pbar_dbm_fast`) calculates these probabilities efficiently.
+Step 1: Generating Block Indices
+================================
+In time series analysis, blocks of data are used to analyze cluster sizes and exceedances. We define two key functions:
 
-Here's how to compute the exceedance probabilities:
+### `I_sb(j, bs)`: Generate indices for a sliding block
+```python
+import numpy as np
 
-.. code-block:: python
+def I_sb(j, bs):
+    return np.arange(j, j + bs)
 
-    import numpy as np
-    from xtremes.biascorrection import pbar, pbar_dbm_fast
+# Example usage
+print(I_sb(3, 5))  # Output: [3, 4, 5, 6, 7]
+```
 
-    # Example dataset
-    data = np.random.rand(100)
-    block_maxima = np.array([0.8, 0.9, 1.0])  # Example block maxima
-    block_size = 10
+### `D_n(n, bs)`: Generate index pairs for disjoint blocks
+```python
+def D_n(n, bs):
+    idx = np.arange(1, n - bs + 2)
+    pairs = []
+    for i in idx:
+        left_js = idx[idx + bs <= i]
+        right_js = idx[idx >= i + bs]
+        for j in left_js:
+            pairs.append((i, j))
+        for j in right_js:
+            pairs.append((i, j))
+    return pairs
 
-    # Compute exceedance probabilities with pbar
-    probabilities = [pbar(m, data, maxima=block_maxima, stride='DBM') for m in range(1, 4)]
-    print("Exceedance Probabilities (pbar):", probabilities)
+# Example usage
+print(D_n(5, 2))  # Output: [(1, 3), (1, 4), (2, 4), (3, 1), (3, 2), (4, 1), (4, 2)]
+```
 
-    # Alternatively, use the optimized version
-    probabilities_fast = [pbar_dbm_fast(m, data, maxima=block_maxima, bs=block_size) for m in range(1, 4)]
-    print("Exceedance Probabilities (pbar_dbm_fast):", probabilities_fast)
+Step 2: Computing Exceedances
+==============================
+The `exceedances` function counts values exceeding a given threshold in a block.
+```python
+def exceedances(data, maxima, bs, i, j, stride='DBM'):
+    if stride == 'DBM':
+        return np.sum(data[(j-1)*bs:j*bs] > maxima[i-1])
+    if stride == 'SBM':
+        return np.sum(data[j:j+bs] > maxima[i-1])
 
-These functions allow you to calculate the probabilities \( \bar{p}(m) \) for different exceedance levels \( m \).
+# Example usage
+data = np.array([1, 3, 5, 2, 6, 4, 7, 9])
+maxima = np.array([5, 7])
+print(exceedances(data, maxima, bs=2, i=1, j=3, stride='DBM'))  # Output: 1
+```
 
-Step 2: Estimating Cluster Size Probabilities
-=============================================
-Using the exceedance probabilities, we can estimate the probabilities of cluster sizes \( \pi(m) \) with the `hat_pis` function.
+Step 3: Estimating Cluster Size Probability
+===========================================
+The function `hat_pi0` estimates the probability of cluster size 1.
+```python
+import xtremes.topt as topt
 
-.. code-block:: python
+def hat_pi0(data, maxima=None, bs=None, stride='DBM'):
+    if maxima is not None:
+        bs = len(data) // len(maxima)
+    elif bs is not None:
+        maxima = topt.extract_BM(data, bs, stride=stride)
+    else:
+        raise ValueError('Either maxima or block size must be provided')
+    k = len(maxima)
+    if stride == 'DBM':
+        s = np.sum([exceedances(data, maxima, bs, i, j, stride='DBM') == 1
+                    for i in range(1, 1 + k)
+                    for j in np.delete(np.arange(1, 1 + k), i-1)])
+        return 4 * s / (k * (k-1))
 
-    from xtremes.biascorrection import hat_pis
+# Example usage
+print(hat_pi0(data, maxima, bs=2, stride='DBM'))
+```
 
-    # Estimate cluster size probabilities
-    cluster_probs = hat_pis(3, data, maxima=block_maxima, stride='DBM')
-    print("Cluster Size Probabilities (hat_pis):", cluster_probs)
+Step 4: Using Bias Correction Functions
+=======================================
+We define functions for the `Upsilon`, `Pi`, and `Psi` functions used in bias correction.
 
-The `hat_pis` function computes \( \hat{\pi}(m) \) recursively based on \( \bar{p}(m) \).
+```python
+from scipy.special import gamma, digamma, polygamma
+from scipy.optimize import root_scalar
 
-Step 3: Using the Upsilon Function
-==================================
-The \( \Upsilon \) function computes weighted sums of cluster size probabilities and is a key component in bias correction.
+def Upsilon(x, rho0):
+    return rho0 * gamma(x+2) + (1-rho0) * gamma(x+1)
 
-.. code-block:: python
+def Upsilon_derivative(x, rho0):
+    return rho0 * gamma(x+2) * digamma(x+2) + (1-rho0) * gamma(x+1) * digamma(x+1)
 
-    from xtremes.biascorrection import ups
+def Pi(x, rho0):
+    return 1/x - Upsilon_derivative(x, rho0)/Upsilon(x, rho0) + rho0/2 - np.euler_gamma
 
-    # Compute the Upsilon function for a given x
-    x = 0.5
-    r = 3
-    upsilon = ups(x, r, cluster_probs)
-    print("Upsilon Function Value (ups):", upsilon)
-
-Step 4: Using the Pi Function for Bias Correction
-=================================================
-The \( \Pi(x) \) function is used to determine the bias-corrected parameter. It combines the \( \Upsilon \) function and its derivative \( \Upsilon'(x) \).
-
-.. code-block:: python
-
-    from xtremes.biascorrection import Pi
-
-    # Compute the Pi function for a given x
-    pi_value = Pi(x, r, cluster_probs)
-    print("Pi Function Value (Pi):", pi_value)
+def Psi(a, a_true, rho0):
+    vp = a / a_true
+    term = 1 / vp - Upsilon_derivative(vp, rho0) / Upsilon(vp, rho0) + rho0/2 - np.euler_gamma
+    return 2 / a_true * term
+```
 
 Step 5: Solving for Bias-Corrected Parameters
 =============================================
-Finally, we can solve for the bias-corrected parameter \( x \) by finding the root of \( \Pi(x) \) using the `varpi` function.
+To obtain bias-corrected parameters, we use numerical root-finding methods.
 
-.. code-block:: python
+```python
+def varpi(rho0):
+    sol = root_scalar(Pi, args=(rho0,), bracket=[0.01, 10])
+    return sol.root
 
-    from xtremes.biascorrection import varpi
+def a1_asy(a_true, rho0):
+    sol = root_scalar(Psi, args=(a_true, rho0), bracket=[1e-2, 100])
+    return sol.root
 
-    # Solve for the bias-corrected parameter
-    bias_corrected_param = varpi(r, cluster_probs)
-    print("Bias-Corrected Parameter (varpi):", bias_corrected_param)
-
-The `varpi` function attempts to find a root for \( \Pi(x) \) in the range \([0.001, 20]\). If no root is found, it returns a default value of 100.
+# Example usage
+rho0 = 0.5
+print(varpi(rho0))  # Computes bias-corrected root
+```
 
 Conclusion
 ==========
-In this tutorial, we explored how to compute exceedance probabilities, estimate cluster size probabilities, and use the \( \Upsilon \) and \( \Pi \) functions for bias correction. We also demonstrated how to solve for bias-corrected parameters using `varpi`. These tools are essential for analyzing cluster size distributions and addressing bias in MLE parameter estimates.
+In this tutorial, we explored:
+- How to generate block indices.
+- Compute exceedances within blocks.
+- Estimate cluster size probability using `hat_pi0`.
+- Use the `Upsilon`, `Pi`, and `Psi` functions for bias correction.
+- Solve for bias-corrected parameters using numerical root-finding.
+
+These methods are essential for extreme value analysis in time series data and improving MLE estimates by accounting for bias.
+
