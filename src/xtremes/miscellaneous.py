@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 from scipy import stats
 from scipy.optimize import minimize
-from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm
+from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm, pareto
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
@@ -525,6 +525,8 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
                 s = invweibull.rvs(modelparams[0], size=n)
         if distr == 'GPD':
             s = genpareto.rvs(c=modelparams[0], size=n)
+        if distr == 'Pareto':
+            s = pareto.rvs(b=modelparams[0], size=n)
         if distr == 'normal':
             s = norm.rvs(loc=modelparams[0], scale=modelparams[1], size=n)
 
@@ -546,13 +548,15 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             if modelparams[0] < 0:
                 # weibull case
                 s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0])
-        if distr == 'Frechet':
+        elif distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
                 s = invweibull.ppf(invweibull.cdf(X, c=1),c=modelparams[0])
 
         elif distr == 'GPD':
             s = genpareto.ppf(invweibull.cdf(X, c=1), c=modelparams[0])
+        elif distr == 'Pareto':
+            s = pareto.ppf(invweibull.cdf(X, c=1), b=modelparams[0])
         else:
             raise ValueError('Other distributions yet to be implemented')
         
@@ -560,13 +564,16 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
         Z = cauchy.rvs(size=n)
         X = [Z[0]]
         for f in Z[1:]:
-            xi = np.max([ts * X[-1], (1 - ts) * f])
+            #xi = np.max([ts * X[-1], (1 - ts) * f]) # this line was wrong!
+            xi = ts * X[-1] + f
             X.append(xi)
         # transforming model to desired distribution
         if distr == 'Cauchy':
             s = X
         elif distr == 'GPD':
             s = genpareto.ppf(cauchy.cdf(X), c=modelparams[0])
+        elif distr == 'Pareto':
+            s = pareto.ppf(cauchy.cdf(X), b=modelparams[0])
         elif distr == 'GEV':
             if modelparams[0] == 0:
                 # gumbel case
@@ -673,7 +680,7 @@ def modelparams2gamma_true(distr, correllation, modelparams):
     """
     if distr in ['GEV', 'GPD'] and correllation in ['IID', 'ARMAX', 'AR']: 
         return modelparams[0]
-    if distr in ['Frechet'] and correllation in ['IID', 'ARMAX', 'AR']: 
+    if distr in ['Frechet', 'Pareto'] and correllation in ['IID', 'ARMAX', 'AR']: 
         return 1 / modelparams[0]
     if distr == 'Cauchy' and correllation == 'AR':
         return 1
