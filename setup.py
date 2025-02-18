@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='xtremes',
-    version='0.2.6.5',
+    version='0.3.2.2',
     packages=find_packages(),
     install_requires=[
         # Add your project's dependencies here
