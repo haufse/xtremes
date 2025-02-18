@@ -21,6 +21,7 @@ import xtremes.biascorrection_erroneous as bc
 def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
     r"""
     Calculate the GEV log likelihood based on the two highest order statistics.
+    
     Parameters
     ----------
     high_order_statistics : numpy.ndarray
