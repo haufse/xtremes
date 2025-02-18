@@ -126,10 +126,9 @@ def exceedances(data, maxima, bs, i, j, stride='DBM'):
 
     stride : {'DBM', 'SBM'}, optional
         Specifies the block method used:
-        - 'DBM' (Disjoint Block Method): The blocks are non-overlapping and 
-          start at `(j-1)*bs` and end at `j*bs`.
-        - 'SBM' (Sliding Block Method): The blocks can overlap and are defined 
-          to start at `j` and end at `j+bs`.
+        - 'DBM' (Disjoint Block Method): The blocks are non-overlapping and start at `(j-1)*bs` and end at `j*bs`.
+        - 'SBM' (Sliding Block Method): The blocks can overlap and are defined to start at `j` and end at `j+bs`.
+        
         Default is 'DBM'.
 
 
