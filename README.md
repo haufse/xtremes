@@ -26,6 +26,7 @@ Submodules:
 -----------
 - **topt**: Contains functions and classes to compute block maxima, high-order statistics, and perform extreme value analysis.
 - **biascorrection**: Implements tools for bias-correcting Top-$t$ Pseudo-MLEs as described in [[BH25]]
+- **miscellaneous**: Provides supplementary functions for other modules
 - **bootstrap**: Provides methods for bootstrapping block maxima and sliding block maxima, with support for both Disjoint and Sliding Block Maxima methods, developed by [[BS24]].
 
 Installation:
@@ -108,7 +109,8 @@ This project is under active development throughout the project phase and will p
 References:
 -----------
 
-[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529).
+[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529)
+[BS26]: Bücher, A., & Haufs, E. (2025). Bootstrapping Estimators based on the Block Maxima Method. *in progress*.
 
 
 Suggested Citation:
