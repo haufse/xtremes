@@ -35,7 +35,9 @@ def I_sb(j, bs):
     Bücher, A., & Jennessen, T. (2022). Statistical analysis for stationary time series 
     at extreme levels: New estimators for the limiting cluster size distribution. 
     Stochastic Processes and their Applications, 149, 75-106.
+    
     """
+    
     return np.arange(j,j+bs)
 
 def D_n(n, bs):
@@ -80,7 +82,9 @@ def D_n(n, bs):
       intersection of two arrays.
     - This function is critical in methods involving disjoint blocks, such as 
       certain statistical estimators that assume independence between blocks.
+    
     """
+    
     idx = np.arange(1, n-bs+2)
     # You can create meshgrids or just do two loops:
     pairs = []
@@ -98,7 +102,6 @@ def D_n(n, bs):
 def exceedances(data, maxima, bs, i, j, stride='DBM'):
     r"""
     Calculate the number of exceedances of a given maximum within a specified block.
-
     This function computes the number of values in the `j`-th block of the data that 
     exceed the `i`-th maximum. The block can be defined using either a disjoint block 
     method (DBM) or a sliding block method (SBM).
@@ -129,6 +132,7 @@ def exceedances(data, maxima, bs, i, j, stride='DBM'):
           to start at `j` and end at `j+bs`.
         Default is 'DBM'.
 
+
     Returns:
     --------
     int
@@ -144,14 +148,18 @@ def exceedances(data, maxima, bs, i, j, stride='DBM'):
     >>> exceedances(data, maxima, bs=3, i=2, j=2, stride='SBM')
     2  # Two values in the sliding block exceed maxima[1] = 7
 
+
     Notes:
     ------
     - The stride parameter allows flexibility in block definition:
       - 'DBM' is suited for non-overlapping blocks, often used in classical block maxima methods.
       - 'SBM' is suited for sliding windows, offering finer granularity for overlap-based analysis.
+    
     - Indexing of blocks and maxima is 1-based for user-friendliness but is internally converted 
       to Python's 0-based indexing.
+      
     """
+    
     if stride == 'DBM':
         return np.sum(data[(j-1)*bs:j*bs] > maxima[i-1])
     if stride == 'SBM':
@@ -220,7 +228,9 @@ def hat_pi0(data, maxima=None, bs=None, stride='DBM'):
     Bücher, A., & Jennessen, T. (2022). Statistical analysis for stationary time series 
     at extreme levels: New estimators for the limiting cluster size distribution. 
     Stochastic Processes and their Applications, 149, 75-106.
+    
     """
+    
     
     if maxima is not None:
         bs = len(data) // len(maxima)
@@ -267,6 +277,7 @@ def Upsilon(x, rho0):
         The computed value of \( \Upsilon(x, \rho_0) \).
 
     """
+    
     return rho0 * gamma(x+2) + (1-rho0) * gamma(x+1)
 
 def Upsilon_derivative(x, rho0):
@@ -289,6 +300,7 @@ def Upsilon_derivative(x, rho0):
 
 
     """
+    
     return rho0 * gamma(x+2) * digamma(x+2) + (1-rho0) * gamma(x+1) * digamma(x+1)
 
 def Upsilon_2ndderivative(x, rho0):
@@ -311,6 +323,7 @@ def Upsilon_2ndderivative(x, rho0):
 
 
     """
+    
     return rho0 * gamma(x+2) * (digamma(x+2)**2+polygamma(1,2+x)) + (1-rho0) * gamma(x+1) * (digamma(x+2)**2+polygamma(1,2+x))
 
 def Pi(x, rho0):
@@ -333,6 +346,7 @@ def Pi(x, rho0):
 
 
     """
+    
     return 1/x - Upsilon_derivative(x, rho0)/Upsilon(x, rho0)+rho0/2 - np.euler_gamma # 0.5772156649015328606065120#np.euler_gamma
 
 def Psi(a, a_true, rho0):
@@ -355,6 +369,7 @@ def Psi(a, a_true, rho0):
 
 
     """
+    
     vp = a/a_true
     term = 1/vp - Upsilon_derivative(vp, rho0)/Upsilon(vp, rho0)+rho0/2 - np.euler_gamma#0.5772156649015328606065120#np.euler_gamma
     return 2/a_true * term
@@ -377,6 +392,7 @@ def a1_asy(a_true, rho0):
 
 
     """
+    
     sol = root_scalar(Psi, args=(a_true, rho0), bracket=[1e-2, 100])
     return sol.root
 
@@ -394,6 +410,7 @@ def varpi(rho0):
         The computed root of \( \Pi(x, \rho_0) \).
 
     """
+    
     sol = root_scalar(Pi, args=(rho0,), bracket=[0.01, 10])
     return sol.root
 
@@ -412,4 +429,5 @@ def z0(rho0):
         The computed root of \( \Pi(x, \rho_0) \).
 
     """
+    
     return 1/2*Upsilon(1+varpi(rho0), rho0) 
