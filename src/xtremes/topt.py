@@ -14,6 +14,8 @@ import pickle
 import warnings
 import xtremes.miscellaneous as misc
 import xtremes.biascorrection_erroneous as bc
+
+import warnings
 ############################### FUNCTIONS ###############################
 
 # log-likelihood
@@ -1990,7 +1992,9 @@ class ML_estimators_data:
             if results.success == True:
                 gamma, mu, sigma = results.x
             else:
-                raise ValueError('Optimization did not converge')
+                warnings.warn('Optimization did not converge. Using PWM estimators instead.')
+                gamma, mu, sigma = initParams
+                #raise ValueError('Optimization did not converge')
             self.values = np.array([gamma, mu, sigma])
             # # for now: hard-coded init params [1,1,1], as it should not matter too much
             # #results = misc.minimize(cost, [1,1,1], method='Nelder-Mead', bounds=((0,np.inf),(-np.inf,np.inf),(0,np.inf)))
