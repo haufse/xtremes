@@ -119,7 +119,7 @@ If you use the functionalities related to fitting a MLE to blockwise high order 
 
 ```bibtex
 @article{BucherHaufs2025,  
-  title={Extreme Value Analysis based on Blockwise Top-Two Order Statistics,  
+  title={Extreme Value Analysis based on Blockwise Top-Two Order Statistics},  
   author={B{"u}cher, Axel and Haufs, Erik},  
   journal={in progress},  
   year={2025}  
