@@ -7,6 +7,7 @@
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 [![Build Status](https://github.com/haufse/xtremes/actions/workflows/ci.yml/badge.svg)](https://github.com/haufse/xtremes/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/haufse/xtremes/branch/main/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/haufse/xtremes)
+[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2502.15036)](https://doi.org/10.48550/arXiv.2502.15036)
 
 
 Welcome to xtremes!
@@ -109,8 +110,8 @@ This project is under active development throughout the project phase and will p
 References:
 -----------
 
-[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529)
-[BH25]: Bücher, A., & Haufs, E. (2025). Bootstrapping Estimators based on the Block Maxima Method. *in progress*.
+[BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529),
+[BH25]: Bücher, A., & Haufs, E. (2025). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2502.15036](https://arxiv.org/abs/2502.15036).
 
 
 Suggested Citation:
@@ -118,10 +119,13 @@ Suggested Citation:
 If you use the functionalities related to fitting a MLE to blockwise high order statistics, please cite the following paper:
 
 ```bibtex
-@article{BucherHaufs2025,  
-  title={Extreme Value Analysis based on Blockwise Top-Two Order Statistics},  
-  author={B{"u}cher, Axel and Haufs, Erik},  
-  journal={in progress},  
-  year={2025}  
+@misc{bücherhaufs2025toptwo,
+      title={Extreme Value Analysis based on Blockwise Top-Two Order Statistics}, 
+      author={Axel Bücher and Erik Haufs},
+      year={2025},
+      eprint={2502.15036},
+      archivePrefix={arXiv},
+      primaryClass={math.ST},
+      url={https://arxiv.org/abs/2502.15036}, 
 }
 
