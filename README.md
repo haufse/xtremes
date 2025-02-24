@@ -7,7 +7,7 @@
 ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)
 [![Build Status](https://github.com/haufse/xtremes/actions/workflows/ci.yml/badge.svg)](https://github.com/haufse/xtremes/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/haufse/xtremes/branch/main/graph/badge.svg?token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/haufse/xtremes)
-[![DOI](https://img.shields.io/badge/DOI-10.48550/arXiv.2502.15036)](https://doi.org/10.48550/arXiv.2502.15036)
+[![arXiv](https://img.shields.io/badge/arXiv-2502.15036-b31b1b.svg)](https://arxiv.org/abs/2502.15036)
 
 
 Welcome to xtremes!
@@ -105,7 +105,7 @@ Roadmap:
 
 Note:
 -----
-This project is under active development throughout the project phase and will provide additional code to support theoretical advancements in extreme value statistics. The submodules will be sorted to the papers yet to come. (todo: add DOI (badge))
+This project is under active development throughout the project phase and will provide additional code to support theoretical advancements in extreme value statistics. The submodules will be sorted to the papers yet to come.
 
 References:
 -----------
