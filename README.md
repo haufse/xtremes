@@ -111,7 +111,7 @@ References:
 -----------
 
 - [BS24]: Bücher, A., & Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2409.05529](https://arxiv.org/abs/2409.05529),
-- [BH25]: Bücher, A., & Haufs, E. (2025). Bootstrapping Estimators based on the Block Maxima Method. *arXiv preprint* [arXiv:2502.15036](https://arxiv.org/abs/2502.15036).
+- [BH25]: Bücher, A., & Haufs, E. (2025). Extreme Value Analysis based on Blockwise Top-Two Order Statistics. *arXiv preprint* [arXiv:2502.15036](https://arxiv.org/abs/2502.15036).
 
 
 Suggested Citation:
