@@ -14,7 +14,8 @@ import numpy as np
 from tqdm import tqdm
 from scipy import stats
 from scipy.optimize import minimize
-from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm, pareto
+from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm, pareto, rv_continuous
+
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
 import pickle
@@ -204,10 +205,15 @@ def GEV_cdf(x, gamma=0, mu=0, sigma=1, theta=1):
     """
     x = np.array(x)
     y = (x - mu) / sigma
-    if gamma == 0:
+    if np.abs(gamma) < 1e-5:
         tau = -np.exp(-y)
     else:
-        tau = np.where(1 + gamma * y > 0, (1 + gamma * y) ** (-1 / gamma), 0)
+        # deprec, raises warning:
+        # tau = np.where(1 + gamma * y > 0, (1 + gamma * y) ** (-1 / gamma), 0)
+        mask = (1 + gamma * y > 0)
+        tau = np.zeros_like(y)
+        tau[mask] = (1 + gamma * y[mask]) ** (-1 / gamma)
+        
     return np.exp(-theta * tau)
 
 
@@ -307,6 +313,18 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
         out = np.zeros_like(x)
         out[mask] = -np.log(sigma) - (1 + gamma * y[mask]) ** (-1 / gamma) + np.log(1 + gamma * y[mask]) * (-1 / gamma - 1)
     return out
+
+
+class GEV(rv_continuous):
+    """Custom Generalized Extreme Value (GEV) Distribution"""
+    
+    def __init__(self, theta, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.theta = theta  # Store the parameters
+
+    def _pdf(self, x):
+        """Define the probability density function (PDF)."""
+        return GEV_pdf(x, *self.theta)
 
 # PWM Estimation
 def PWM_estimation(maxima):
@@ -494,7 +512,7 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
 
     See Also
     --------
-    Tutorial: Link to the associated tutorial.
+    Tutorial on Time Series Simulation: https://xtremes.readthedocs.io/en/latest/topt.html
 
     Example
     -------
@@ -507,28 +525,34 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     """
     if seed is not None:
         np.random.seed(seed)
+    if len(modelparams) == 1:
+        shape, loc, scale = modelparams[0], 0, 1
+    if len(modelparams) == 2:
+        shape, loc, scale = modelparams[0], modelparams[1], 1
+    if len(modelparams) > 2:
+        shape, loc, scale = modelparams[0], modelparams[1], modelparams[2]
     if correlation.upper() == 'IID':
         # draw from GEV
         if distr == 'GEV':
             if modelparams[0] == 0:
                 # gumbel case
-                s = gumbel_r.rvs(size=n)
+                s = gumbel_r.rvs(size=n, loc=loc, scale=scale)
             if modelparams[0] > 0:
                 # frechet case
-                s = invweibull.rvs(1/modelparams[0], size=n)
+                s = invweibull.rvs(1/modelparams[0], size=n, loc=loc, scale=scale)
             if modelparams[0] < 0:
                 # weibull case
-                s = weibull_max.rvs(-1/modelparams[0], size=n)
+                s = weibull_max.rvs(-1/modelparams[0], size=n, loc=loc, scale=scale)
         if distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
-                s = invweibull.rvs(modelparams[0], size=n)
+                s = invweibull.rvs(modelparams[0], size=n, loc=loc, scale=scale)
         if distr == 'GPD':
-            s = genpareto.rvs(c=modelparams[0], size=n)
+            s = genpareto.rvs(c=modelparams[0], size=n, loc=loc, scale=scale)
         if distr == 'Pareto':
-            s = pareto.rvs(b=modelparams[0], size=n)
+            s = pareto.rvs(b=modelparams[0], size=n, loc=loc, scale=scale)
         if distr == 'normal':
-            s = norm.rvs(loc=modelparams[0], scale=modelparams[1], size=n)
+            s = norm.rvs(loc=modelparams[1], scale=modelparams[2], size=n)
 
     elif correlation == 'ARMAX':
         # creating Frechet(1)-AMAX model
@@ -541,22 +565,22 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
         if distr == 'GEV':
             if modelparams[0] == 0:
                 # gumbel case
-                s = gumbel_r.ppf(invweibull.cdf(X, c=1))
+                s = gumbel_r.ppf(invweibull.cdf(X, c=1, loc=loc, scale=scale))
             if modelparams[0] > 0:
                 # frechet case
-                s = invweibull.ppf(invweibull.cdf(X, c=1),c=1/modelparams[0])
+                s = invweibull.ppf(invweibull.cdf(X, c=1),c=1/modelparams[0], loc=loc, scale=scale)
             if modelparams[0] < 0:
                 # weibull case
-                s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0])
+                s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0], loc=loc, scale=scale)
         elif distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
-                s = invweibull.ppf(invweibull.cdf(X, c=1),c=modelparams[0])
+                s = invweibull.ppf(invweibull.cdf(X, c=1),c=modelparams[0], loc=loc, scale=scale)
 
         elif distr == 'GPD':
-            s = genpareto.ppf(invweibull.cdf(X, c=1), c=modelparams[0])
+            s = genpareto.ppf(invweibull.cdf(X, c=1), c=modelparams[0], loc=loc, scale=scale)
         elif distr == 'Pareto':
-            s = pareto.ppf(invweibull.cdf(X, c=1), b=modelparams[0])
+            s = pareto.ppf(invweibull.cdf(X, c=1), b=modelparams[0], loc=loc, scale=scale)
         else:
             raise ValueError('Other distributions yet to be implemented')
         
@@ -571,23 +595,23 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
         if distr == 'Cauchy':
             s = X
         elif distr == 'GPD':
-            s = genpareto.ppf(cauchy.cdf(X), c=modelparams[0])
+            s = genpareto.ppf(cauchy.cdf(X), c=modelparams[0], loc=loc, scale=scale)
         elif distr == 'Pareto':
-            s = pareto.ppf(cauchy.cdf(X), b=modelparams[0])
+            s = pareto.ppf(cauchy.cdf(X), b=modelparams[0], loc=loc, scale=scale)
         elif distr == 'GEV':
             if modelparams[0] == 0:
                 # gumbel case
-                s = gumbel_r.ppf(cauchy.cdf(X))
+                s = gumbel_r.ppf(cauchy.cdf(X), loc=loc, scale=scale)
             if modelparams[0] > 0:
                 # frechet case
-                s = invweibull.ppf(cauchy.cdf(X),c=1/modelparams[0])
+                s = invweibull.ppf(cauchy.cdf(X),c=1/modelparams[0], loc=loc, scale=scale)
             if modelparams[0] < 0:
                 # weibull case
-                s = weibull_max.ppf(cauchy.cdf(X),c=-1/modelparams[0])
+                s = weibull_max.ppf(cauchy.cdf(X),c=-1/modelparams[0], loc=loc, scale=scale)
         elif distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
-                s = invweibull.ppf(cauchy.cdf(X),c=modelparams[0])
+                s = invweibull.ppf(cauchy.cdf(X),c=modelparams[0], loc=loc, scale=scale)
         else:
             raise ValueError('Other distributions yet to be implemented')
         

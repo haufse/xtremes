@@ -86,7 +86,7 @@ def log_likelihood(high_order_statistics,  gamma=0, mu=0, sigma=1, r=None):
         mask = np.bitwise_and((1+gamma*unique_hos[-1]>0), (1+gamma*unique_hos[0]>0)) # ensure all conditions fulfilled
         f = lambda x: np.log(1+gamma*x[mask])*(1/gamma+1)
         out[mask] = -r * np.log(sigma) - (1+gamma*unique_hos[-r][mask])**(-1/gamma) - np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0)
-        out[np.invert(mask)] = -1000 # ln(0)
+        out[np.invert(mask)] = -np.inf # ln(0)
     
     joint_ll = np.dot(out, counts)
     
@@ -151,7 +151,7 @@ def Frechet_log_likelihood(high_order_statistics, alpha=1, sigma=1, r=None, weig
         f = lambda x: np.log(x[mask]) 
         out[mask] = r * np.log(alpha) + r * alpha * np.log(sigma) - (alpha+1)*np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0) - (unique_hos[-r][mask]/sigma)**(-alpha)
         # out[mask] = - r * np.log(alpha) + r * 1/alpha * np.log(sigma) - (1/alpha+1)*np.sum(np.apply_along_axis(f, 1, unique_hos[-r:,]), axis=0) - (unique_hos[-r][mask]/sigma)**(-1/alpha)
-        out[np.invert(mask)] = -np.inf # ln(0)
+        out[np.invert(mask)] = -1e8 # ln(0)
     joint_ll = np.dot(out, counts)
     
     return joint_ll
@@ -1858,7 +1858,7 @@ class Data:
         self.stride = stride
         self.high_order_stats = extract_HOS(self.values, orderstats=orderstats, block_size=block_size, stride=stride)
 
-    def get_ML_estimation(self, r=None, FrechetOrGEV = 'GEV'):
+    def get_ML_estimation(self, r=None, FrechetOrGEV = 'GEV', bounds = None):
         r"""
         Compute Maximum Likelihood (ML) estimations for the Frechet or GEV parameters.
 
@@ -1882,7 +1882,7 @@ class Data:
             # potentially use parameters optained by getting blockmaxima
             self.get_HOS(orderstats=1, block_size=self.block_size, stride=self.stride)
         self.ML_estimators = ML_estimators_data(self.high_order_stats)
-        self.ML_estimators.get_ML_estimation(FrechetOrGEV=FrechetOrGEV, r=r)
+        self.ML_estimators.get_ML_estimation(FrechetOrGEV=FrechetOrGEV, r=r, bounds=bounds)
 
 
 class ML_estimators_data:
@@ -1948,7 +1948,7 @@ class ML_estimators_data:
     def __len__(self):
         return len(self.values)
 
-    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None, initParams='auto', bc_varpi=None):
+    def get_ML_estimation(self, FrechetOrGEV='GEV', r=None, initParams='auto', bc_varpi=None, bounds=None):
         r"""
         Perform Maximum Likelihood (ML) estimation for the GEV or Frechet distribution.
 
@@ -1977,17 +1977,19 @@ class ML_estimators_data:
             If an invalid value is provided for the `FrechetOrGEV` parameter.
         """
         if FrechetOrGEV == 'GEV':
+            if bounds == None:
+                bounds = [(None, None), (None, None), (1e-5, None)]
             def cost(params):
                 gamma, mu, sigma = params
                 cst = - log_likelihood(self.high_order_stats, gamma=gamma, mu=mu, sigma=sigma, r=r)
                 return cst
             if initParams=='auto':
                 initParams = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
-            results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+            results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=bounds)
             if results.success == False:
-                results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
+                results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=bounds)
             if results.success == False:
-                results = misc.minimize(cost, initParams, method='COBYLA', bounds=[(None, None), (None, None), (1e-5, None)])
+                results = misc.minimize(cost, initParams, method='COBYLA', bounds=bounds)
 
             if results.success == True:
                 gamma, mu, sigma = results.x
@@ -2005,6 +2007,8 @@ class ML_estimators_data:
             # self.values = np.array([gamma, mu, sigma])
 
         elif FrechetOrGEV == 'Frechet':
+            if bounds == None:
+                bounds = [(1e-5, None), (1e-5, None)]
             if initParams=='auto':
                 initParams_GEV = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
                 initParams = [1/initParams_GEV[0], initParams_GEV[2]]
@@ -2014,8 +2018,8 @@ class ML_estimators_data:
                 return cst
             # for now: hard-coded init params [1,1], as it should not matter too much
             # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-            # results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=((1e-5,np.inf),(1e-5,np.inf)))
-            results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=((1e-5,np.inf),(1e-5,np.inf)))
+            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=bounds)
+            # results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=bounds)
     
             alpha, sigma = results.x
             if bc_varpi != None:
@@ -2041,10 +2045,10 @@ class ML_estimators_data:
                 if initParams == 'auto':
                     initParams = misc.PWM2GEV(*misc.PWM_estimation(new_data[:,-1]))
 
-                results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
+                results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
                 
                 if results.success == False:
-                    results = misc.minimize(cost, initParams, method='Nelder-Mead', bounds=[(None, None), (None, None), (1e-5, None)])
+                    results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=[(None, None), (None, None), (1e-5, None)])
                 if results.success == False:
                     results = misc.minimize(cost, initParams, method='COBYLA', bounds=[(None, None), (None, None), (1e-5, None)])
                 if results.success == True:
