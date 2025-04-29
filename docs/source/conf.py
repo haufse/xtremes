@@ -105,8 +105,8 @@ latex_elements = {
     \vfill
     \begin{figure}[!htp]
     \centering
-    \includegraphics[width=0.4\textwidth]{../../docs/source/images/logo4.png}\par
-    \caption{Dall-E's interpretation of the \texttt{xtremes} package}
+    \includegraphics[width=0.4\textwidth]{../../docs/source/images/logo_xtremes.png}\par
+    %\caption{Dall-E's interpretation of the \texttt{xtremes} package}
     \end{figure}
     \vfill
     {\large \today \par}

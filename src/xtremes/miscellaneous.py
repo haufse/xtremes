@@ -306,12 +306,18 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
     x = np.array(x)
     sigma = np.abs(sigma)
     y = (x - mu) / sigma
-    if np.abs(gamma) < 0.01:
+    if np.abs(gamma) < 0.001:
         out = -np.log(sigma) - np.exp(-y) - y
     else:
         mask = (1 + gamma * y > 0)
-        out = np.zeros_like(x)
-        out[mask] = -np.log(sigma) - (1 + gamma * y[mask]) ** (-1 / gamma) + np.log(1 + gamma * y[mask]) * (-1 / gamma - 1)
+        # recent change dealing with params being arrays
+        y = y[mask]
+        if hasattr(sigma, '__len__'):
+            sigma = sigma[mask]
+        if hasattr(gamma, '__len__'):
+            gamma = gamma[mask]
+        out =  - np.ones_like(x) * 1e6#np.inf
+        out[mask] = -np.log(sigma) - (1 + gamma * y) ** (-1 / gamma) + np.log(1 + gamma * y) * (-1 / gamma - 1)
     return out
 
 
