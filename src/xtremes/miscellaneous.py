@@ -14,7 +14,7 @@ import numpy as np
 from tqdm import tqdm
 from scipy import stats
 from scipy.optimize import minimize
-from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm, pareto, rv_continuous
+from scipy.stats import genextreme, invweibull, weibull_max, gumbel_r, genpareto, cauchy, norm, pareto, genextreme, rv_continuous
 
 from scipy.special import gamma as Gamma
 from pynverse import inversefunc
@@ -306,7 +306,7 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
     x = np.array(x)
     sigma = np.abs(sigma)
     y = (x - mu) / sigma
-    if np.abs(gamma) < 0.001:
+    if np.abs(gamma) < 1e-6:
         out = -np.log(sigma) - np.exp(-y) - y
     else:
         mask = (1 + gamma * y > 0)
@@ -316,7 +316,7 @@ def GEV_ll(x, gamma=0, mu=0, sigma=1):
             sigma = sigma[mask]
         if hasattr(gamma, '__len__'):
             gamma = gamma[mask]
-        out =  - np.ones_like(x) * 1e6#np.inf
+        out =  - np.ones_like(x) * 1e8#np.inf
         out[mask] = -np.log(sigma) - (1 + gamma * y) ** (-1 / gamma) + np.log(1 + gamma * y) * (-1 / gamma - 1)
     return out
 
@@ -540,15 +540,16 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
     if correlation.upper() == 'IID':
         # draw from GEV
         if distr == 'GEV':
-            if modelparams[0] == 0:
-                # gumbel case
-                s = gumbel_r.rvs(size=n, loc=loc, scale=scale)
-            if modelparams[0] > 0:
-                # frechet case
-                s = invweibull.rvs(1/modelparams[0], size=n, loc=loc, scale=scale)
-            if modelparams[0] < 0:
-                # weibull case
-                s = weibull_max.rvs(-1/modelparams[0], size=n, loc=loc, scale=scale)
+            s = genextreme.rvs(c=-shape, loc=loc, scale=scale, size=n)
+            # if modelparams[0] == 0:
+            #     # gumbel case
+            #     s = gumbel_r.rvs(size=n, loc=loc, scale=scale)
+            # if modelparams[0] > 0:
+            #     # frechet case
+            #     s = invweibull.rvs(1/modelparams[0], size=n, loc=loc, scale=scale)
+            # if modelparams[0] < 0:
+            #     # weibull case
+            #     s = weibull_max.rvs(-1/modelparams[0], size=n, loc=loc, scale=scale)
         if distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
@@ -569,15 +570,16 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
             X.append(xi)
         # transforming model to desired distribution
         if distr == 'GEV':
-            if modelparams[0] == 0:
-                # gumbel case
-                s = gumbel_r.ppf(invweibull.cdf(X, c=1, loc=loc, scale=scale))
-            if modelparams[0] > 0:
-                # frechet case
-                s = invweibull.ppf(invweibull.cdf(X, c=1),c=1/modelparams[0], loc=loc, scale=scale)
-            if modelparams[0] < 0:
-                # weibull case
-                s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0], loc=loc, scale=scale)
+            s = genextreme.ppf(invweibull.cdf(X, c=1), c=-modelparams[0], loc=loc, scale=scale)
+            # if modelparams[0] == 0:
+            #     # gumbel case
+            #     s = gumbel_r.ppf(invweibull.cdf(X, c=1, loc=loc, scale=scale))
+            # if modelparams[0] > 0:
+            #     # frechet case
+            #     s = invweibull.ppf(invweibull.cdf(X, c=1),c=1/modelparams[0], loc=loc, scale=scale)
+            # if modelparams[0] < 0:
+            #     # weibull case
+            #     s = weibull_max.ppf(invweibull.cdf(X, c=1),c=-1/modelparams[0], loc=loc, scale=scale)
         elif distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
@@ -605,15 +607,16 @@ def simulate_timeseries(n, distr='GEV', correlation='IID', modelparams=[0], ts=0
         elif distr == 'Pareto':
             s = pareto.ppf(cauchy.cdf(X), b=modelparams[0], loc=loc, scale=scale)
         elif distr == 'GEV':
-            if modelparams[0] == 0:
-                # gumbel case
-                s = gumbel_r.ppf(cauchy.cdf(X), loc=loc, scale=scale)
-            if modelparams[0] > 0:
-                # frechet case
-                s = invweibull.ppf(cauchy.cdf(X),c=1/modelparams[0], loc=loc, scale=scale)
-            if modelparams[0] < 0:
-                # weibull case
-                s = weibull_max.ppf(cauchy.cdf(X),c=-1/modelparams[0], loc=loc, scale=scale)
+            s = genextreme.ppf(cauchy.cdf(X), c=-modelparams[0], loc=loc, scale=scale)
+            # if modelparams[0] == 0:
+            #     # gumbel case
+            #     s = gumbel_r.ppf(cauchy.cdf(X), loc=loc, scale=scale)
+            # if modelparams[0] > 0:
+            #     # frechet case
+            #     s = invweibull.ppf(cauchy.cdf(X),c=1/modelparams[0], loc=loc, scale=scale)
+            # if modelparams[0] < 0:
+            #     # weibull case
+            #     s = weibull_max.ppf(cauchy.cdf(X),c=-1/modelparams[0], loc=loc, scale=scale)
         elif distr == 'Frechet':
             if modelparams[0] > 0:
                 # frechet case
