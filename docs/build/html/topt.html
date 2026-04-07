@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Series and Extreme Value Analysis &mdash; xtremes 0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/sphinx_rtd_size.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=73b1e7da"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bootstrap and MLE Tutorial" href="bootstrap.html" />
+    <link rel="prev" title="The Bootstrap" href="notebooks/bootstrap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xtremes
+          </a>
+              <div class="version">
+                0.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Time Series and Extreme Value Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#step-1-simulating-time-series-data">Step 1: Simulating Time Series Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-2-extracting-block-maxima">Step 2: Extracting Block Maxima</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-3-extracting-high-order-statistics">Step 3: Extracting High Order Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-4-estimating-parameters-with-pwm">Step 4: Estimating Parameters with PWM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-5-maximum-likelihood-estimation-mle">Step 5: Maximum Likelihood Estimation (MLE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#step-6-analyzing-real-data">Step 6: Analyzing Real Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap and MLE Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biascorrection.html">Bias Correction Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Utility Functions for Extreme Value Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_topt.html">Reference: topt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_bootstrap.html">Reference: Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_misc.html">Reference: Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_biascorrection.html">Bias Correction</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xtremes</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Time Series and Extreme Value Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/topt.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="time-series-and-extreme-value-analysis">
+<h1>Time Series and Extreme Value Analysis<a class="headerlink" href="#time-series-and-extreme-value-analysis" title="Permalink to this heading"></a></h1>
+<p>In this tutorial, we will explore how to use the functionalities provided in <cite>topt.py</cite> to simulate time series data, extract block maxima, and perform Maximum Likelihood Estimation (MLE) for extreme value distributions. We will also see how to work with real data to extract high-order statistics and compute MLE.</p>
+<p>We will cover:
+- Simulating time series data using the <cite>TimeSeries</cite> class.
+- Extracting block maxima and high-order statistics from the simulated data.
+- Estimating parameters for GEV and Frechet distributions using PWM and MLE.
+- Analyzing real-world datasets for extreme value statistics.</p>
+<p>Let’s walk through each of these steps with code examples.</p>
+<section id="step-1-simulating-time-series-data">
+<h2>Step 1: Simulating Time Series Data<a class="headerlink" href="#step-1-simulating-time-series-data" title="Permalink to this heading"></a></h2>
+<p>The first step is to simulate a time series dataset using the <cite>TimeSeries</cite> class. You can specify the length of the series, the type of distribution (e.g., GEV), and whether to apply any correlation structure (e.g., IID or ARMAX).</p>
+<p>Here’s how you can simulate a GEV-distributed time series:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">topt</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+
+<span class="c1"># Create a time series object with 100 data points, GEV distribution, and IID correlation</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distr</span><span class="o">=</span><span class="s1">&#39;GEV&#39;</span><span class="p">,</span> <span class="n">correlation</span><span class="o">=</span><span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="n">modelparams</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+
+<span class="c1"># Simulate the time series with 10 repetitions</span>
+<span class="n">ts</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">rep</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Print the simulated time series data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-extracting-block-maxima">
+<h2>Step 2: Extracting Block Maxima<a class="headerlink" href="#step-2-extracting-block-maxima" title="Permalink to this heading"></a></h2>
+<p>Once the time series is generated, the next step is to extract block maxima from the data. Block maxima are the largest values within blocks of a certain size in the time series.</p>
+<p>Here’s how to extract block maxima with a block size of 5:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract block maxima with a block size of 5</span>
+<span class="n">ts</span><span class="o">.</span><span class="n">get_blockmaxima</span><span class="p">(</span><span class="n">block_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print the extracted block maxima</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">blockmaxima</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example, the <cite>get_blockmaxima()</cite> function divides the time series into blocks of size 5 and extracts the maximum value from each block. You can adjust the stride (e.g., ‘DBM’ for disjoint blocks or ‘SBM’ for sliding blocks).</p>
+</section>
+<section id="step-3-extracting-high-order-statistics">
+<h2>Step 3: Extracting High Order Statistics<a class="headerlink" href="#step-3-extracting-high-order-statistics" title="Permalink to this heading"></a></h2>
+<p>High-order statistics refer to the second, third, or higher-largest values within a block of data. You can extract these using the <cite>get_HOS()</cite> method.</p>
+<p>Here’s how to extract the top 2 largest values from each block:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extract the two highest values from each block</span>
+<span class="n">ts</span><span class="o">.</span><span class="n">get_HOS</span><span class="p">(</span><span class="n">orderstats</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print the high-order statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ts</span><span class="o">.</span><span class="n">high_order_stats</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-estimating-parameters-with-pwm">
+<h2>Step 4: Estimating Parameters with PWM<a class="headerlink" href="#step-4-estimating-parameters-with-pwm" title="Permalink to this heading"></a></h2>
+<p>Once block maxima are extracted, you can estimate the parameters of the Generalized Extreme Value (GEV) distribution using Probability Weighted Moments (PWM). The <cite>PWM_estimators</cite> class handles this.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">topt</span> <span class="kn">import</span> <span class="n">PWM_estimators</span>
+
+<span class="c1"># Initialize PWM estimator with the time series data</span>
+<span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+
+<span class="c1"># Compute PWM estimators for GEV parameters</span>
+<span class="n">pwm</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+
+<span class="c1"># Print the GEV parameter estimates</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pwm</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-maximum-likelihood-estimation-mle">
+<h2>Step 5: Maximum Likelihood Estimation (MLE)<a class="headerlink" href="#step-5-maximum-likelihood-estimation-mle" title="Permalink to this heading"></a></h2>
+<p>To estimate the GEV or Frechet parameters using MLE, you can use the <cite>ML_estimators</cite> class. This method fits the distribution to the block maxima or high-order statistics.</p>
+<p>Here’s how to perform MLE for the GEV distribution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">topt</span> <span class="kn">import</span> <span class="n">ML_estimators</span>
+
+<span class="c1"># Initialize MLE estimator with the time series data</span>
+<span class="n">ml</span> <span class="o">=</span> <span class="n">ML_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+
+<span class="c1"># Perform MLE for the GEV distribution</span>
+<span class="n">ml</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">()</span>
+
+<span class="c1"># Print the MLE results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-6-analyzing-real-data">
+<h2>Step 6: Analyzing Real Data<a class="headerlink" href="#step-6-analyzing-real-data" title="Permalink to this heading"></a></h2>
+<p>You can also work with real-world datasets using the <cite>Data</cite> class. This class allows you to extract block maxima and high-order statistics, and perform MLE on the dataset.</p>
+<p>Here’s how to analyze a real dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">topt</span> <span class="kn">import</span> <span class="n">Data</span>
+
+<span class="c1"># Initialize the Data class with a real dataset</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">4.6</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">])</span>
+
+<span class="c1"># Extract block maxima</span>
+<span class="n">data</span><span class="o">.</span><span class="n">get_blockmaxima</span><span class="p">(</span><span class="n">block_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+
+<span class="c1"># Extract high-order statistics</span>
+<span class="n">data</span><span class="o">.</span><span class="n">get_HOS</span><span class="p">(</span><span class="n">orderstats</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+
+<span class="c1"># Perform MLE on the dataset</span>
+<span class="n">data</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">(</span><span class="n">FrechetOrGEV</span><span class="o">=</span><span class="s1">&#39;GEV&#39;</span><span class="p">)</span>
+
+<span class="c1"># Print the MLE results</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ML_estimators</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading"></a></h2>
+<p>In this tutorial, we explored how to simulate time series data, extract block maxima and high-order statistics, and perform MLE for extreme value distributions. We also saw how to analyze real-world data for extreme value statistics using block maxima and MLE.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="notebooks/bootstrap.html" class="btn btn-neutral float-left" title="The Bootstrap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bootstrap.html" class="btn btn-neutral float-right" title="Bootstrap and MLE Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Erik Haufs.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

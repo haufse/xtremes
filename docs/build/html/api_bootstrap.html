@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reference: Bootstrap &mdash; xtremes 0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/sphinx_rtd_size.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=73b1e7da"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference: Miscellaneous" href="api_misc.html" />
+    <link rel="prev" title="Reference: topt" href="api_topt.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xtremes
+          </a>
+              <div class="version">
+                0.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topt.html">Time Series and Extreme Value Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap and MLE Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biascorrection.html">Bias Correction Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Utility Functions for Extreme Value Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_topt.html">Reference: topt</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reference: Bootstrap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-fullbootstrap-class">The <code class="docutils literal notranslate"><span class="pre">FullBootstrap</span></code> Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.bootstrap.FullBootstrap"><code class="docutils literal notranslate"><span class="pre">FullBootstrap</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.bootstrap.FullBootstrap.get_CI"><code class="docutils literal notranslate"><span class="pre">FullBootstrap.get_CI()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.bootstrap.FullBootstrap.plot_bootstrap"><code class="docutils literal notranslate"><span class="pre">FullBootstrap.plot_bootstrap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.bootstrap.FullBootstrap.run_bootstrap"><code class="docutils literal notranslate"><span class="pre">FullBootstrap.run_bootstrap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-circmax-function">The <code class="docutils literal notranslate"><span class="pre">circmax</span></code> Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.bootstrap.circmax"><code class="docutils literal notranslate"><span class="pre">circmax()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-uniquening-function">The <code class="docutils literal notranslate"><span class="pre">uniquening</span></code> Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.bootstrap.uniquening"><code class="docutils literal notranslate"><span class="pre">uniquening()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-bootstrap-function">The <code class="docutils literal notranslate"><span class="pre">Bootstrap</span></code> Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.bootstrap.Bootstrap"><code class="docutils literal notranslate"><span class="pre">Bootstrap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-aggregate-boot-function">The <code class="docutils literal notranslate"><span class="pre">aggregate_boot</span></code> Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.bootstrap.aggregate_boot"><code class="docutils literal notranslate"><span class="pre">aggregate_boot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-bootstrap-worker-function">The <code class="docutils literal notranslate"><span class="pre">bootstrap_worker</span></code> Function</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.bootstrap.bootstrap_worker"><code class="docutils literal notranslate"><span class="pre">bootstrap_worker()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id24">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_misc.html">Reference: Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_biascorrection.html">Bias Correction</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xtremes</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reference: Bootstrap</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_bootstrap.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reference-bootstrap">
+<h1>Reference: Bootstrap<a class="headerlink" href="#reference-bootstrap" title="Permalink to this heading"></a></h1>
+<p>This module computes a Bootstrap procedure on disjoint or sliding block maxima.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The <cite>xtremes.bootstrap</cite> module provides tools for performing bootstrap procedures on block maxima. It includes classes and functions for extracting block maxima, resampling, and estimating parameters using Maximum Likelihood Estimation (MLE).</p>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+</section>
+<section id="the-fullbootstrap-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">FullBootstrap</span></code> Class<a class="headerlink" href="#the-fullbootstrap-class" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.bootstrap.FullBootstrap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.bootstrap.</span></span><span class="sig-name descname"><span class="pre">FullBootstrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dist_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Frechet'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.FullBootstrap" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class to perform bootstrapping of Maximum Likelihood Estimates (MLE) for Fréchet or GEV distributions.</p>
+<p>This class performs block maxima extraction from an initial sample using either disjoint or sliding blocks.
+It applies a bootstrap resampling procedure to estimate the variability of the MLE parameters for the specified
+distribution type (Fréchet or GEV). The bootstrap method is parallelized for efficiency and supports reproducibility
+through optional seed setting.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>initial_sample<span class="classifier">list or numpy.ndarray</span></dt><dd><p>The initial dataset from which block maxima will be extracted and bootstrapped.</p>
+</dd>
+<dt>bs<span class="classifier">int, optional</span></dt><dd><p>Block size for the block maxima extraction. Default is 10.</p>
+</dd>
+<dt>stride<span class="classifier">{‘DBM’, ‘SBM’}, optional</span></dt><dd><p>Stride type for block maxima extraction:
+- ‘DBM’ (Disjoint Block Maxima): Non-overlapping blocks.
+- ‘SBM’ (Sliding Block Maxima): Overlapping blocks.
+Default is ‘DBM’.</p>
+</dd>
+<dt>dist_type<span class="classifier">{‘Frechet’, ‘GEV’}, optional</span></dt><dd><p>Distribution type to estimate the parameters for:
+- ‘Frechet’: Estimate parameters for the 2-parametric Fréchet distribution.
+- ‘GEV’: Estimate parameters for the 3-parametric Generalized Extreme Value (GEV) distribution.
+Default is ‘Frechet’.</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>circmaxs<span class="classifier">list</span></dt><dd><p>The block maxima extracted from the initial sample using the specified block size and stride.</p>
+</dd>
+<dt>data<span class="classifier">hos.Data</span></dt><dd><p>The <cite>hos.Data</cite> object containing the original dataset and its MLE results.</p>
+</dd>
+<dt>MLEvals<span class="classifier">numpy.ndarray</span></dt><dd><p>The MLE estimates from the original dataset before bootstrapping.</p>
+</dd>
+<dt>values<span class="classifier">numpy.ndarray</span></dt><dd><p>MLE estimates for each bootstrap sample after running the <cite>run_bootstrap</cite> method.</p>
+</dd>
+<dt>statistics<span class="classifier">dict</span></dt><dd><p>Dictionary containing summary statistics (mean and standard deviation) of the bootstrap estimates.</p>
+</dd>
+</dl>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>run_bootstrap(num_bootstraps=100, set_seeds=False, max_workers=1)</dt><dd><p>Runs the bootstrap procedure in parallel and calculates the MLE estimates for each bootstrap sample.</p>
+</dd>
+</dl>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span> <span class="o">=</span> <span class="n">FullBootstrap</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="s1">&#39;Frechet&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">run_bootstrap</span><span class="p">(</span><span class="n">num_bootstraps</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">set_seeds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>  <span class="c1"># Mean of bootstrap estimates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span>   <span class="c1"># Standard deviation of bootstrap estimates</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.bootstrap.FullBootstrap.get_CI">
+<span class="sig-name descname"><span class="pre">get_CI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bootstrap'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.FullBootstrap.get_CI" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the confidence interval (CI) for the Maximum Likelihood Estimate (MLE) parameters 
+based on bootstrap samples.</p>
+<section id="id1">
+<h4>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>alpha<span class="classifier">float, optional</span></dt><dd><p>Significance level for the confidence interval. Default is 0.05, 
+corresponding to a 95% confidence interval.</p>
+</dd>
+<dt>method<span class="classifier">str, optional</span></dt><dd><p>Method to compute the confidence interval. Two options are available:
+- ‘symmetric’: The confidence interval is computed using the symmetric quantiles.
+- ‘minimal_width’: The confidence interval is computed by finding the minimal-width 
+interval that contains (1 - alpha) proportion of the bootstrap distribution.
+The default is ‘symmetric’.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>A 2D array with shape (n_parameters, 2) containing the lower and upper bounds of 
+the confidence interval for each parameter. The first column represents the lower 
+bounds, and the second column represents the upper bounds.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h4>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h4>
+<p>The confidence intervals are based on bootstrap estimates of the MLE parameters, which 
+means the confidence intervals are derived from the empirical distribution of the parameter 
+estimates obtained from multiple bootstrap samples.</p>
+<p>There are two methods available for calculating the confidence intervals:
+- ‘symmetric’: This method takes the alpha/2 and (1 - alpha/2) quantiles of the bootstrap 
+distribution for each parameter. It is based on the assumption that the distribution 
+is approximately symmetric and works well when the bootstrap distribution is roughly normal.
+- ‘minimal_width’: This method identifies the interval with the minimal width that contains 
+(1 - alpha) proportion of the bootstrap samples. It is particularly useful when the 
+bootstrap distribution is skewed or not symmetric.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.bootstrap.FullBootstrap.plot_bootstrap">
+<span class="sig-name descname"><span class="pre">plot_bootstrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gamma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.FullBootstrap.plot_bootstrap" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the bootstrap distribution for a specified parameter.</p>
+<section id="id2">
+<h4>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>param_idx<span class="classifier">int, optional</span></dt><dd><p>Index of the parameter to plot (0 for the first parameter, 1 for the second, etc.). Default is 0.</p>
+</dd>
+<dt>bins<span class="classifier">int, optional</span></dt><dd><p>Number of bins to use for the histogram. Default is 30.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h4>Notes<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
+<p>This method generates a histogram of the bootstrap estimates for the specified parameter and overlays
+the mean and confidence interval.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.bootstrap.FullBootstrap.run_bootstrap">
+<span class="sig-name descname"><span class="pre">run_bootstrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_bootstraps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">set_seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.FullBootstrap.run_bootstrap" title="Permalink to this definition"></a></dt>
+<dd><p>Run the bootstrap resampling procedure in parallel.</p>
+<p>This method resamples the block maxima dataset, estimates the MLE parameters for each bootstrap sample,
+and computes summary statistics (mean and standard deviation) of the bootstrap estimates. The computation
+is parallelized using <cite>ProcessPoolExecutor</cite> with an adjustable number of worker processes.</p>
+<section id="id4">
+<h4>Parameters<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>num_bootstraps<span class="classifier">int, optional</span></dt><dd><p>Number of bootstrap samples to generate. Default is 100.</p>
+</dd>
+<dt>set_seeds<span class="classifier">bool, optional</span></dt><dd><p>If True, sets the random seed for reproducibility in each bootstrap iteration. Default is False.</p>
+</dd>
+<dt>max_workers<span class="classifier">int, optional</span></dt><dd><p>Maximum number of worker processes to use for parallelization. Default is 1 (no parallelism).
+Set to <cite>None</cite> to use all available CPU cores.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h4>Returns<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>Results are stored in the <cite>values</cite> attribute and summary statistics in the <cite>statistics</cite> attribute.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h4>Example<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">run_bootstrap</span><span class="p">(</span><span class="n">num_bootstraps</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">set_seeds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span>  <span class="c1"># Access the mean of bootstrap estimates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span>   <span class="c1"># Access the standard deviation of bootstrap estimates</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+</section>
+<section id="the-circmax-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">circmax</span></code> Function<a class="headerlink" href="#the-circmax-function" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.bootstrap.circmax">
+<span class="sig-prename descclassname"><span class="pre">xtremes.bootstrap.</span></span><span class="sig-name descname"><span class="pre">circmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.circmax" title="Permalink to this definition"></a></dt>
+<dd><p>Extract the block maxima (BM) from a given sample using different stride methods.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>sample<span class="classifier">numpy.ndarray</span></dt><dd><p>A 1D array containing the sample from which block maxima will be extracted.</p>
+</dd>
+<dt>bs<span class="classifier">int, optional</span></dt><dd><p>The block size (number of observations per block) used to divide the sample for block maxima extraction. Default is 10.</p>
+</dd>
+<dt>stride<span class="classifier">{‘DBM’, ‘SBM’}, optional</span></dt><dd><p>The stride method used for extracting block maxima:
+- ‘DBM’ (Disjoint Block Maxima): Extracts maxima from non-overlapping blocks.
+- ‘SBM’ (Sliding Block Maxima): Extracts maxima using overlapping blocks. Default is ‘DBM’.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>A 1D or 2D array containing the block maxima extracted from the sample. The result depends on the stride method used:
+- For ‘DBM’, returns a 1D array of block maxima.
+- For ‘SBM’, returns a 2D array where each row contains the block maxima extracted from overlapping blocks.</p>
+</dd>
+</dl>
+</section>
+<section id="raises">
+<h3>Raises<a class="headerlink" href="#raises" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If an invalid stride method is specified.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Notes<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>‘DBM’ (Disjoint Block Maxima) extracts block maxima from non-overlapping blocks of size <cite>bs</cite>.</p></li>
+<li><p>‘SBM’ (Sliding Block Maxima) creates overlapping blocks, effectively increasing the number of block maxima compared to ‘DBM’.</p></li>
+<li><p>In the ‘SBM’ setting, the circmax() method introduced by Bücher and Staud 2024 is used.</p></li>
+</ul>
+</section>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h3>
+<p>Bücher, A., &amp; Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. 
+arXiv preprint arXiv:2409.05529.</p>
+</section>
+<section id="id10">
+<h3>Example<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">circmax</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+<span class="go">array([5, 10])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">circmax</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;SBM&#39;</span><span class="p">)</span>
+<span class="go">array([[3, 6, 9],</span>
+<span class="go">       [4, 7, 10]])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="the-uniquening-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">uniquening</span></code> Function<a class="headerlink" href="#the-uniquening-function" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.bootstrap.uniquening">
+<span class="sig-prename descclassname"><span class="pre">xtremes.bootstrap.</span></span><span class="sig-name descname"><span class="pre">uniquening</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circmaxs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.uniquening" title="Permalink to this definition"></a></dt>
+<dd><p>Identify unique values and their counts from a list of arrays.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>circmaxs<span class="classifier">numpy.ndarray</span></dt><dd><p>A NumPy array containing block maxima values extracted from a sample.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>list of tuples</dt><dd><p>A list where each element is a tuple containing two NumPy arrays:
+- The first array contains the unique values from the corresponding row in <cite>circmaxs</cite>.
+- The second array contains the counts of each unique value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="the-bootstrap-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Bootstrap</span></code> Function<a class="headerlink" href="#the-bootstrap-function" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.bootstrap.Bootstrap">
+<span class="sig-prename descclassname"><span class="pre">xtremes.bootstrap.</span></span><span class="sig-name descname"><span class="pre">Bootstrap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.Bootstrap" title="Permalink to this definition"></a></dt>
+<dd><p>Generate a bootstrap sample by resampling with replacement from the input data.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>xx<span class="classifier">list or numpy.ndarray</span></dt><dd><p>The input sample to resample from.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>Returns<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>list</dt><dd><p>A new sample of the same size, created by randomly selecting elements from <cite>xx</cite> with replacement.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Notes<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<p>This function creates a bootstrap sample, which is commonly used in statistical resampling methods to estimate 
+the variability of a statistic.</p>
+</section>
+<section id="id16">
+<h3>Example<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Bootstrap</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+<span class="go">[2, 5, 3, 1, 2]  # Example output, actual result may vary</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="the-aggregate-boot-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">aggregate_boot</span></code> Function<a class="headerlink" href="#the-aggregate-boot-function" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.bootstrap.aggregate_boot">
+<span class="sig-prename descclassname"><span class="pre">xtremes.bootstrap.</span></span><span class="sig-name descname"><span class="pre">aggregate_boot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boot_samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.aggregate_boot" title="Permalink to this definition"></a></dt>
+<dd><p>Aggregate counts of unique values from a list of tuples containing values and their counts.</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>boot_samp<span class="classifier">list of tuples</span></dt><dd><p>Each tuple contains two arrays: the first with values and the second with corresponding counts.</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h3>Returns<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>A 2D array with two columns: the first column contains unique values, and the second column contains the aggregated counts.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Example<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">boot_samp</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aggregate_boot</span><span class="p">(</span><span class="n">boot_samp</span><span class="p">)</span>
+<span class="go">array([[1, 1],</span>
+<span class="go">       [2, 3],</span>
+<span class="go">       [3, 3]])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="the-bootstrap-worker-function">
+<h2>The <code class="docutils literal notranslate"><span class="pre">bootstrap_worker</span></code> Function<a class="headerlink" href="#the-bootstrap-worker-function" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.bootstrap.bootstrap_worker">
+<span class="sig-prename descclassname"><span class="pre">xtremes.bootstrap.</span></span><span class="sig-name descname"><span class="pre">bootstrap_worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.bootstrap.bootstrap_worker" title="Permalink to this definition"></a></dt>
+<dd><p>Auxiliary function to perform a single bootstrap resampling and MLE estimation.</p>
+<p>This function is designed to be used in parallelized bootstrap procedures. It takes arguments for a single 
+bootstrap iteration, performs resampling on the given block maxima, estimates MLE parameters using the 
+specified distribution type, and returns the results.</p>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>args<span class="classifier">tuple</span></dt><dd><p>A tuple containing the following elements:
+- idx (int): The iteration index, used for setting the random seed if <cite>set_seeds</cite> is True.
+- set_seeds (bool): Whether to set the random seed for reproducibility.
+- circmaxs (list or numpy.ndarray): The block maxima dataset to be resampled.
+- aggregate_boot (callable): A function to aggregate the resampled data.
+- ML_estimators_data (callable): A function or class to compute MLE parameters on the aggregated data.
+- dist_type (str): The distribution type for MLE estimation (‘Frechet’ or ‘GEV’).</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>The MLE parameter estimates for the current bootstrap sample.</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>Notes<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>This function is designed to be compatible with <cite>ProcessPoolExecutor</cite> or other parallel processing tools.</p></li>
+<li><p>The random seed is set per iteration to ensure reproducibility when <cite>set_seeds</cite> is True.</p></li>
+</ul>
+</section>
+<section id="id23">
+<h3>Example<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">circmaxs</span><span class="p">,</span> <span class="n">aggregate_boot</span><span class="p">,</span> <span class="n">ML_estimators_data</span><span class="p">,</span> <span class="s1">&#39;GEV&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bootstrap_worker</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="go">array([param1, param2, param3])  # Example output for GEV distribution</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<p>Here are some examples of how to use the <cite>xtremes.bootstrap</cite> module:</p>
+<ol class="arabic">
+<li><p><strong>FullBootstrap Class</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.bootstrap</span> <span class="kn">import</span> <span class="n">FullBootstrap</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">bootstrap</span> <span class="o">=</span> <span class="n">FullBootstrap</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="n">dist_type</span><span class="o">=</span><span class="s1">&#39;Frechet&#39;</span><span class="p">)</span>
+<span class="n">bootstrap</span><span class="o">.</span><span class="n">run_bootstrap</span><span class="p">(</span><span class="n">num_bootstraps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean of bootstrap estimates:&quot;</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Standard deviation of bootstrap estimates:&quot;</span><span class="p">,</span> <span class="n">bootstrap</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>circmax Function</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.bootstrap</span> <span class="kn">import</span> <span class="n">circmax</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">block_maxima</span> <span class="o">=</span> <span class="n">circmax</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Block Maxima (DBM):&quot;</span><span class="p">,</span> <span class="n">block_maxima</span><span class="p">)</span>
+
+<span class="n">block_maxima</span> <span class="o">=</span> <span class="n">circmax</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;SBM&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Block Maxima (SBM):&quot;</span><span class="p">,</span> <span class="n">block_maxima</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>uniquening Function</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.bootstrap</span> <span class="kn">import</span> <span class="n">uniquening</span>
+
+<span class="n">circmaxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="n">unique_values</span> <span class="o">=</span> <span class="n">uniquening</span><span class="p">(</span><span class="n">circmaxs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unique values and counts:&quot;</span><span class="p">,</span> <span class="n">unique_values</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Bootstrap Function</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.bootstrap</span> <span class="kn">import</span> <span class="n">Bootstrap</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">bootstrap_sample</span> <span class="o">=</span> <span class="n">Bootstrap</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bootstrap sample:&quot;</span><span class="p">,</span> <span class="n">bootstrap_sample</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>aggregate_boot Function</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.bootstrap</span> <span class="kn">import</span> <span class="n">aggregate_boot</span>
+
+<span class="n">boot_samp</span> <span class="o">=</span> <span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])),</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))]</span>
+<span class="n">aggregated_counts</span> <span class="o">=</span> <span class="n">aggregate_boot</span><span class="p">(</span><span class="n">boot_samp</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Aggregated counts:&quot;</span><span class="p">,</span> <span class="n">aggregated_counts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="id24">
+<h2>References<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Bücher, A., &amp; Staud, T. (2024). Bootstrapping Estimators based on the Block Maxima Method. arXiv preprint arXiv:2409.05529.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_topt.html" class="btn btn-neutral float-left" title="Reference: topt" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_misc.html" class="btn btn-neutral float-right" title="Reference: Miscellaneous" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Erik Haufs.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

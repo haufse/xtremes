@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reference: topt &mdash; xtremes 0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/sphinx_rtd_size.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=73b1e7da"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reference: Bootstrap" href="api_bootstrap.html" />
+    <link rel="prev" title="Utility Functions for Extreme Value Analysis" href="miscellaneous.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xtremes
+          </a>
+              <div class="version">
+                0.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topt.html">Time Series and Extreme Value Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap and MLE Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biascorrection.html">Bias Correction Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Utility Functions for Extreme Value Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reference: topt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-timeseries-class-and-its-functionalities">The <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> Class and its Functionalities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.TimeSeries"><code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.get_ABM_weights"><code class="docutils literal notranslate"><span class="pre">TimeSeries.get_ABM_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.get_HOS"><code class="docutils literal notranslate"><span class="pre">TimeSeries.get_HOS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.get_blockmaxima"><code class="docutils literal notranslate"><span class="pre">TimeSeries.get_blockmaxima()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.plot"><code class="docutils literal notranslate"><span class="pre">TimeSeries.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.plot_blockmaxima"><code class="docutils literal notranslate"><span class="pre">TimeSeries.plot_blockmaxima()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.plot_with_blockmaxima"><code class="docutils literal notranslate"><span class="pre">TimeSeries.plot_with_blockmaxima()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.TimeSeries.simulate"><code class="docutils literal notranslate"><span class="pre">TimeSeries.simulate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-highorderstats-class-and-its-functionalities">The <code class="docutils literal notranslate"><span class="pre">HighOrderStats</span></code> Class and its Functionalities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.HighOrderStats"><code class="docutils literal notranslate"><span class="pre">HighOrderStats</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.HighOrderStats.get_ML_estimation"><code class="docutils literal notranslate"><span class="pre">HighOrderStats.get_ML_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.HighOrderStats.get_PWM_estimation"><code class="docutils literal notranslate"><span class="pre">HighOrderStats.get_PWM_estimation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-data-class-and-its-functionalities">The <code class="docutils literal notranslate"><span class="pre">Data</span></code> Class and its Functionalities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Data.get_ABM_weights"><code class="docutils literal notranslate"><span class="pre">Data.get_ABM_weights()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Data.get_HOS"><code class="docutils literal notranslate"><span class="pre">Data.get_HOS()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Data.get_ML_estimation"><code class="docutils literal notranslate"><span class="pre">Data.get_ML_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Data.get_blockmaxima"><code class="docutils literal notranslate"><span class="pre">Data.get_blockmaxima()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-pwm-estimators-class">The <code class="docutils literal notranslate"><span class="pre">PWM_estimators</span></code> Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.PWM_estimators"><code class="docutils literal notranslate"><span class="pre">PWM_estimators</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.PWM_estimators.get_CIs"><code class="docutils literal notranslate"><span class="pre">PWM_estimators.get_CIs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.PWM_estimators.get_PWM_estimation"><code class="docutils literal notranslate"><span class="pre">PWM_estimators.get_PWM_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.PWM_estimators.get_statistics"><code class="docutils literal notranslate"><span class="pre">PWM_estimators.get_statistics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.PWM_estimators.plot"><code class="docutils literal notranslate"><span class="pre">PWM_estimators.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.automatic_parameter_initialization"><code class="docutils literal notranslate"><span class="pre">automatic_parameter_initialization()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-ml-estimators-frechet-ml-estimators-and-ml-estimators-data-classes">The <code class="docutils literal notranslate"><span class="pre">ML_estimators</span></code>, <code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators</span></code> and <code class="docutils literal notranslate"><span class="pre">ML_estimators_data</span></code> Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.ML_estimators"><code class="docutils literal notranslate"><span class="pre">ML_estimators</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.ML_estimators.get_CIs"><code class="docutils literal notranslate"><span class="pre">ML_estimators.get_CIs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.ML_estimators.get_ML_estimation"><code class="docutils literal notranslate"><span class="pre">ML_estimators.get_ML_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.ML_estimators.get_statistics"><code class="docutils literal notranslate"><span class="pre">ML_estimators.get_statistics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.ML_estimators.plot"><code class="docutils literal notranslate"><span class="pre">ML_estimators.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.Frechet_ML_estimators"><code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Frechet_ML_estimators.get_CIs"><code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators.get_CIs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Frechet_ML_estimators.get_ML_estimation"><code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators.get_ML_estimation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Frechet_ML_estimators.get_statistics"><code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators.get_statistics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xtremes.topt.Frechet_ML_estimators.plot"><code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.log_likelihood"><code class="docutils literal notranslate"><span class="pre">log_likelihood()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.Frechet_log_likelihood"><code class="docutils literal notranslate"><span class="pre">Frechet_log_likelihood()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-extensive-simulations">Running Extensive Simulations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.run_ML_estimation"><code class="docutils literal notranslate"><span class="pre">run_ML_estimation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.topt.run_multiple_ML_estimations"><code class="docutils literal notranslate"><span class="pre">run_multiple_ML_estimations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id97">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_bootstrap.html">Reference: Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_misc.html">Reference: Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_biascorrection.html">Bias Correction</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xtremes</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reference: topt</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_topt.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reference-topt">
+<h1>Reference: topt<a class="headerlink" href="#reference-topt" title="Permalink to this heading"></a></h1>
+<p>This module is specialized in implementing Top-t based Maximum Likelihood Estimators.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The <cite>xtremes.topt</cite> module provides tools for analyzing higher order statistics and their influence on Maximum Likelihood estimations. It includes classes and functions for handling time series data, extracting block maxima, and performing statistical analysis.</p>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+</section>
+<section id="the-timeseries-class-and-its-functionalities">
+<h2>The <code class="docutils literal notranslate"><span class="pre">TimeSeries</span></code> Class and its Functionalities<a class="headerlink" href="#the-timeseries-class-and-its-functionalities" title="Permalink to this heading"></a></h2>
+<p>The <cite>TimeSeries</cite> class is used to handle and manipulate time series data. It provides methods for extracting block maxima and high order statistics.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">TimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GEV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelparams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>TimeSeries class for simulating and analyzing time series data with optional correlation structures.</p>
+<p>This class is designed to simulate time series data based on specified distributions and correlation types. 
+It also provides methods to extract block maxima and high order statistics from the simulated data.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>n<span class="classifier">int</span></dt><dd><p>The length of the time series.</p>
+</dd>
+<dt>distr<span class="classifier">str, optional</span></dt><dd><p>The distribution to simulate the time series data from. Default is ‘GEV’ (Generalized Extreme Value).</p>
+</dd>
+<dt>correlation<span class="classifier">str, optional</span></dt><dd><p>The type of correlation structure. Options include [‘IID’, ‘ARMAX’, ‘AR’]. Default is ‘IID’ 
+(independent and identically distributed).</p>
+</dd>
+<dt>modelparams<span class="classifier">list, optional</span></dt><dd><p>The parameters of the specified distribution. Default is [0].</p>
+</dd>
+<dt>ts<span class="classifier">float, optional</span></dt><dd><p>A parameter for controlling the time series characteristics, particularly for correlated series (e.g., in AR models).
+Must be in the range [0, 1]. Default is 0.</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>values<span class="classifier">list</span></dt><dd><p>A list to store the simulated time series data.</p>
+</dd>
+<dt>distr<span class="classifier">str</span></dt><dd><p>The type of distribution used for generating the time series data.</p>
+</dd>
+<dt>corr<span class="classifier">str</span></dt><dd><p>The type of correlation structure applied to the time series.</p>
+</dd>
+<dt>modelparams<span class="classifier">list</span></dt><dd><p>The parameters of the chosen distribution model.</p>
+</dd>
+<dt>ts<span class="classifier">float</span></dt><dd><p>A parameter controlling the correlation or time series structure, if applicable.</p>
+</dd>
+<dt>len<span class="classifier">int</span></dt><dd><p>The length of the time series.</p>
+</dd>
+<dt>blockmaxima<span class="classifier">list</span></dt><dd><p>A list storing block maxima extracted from the simulated data.</p>
+</dd>
+<dt>high_order_stats<span class="classifier">list</span></dt><dd><p>A list storing the high order statistics extracted from the simulated data.</p>
+</dd>
+</dl>
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>simulate(rep=10, seeds=’default’):</dt><dd><p>Simulates time series data based on the given distribution and correlation type.</p>
+</dd>
+<dt>get_blockmaxima(block_size=2, stride=’DBM’, rep=10):</dt><dd><p>Extracts block maxima from the simulated time series data.</p>
+</dd>
+<dt>get_HOS(orderstats=2, block_size=2, stride=’DBM’, rep=10):</dt><dd><p>Extracts high order statistics from the simulated time series data.</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a TimeSeries object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distr</span><span class="o">=</span><span class="s1">&#39;GEV&#39;</span><span class="p">,</span> <span class="n">correlation</span><span class="o">=</span><span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="n">modelparams</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simulate time series data with 5 repetitions and specific seeds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">rep</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">seeds</span><span class="o">=</span><span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">,</span> <span class="mi">1011</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract block maxima using a block size of 5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span><span class="o">.</span><span class="n">get_blockmaxima</span><span class="p">(</span><span class="n">block_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract high order statistics (order 3) using the same block size and stride</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span><span class="o">.</span><span class="n">get_HOS</span><span class="p">(</span><span class="n">orderstats</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="n">rep</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.get_ABM_weights">
+<span class="sig-name descname"><span class="pre">get_ABM_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recursively</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.get_ABM_weights" title="Permalink to this definition"></a></dt>
+<dd><p>“Computes weights for MLE with ABM stride</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.get_HOS">
+<span class="sig-name descname"><span class="pre">get_HOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orderstats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.get_HOS" title="Permalink to this definition"></a></dt>
+<dd><p>Extract high order statistics from simulated time series data.</p>
+<p>High order statistics include values such as the second-largest value within each block of the time series.</p>
+<section id="id1">
+<h4>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>orderstats<span class="classifier">int, optional</span></dt><dd><p>The order of statistics to extract. Default is 2 (i.e., second-highest value).</p>
+</dd>
+<dt>block_size<span class="classifier">int, optional</span></dt><dd><p>The size of blocks from which to extract the statistics. Default is 2.</p>
+</dd>
+<dt>stride<span class="classifier">str, optional</span></dt><dd><p>The stride or step type used for block extraction. Choose from [‘SBM’, ‘DBM’]. Default is ‘DBM’.</p>
+</dd>
+<dt>rep<span class="classifier">int, optional</span></dt><dd><p>The number of repetitions for extracting high order statistics. Should match the number of simulations. Default is 10.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.get_blockmaxima">
+<span class="sig-name descname"><span class="pre">get_blockmaxima</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.get_blockmaxima" title="Permalink to this definition"></a></dt>
+<dd><p>Extract block maxima from simulated time series data.</p>
+<p>Block maxima are the maximum values extracted from blocks of the time series data.</p>
+<section id="id2">
+<h4>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>block_size<span class="classifier">int, optional</span></dt><dd><p>The size of blocks from which to extract maxima. Default is 2.</p>
+</dd>
+<dt>stride<span class="classifier">{str, int}, optional</span></dt><dd><p>The stride or step type used for block extraction. Choose from [‘SBM’ (Sliding Block Maxima), ‘DBM’ 
+(Disjoint Block Maxima)] or specify an integer as a step size. Default is ‘DBM’.</p>
+</dd>
+<dt>rep<span class="classifier">int, optional</span></dt><dd><p>The number of repetitions for maxima extraction. This should match the number of simulations. Default is 10.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the simulated time series data.</p>
+<p>This method generates a plot showing the simulated time series data. The user can choose to display 
+data from specific repetitions or all repetitions.</p>
+<section id="id3">
+<h4>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>rep<span class="classifier">int or list, optional</span></dt><dd><p>The repetition number(s) to plot. If 0, all repetitions are plotted. If a list is provided, 
+only the specified repetitions are plotted. Default is 1.</p>
+</dd>
+<dt>filename<span class="classifier">str, optional</span></dt><dd><p>The name of the PNG file to save the plot. If None, the plot is displayed but not saved. Default is None.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.plot_blockmaxima">
+<span class="sig-name descname"><span class="pre">plot_blockmaxima</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'line'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.plot_blockmaxima" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the extracted block maxima.</p>
+<p>This method generates a plot showing the extracted block maxima from the simulated time series data. 
+The user can choose to display block maxima from specific repetitions or all repetitions. The plot 
+can be either a line plot or a histogram.</p>
+<section id="id4">
+<h4>Parameters<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>rep<span class="classifier">int or list, optional</span></dt><dd><p>The repetition number(s) to plot. If 0, all repetitions are plotted. If a list is provided, 
+only the specified repetitions are plotted. Default is 1.</p>
+</dd>
+<dt>filename<span class="classifier">str, optional</span></dt><dd><p>The name of the PNG file to save the plot. If None, the plot is displayed but not saved. Default is None.</p>
+</dd>
+<dt>plot_type<span class="classifier">str, optional</span></dt><dd><p>The type of plot to generate. Options are ‘line’ for a line plot and ‘hist’ for a histogram. Default is ‘line’.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.plot_with_blockmaxima">
+<span class="sig-name descname"><span class="pre">plot_with_blockmaxima</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotlim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.plot_with_blockmaxima" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the simulated time series data along with block maxima.</p>
+<p>This method generates a plot showing the simulated time series data along with the block maxima. 
+The user can choose to display data from specific repetitions or all repetitions.</p>
+<section id="id5">
+<h4>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>rep<span class="classifier">int, optional</span></dt><dd><p>The repetition number to plot. Default is 1.</p>
+</dd>
+<dt>plotlim<span class="classifier">int, optional</span></dt><dd><p>The limit for the number of data points to plot. Default is 300.</p>
+</dd>
+<dt>filename<span class="classifier">str, optional</span></dt><dd><p>The name of the PNG file to save the plot. If None, the plot is displayed but not saved. Default is None.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.TimeSeries.simulate">
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seeds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.TimeSeries.simulate" title="Permalink to this definition"></a></dt>
+<dd><p>Simulate time series data.</p>
+<p>This method generates time series data based on the specified distribution, correlation type, and other parameters.</p>
+<section id="id6">
+<h4>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>rep<span class="classifier">int, optional</span></dt><dd><p>The number of repetitions (simulations) to run. Default is 10.</p>
+</dd>
+<dt>seeds<span class="classifier">{str, list}, optional</span></dt><dd><p>Seed(s) for random number generation. If ‘default’, a sequence of seeds is automatically generated 
+based on the number of repetitions. If a list of seeds is provided, it must match the number of 
+repetitions (<cite>rep</cite>). Default is ‘default’.</p>
+</dd>
+</dl>
+</section>
+<section id="raises">
+<h4>Raises<a class="headerlink" href="#raises" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the number of provided seeds does not match the number of repetitions.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="id7">
+<h2>Examples<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Extract Block Maxima</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.topt</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">ts_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">ts_data</span><span class="p">)</span>
+<span class="n">block_maxima</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">extract_BM</span><span class="p">(</span><span class="n">block_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Block Maxima:&quot;</span><span class="p">,</span> <span class="n">block_maxima</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Extract High Order Statistics</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.topt</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">ts_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">15</span><span class="p">])</span>
+<span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">ts_data</span><span class="p">)</span>
+<span class="n">high_order_stats</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">extract_HOS</span><span class="p">(</span><span class="n">orderstats</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;High Order Statistics:&quot;</span><span class="p">,</span> <span class="n">high_order_stats</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="the-highorderstats-class-and-its-functionalities">
+<h2>The <code class="docutils literal notranslate"><span class="pre">HighOrderStats</span></code> Class and its Functionalities<a class="headerlink" href="#the-highorderstats-class-and-its-functionalities" title="Permalink to this heading"></a></h2>
+<p>The <cite>HighOrderStats</cite> class is used to compute and analyze higher order statistics from the time series data. It provides methods for calculating log-likelihoods and performing Maximum Likelihood Estimation (MLE).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.topt.HighOrderStats">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">HighOrderStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TimeSeries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.HighOrderStats" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>HighOrderStats class for calculating and analyzing high-order statistics of time series data.</p>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
+<p>This class provides functionality for calculating Probability Weighted Moment (PWM) estimators and
+Maximum Likelihood (ML) estimators from a given TimeSeries object.</p>
+</section>
+<section id="id8">
+<h3>Methods<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>get_PWM_estimation():</dt><dd><p>Calculate the PWM estimators for the time series data.</p>
+</dd>
+<dt>get_ML_estimation(initParams=’auto’, FrechetOrGEV = ‘Frechet’, option=1, estimate_pi=False):</dt><dd><p>Calculate the ML estimators for the time series data.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Attributes<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>TimeSeries<span class="classifier">TimeSeries</span></dt><dd><p>The TimeSeries object containing the time series data.</p>
+</dd>
+<dt>high_order_stats<span class="classifier">list</span></dt><dd><p>List of high-order statistics extracted from the TimeSeries object.</p>
+</dd>
+<dt>blockmaxima<span class="classifier">list</span></dt><dd><p>List of block maxima derived from the high-order statistics.</p>
+</dd>
+<dt>gamma_true<span class="classifier">float</span></dt><dd><p>True gamma parameter of the GEV distribution derived from the TimeSeries object.</p>
+</dd>
+<dt>PWM_estimators<span class="classifier">PWM_estimators</span></dt><dd><p>Instance of PWM_estimators class for calculating PWM estimators.</p>
+</dd>
+<dt>ML_estimators<span class="classifier">ML_estimators</span></dt><dd><p>Instance of ML_estimators class for calculating ML estimators.</p>
+</dd>
+</dl>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a TimeSeries object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distr</span><span class="o">=</span><span class="s1">&#39;GEV&#39;</span><span class="p">,</span> <span class="n">correlation</span><span class="o">=</span><span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="n">modelparams</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simulate time series data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">rep</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">seeds</span><span class="o">=</span><span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="mi">123</span><span class="p">,</span> <span class="mi">456</span><span class="p">,</span> <span class="mi">789</span><span class="p">,</span> <span class="mi">1011</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize HighOrderStats object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hos</span> <span class="o">=</span> <span class="n">HighOrderStats</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Calculate PWM estimators</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hos</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Calculate ML estimators</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hos</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">(</span><span class="n">initParams</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.HighOrderStats.get_ML_estimation">
+<span class="sig-name descname"><span class="pre">get_ML_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FrechetOrGEV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Frechet'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.HighOrderStats.get_ML_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the Maximum Likelihood (ML) estimators.</p>
+<section id="id10">
+<h4>Parameters<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>initParams<span class="classifier">str or array-like, optional</span></dt><dd><p>Method for initializing parameters. Default is ‘auto’, which uses automatic parameter initialization.</p>
+</dd>
+<dt>r<span class="classifier">int, optional</span></dt><dd><p>Number of order statistics to calculate the log-likelihood on. If not specified, use all provided.</p>
+</dd>
+<dt>FrechetOrGEV<span class="classifier">str, optional</span></dt><dd><p>Whether to fit the Frechet or GEV distribution.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h4>Notes<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h4>
+<p>This function performs maximum likelihood estimation based on either the Frechet or GEV distribution.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.HighOrderStats.get_PWM_estimation">
+<span class="sig-name descname"><span class="pre">get_PWM_estimation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.HighOrderStats.get_PWM_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the Probability Weighted Moment (PWM) estimators.</p>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="id12">
+<h2>Examples<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Log Likelihood</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.topt</span> <span class="kn">import</span> <span class="n">HighOrderStats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">hos_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]])</span>
+<span class="n">hos</span> <span class="o">=</span> <span class="n">HighOrderStats</span><span class="p">(</span><span class="n">hos_data</span><span class="p">)</span>
+<span class="n">log_likelihood</span> <span class="o">=</span> <span class="n">hos</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Log Likelihood:&quot;</span><span class="p">,</span> <span class="n">log_likelihood</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Frechet Log Likelihood</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.topt</span> <span class="kn">import</span> <span class="n">HighOrderStats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">hos_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]])</span>
+<span class="n">hos</span> <span class="o">=</span> <span class="n">HighOrderStats</span><span class="p">(</span><span class="n">hos_data</span><span class="p">)</span>
+<span class="n">frechet_log_likelihood</span> <span class="o">=</span> <span class="n">hos</span><span class="o">.</span><span class="n">Frechet_log_likelihood</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Frechet Log Likelihood:&quot;</span><span class="p">,</span> <span class="n">frechet_log_likelihood</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="the-data-class-and-its-functionalities">
+<h2>The <code class="docutils literal notranslate"><span class="pre">Data</span></code> Class and its Functionalities<a class="headerlink" href="#the-data-class-and-its-functionalities" title="Permalink to this heading"></a></h2>
+<p>The <cite>Data</cite> class is used to handle and manipulate real data for analysis.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.topt.Data">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Data" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class for analyzing data with block maxima and high order statistics.</p>
+<p>This class provides methods to extract block maxima and high order statistics from a given dataset. 
+It also supports Maximum Likelihood (ML) estimation for the parameters of either the Frechet or GEV distributions.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>values<span class="classifier">list or numpy.ndarray</span></dt><dd><p>The dataset from which block maxima and high order statistics are extracted. This should be a 1D array 
+or list of values representing the time series or data.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>Attributes<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>values<span class="classifier">list or numpy.ndarray</span></dt><dd><p>The dataset on which operations are performed.</p>
+</dd>
+<dt>len<span class="classifier">int</span></dt><dd><p>The length of the dataset.</p>
+</dd>
+<dt>blockmaxima<span class="classifier">list</span></dt><dd><p>List to store the block maxima extracted from the dataset.</p>
+</dd>
+<dt>bm_indices<span class="classifier">list</span></dt><dd><p>List of indices corresponding to the positions of the block maxima in the original dataset.</p>
+</dd>
+<dt>high_order_stats<span class="classifier">list</span></dt><dd><p>List to store the high order statistics extracted from the dataset.</p>
+</dd>
+<dt>ML_estimators<span class="classifier">ML_estimators_data</span></dt><dd><p>Object that stores and handles the ML estimation results for the Frechet or GEV parameters.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Methods<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>get_blockmaxima(block_size=2, stride=’DBM’):</dt><dd><p>Extracts block maxima from the dataset.</p>
+</dd>
+<dt>get_HOS(orderstats=2, block_size=2, stride=’DBM’):</dt><dd><p>Extracts high order statistics from the dataset.</p>
+</dd>
+<dt>get_ML_estimation(r=None, FrechetOrGEV=’GEV’):</dt><dd><p>Computes ML estimations for the Frechet or GEV parameters.</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h3>Example<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Initialize the Data object with a dataset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">Data</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.1</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">4.6</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract block maxima using a block size of 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">get_blockmaxima</span><span class="p">(</span><span class="n">block_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">blockmaxima</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract second-highest order statistics (HOS) with the same block size and stride</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">get_HOS</span><span class="p">(</span><span class="n">orderstats</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">high_order_stats</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Perform ML estimation using the extracted HOS, choosing between Frechet and GEV</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">(</span><span class="n">FrechetOrGEV</span><span class="o">=</span><span class="s1">&#39;GEV&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ML_estimators</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Data.get_ABM_weights">
+<span class="sig-name descname"><span class="pre">get_ABM_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recursively</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Data.get_ABM_weights" title="Permalink to this definition"></a></dt>
+<dd><p>“Computes weights for MLE with ABM stride</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Data.get_HOS">
+<span class="sig-name descname"><span class="pre">get_HOS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orderstats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Data.get_HOS" title="Permalink to this definition"></a></dt>
+<dd><p>Extract high order statistics (HOS) from the dataset.</p>
+<p>High order statistics refer to statistics of interest beyond the maximum (e.g., second-highest, 
+third-highest). This method extracts these statistics from blocks of the dataset.</p>
+<section id="id17">
+<h4>Parameters<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>orderstats<span class="classifier">int, optional</span></dt><dd><p>The order of the statistic to extract (e.g., 2 for second-highest). Default is 2.</p>
+</dd>
+<dt>block_size<span class="classifier">int, optional</span></dt><dd><p>The size of blocks from which to extract the statistics. Default is 2.</p>
+</dd>
+<dt>stride<span class="classifier">str or int, optional</span></dt><dd><p>The type of stride to use when extracting blocks. Choose from:
+- ‘SBM’: Sliding Block Maxima (step size 1)
+- ‘DBM’: Disjoint Block Maxima (non-overlapping blocks)
+- int: Specifies the step size directly.
+Default is ‘DBM’.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h4>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The high order statistics are stored in the <cite>high_order_stats</cite> attribute.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Data.get_ML_estimation">
+<span class="sig-name descname"><span class="pre">get_ML_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">FrechetOrGEV</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GEV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Data.get_ML_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Maximum Likelihood (ML) estimations for the Frechet or GEV parameters.</p>
+<p>This method computes ML estimators for the parameters of either the Frechet or GEV distribution based 
+on the high order statistics extracted from the data. If no high order statistics are available, it 
+will first extract them.</p>
+<section id="id18">
+<h4>Parameters<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>r<span class="classifier">int, optional</span></dt><dd><p>The number of order statistics to use in the ML estimation. If not specified, it uses all the extracted statistics.</p>
+</dd>
+<dt>FrechetOrGEV<span class="classifier">str, optional</span></dt><dd><p>The type of distribution to use for the ML estimation. Choose between ‘Frechet’ and ‘GEV’. Default is ‘GEV’.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h4>Returns<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The ML estimators are stored in the <cite>ML_estimators</cite> attribute.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Data.get_blockmaxima">
+<span class="sig-name descname"><span class="pre">get_blockmaxima</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DBM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Data.get_blockmaxima" title="Permalink to this definition"></a></dt>
+<dd><p>Extract block maxima from the dataset.</p>
+<p>Block maxima are the largest values in each block of the dataset, where the block size 
+and the stride (step size) determine how the blocks are divided.</p>
+<section id="id20">
+<h4>Parameters<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>block_size<span class="classifier">int, optional</span></dt><dd><p>The size of blocks for maxima extraction. Default is 2.</p>
+</dd>
+<dt>stride<span class="classifier">str or int, optional</span></dt><dd><p>The type of stride to use when extracting blocks. Choose from:
+- ‘SBM’: Sliding Block Maxima (step size 1)
+- ‘DBM’: Disjoint Block Maxima (non-overlapping blocks)
+- int: Specifies the step size directly.
+Default is ‘DBM’.</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h4>Returns<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The block maxima and their corresponding indices are stored in the <cite>blockmaxima</cite> 
+and <cite>bm_indices</cite> attributes.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="the-pwm-estimators-class">
+<h2>The <code class="docutils literal notranslate"><span class="pre">PWM_estimators</span></code> Class<a class="headerlink" href="#the-pwm-estimators-class" title="Permalink to this heading"></a></h2>
+<p>The <cite>PWM_estimators</cite> class is used to compute Probability Weighted Moment (PWM) estimators.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.topt.PWM_estimators">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">PWM_estimators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TimeSeries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.PWM_estimators" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Calculates Probability Weighted Moment (PWM) estimators from block maxima and computes statistics and confidence intervals for the GEV parameters.</p>
+<section id="id22">
+<h3>Notes<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
+<p>This class provides methods to compute the Probability Weighted Moment (PWM) estimators and convert them into Generalized Extreme Value (GEV) 
+distribution parameters (gamma, mu, sigma). It also allows users to compute confidence intervals for the estimated parameters and assess 
+the statistical properties (mean, variance, bias, mean squared error) of the estimators compared to a true gamma value. Visualization options 
+are provided to plot the estimators and confidence intervals.</p>
+</section>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param TimeSeries<span class="colon">:</span></dt>
+<dd class="field-odd"><p>TimeSeries object
+TimeSeries object containing block maxima or high order statistics.</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h3>Attributes<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">attribute blockmaxima<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray
+Array of block maxima extracted from the TimeSeries object.</p>
+</dd>
+<dt class="field-even">attribute values<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray
+Array containing the PWM estimators (<span class="math notranslate nohighlight">\(\gamma, \mu, \sigma\)</span>) for each block maxima series.</p>
+</dd>
+<dt class="field-odd">attribute statistics<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict
+Dictionary containing statistics (mean, variance, bias, mse) and confidence intervals of the PWM estimators.</p>
+</dd>
+</dl>
+</section>
+<section id="id25">
+<h3>Methods<a class="headerlink" href="#id25" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">method get_PWM_estimation()<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Compute PWM estimators for each block maxima series and convert them into GEV parameters.</p>
+</dd>
+<dt class="field-even">method get_statistics(gamma_true)<span class="colon">:</span></dt>
+<dd class="field-even"><p>Compute statistics of the PWM estimators using a true gamma value.</p>
+</dd>
+<dt class="field-odd">method get_CIs(alpha=0.05, method=’symmetric’)<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Compute confidence intervals (CIs) for the GEV parameters using either symmetric quantiles or minimal width intervals.</p>
+</dd>
+<dt class="field-even">method plot(param=’gamma’, show_CI=True, show_true=True, filename=None)<span class="colon">:</span></dt>
+<dd class="field-even"><p>Plot the PWM estimators for the GEV parameters (gamma, mu, sigma) with options to display confidence intervals and save the plot as an image.</p>
+</dd>
+</dl>
+</section>
+<section id="id26">
+<h3>Raises<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">raises ValueError<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If block maxima or high order statistics are not available in the TimeSeries object.</p>
+</dd>
+</dl>
+</section>
+<section id="id27">
+<h3>Examples<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">TimeSeries</span> <span class="kn">import</span> <span class="n">TimeSeries</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">PWM_estimators</span> <span class="kn">import</span> <span class="n">PWM_estimators</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># Initialize TimeSeries object with data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span><span class="o">.</span><span class="n">get_blockmaxima</span><span class="p">(</span><span class="n">block_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;SBM&#39;</span><span class="p">)</span>  <span class="c1"># Extract block maxima</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>  <span class="c1"># Initialize PWM_estimators object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>  <span class="c1"># Compute PWM estimators</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Compute statistics with true gamma value 0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>  <span class="c1"># Compute confidence intervals</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">param</span><span class="o">=</span><span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="n">show_CI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_true</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;PWM_plot.png&#39;</span><span class="p">)</span>  <span class="c1"># Plot the results and save as image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pwm</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>  <span class="c1"># Print computed statistics</span>
+<span class="go">{&#39;gamma_mean&#39;: 0.25, &#39;gamma_variance&#39;: 0.005, &#39;gamma_bias&#39;: 0.02, &#39;gamma_mse&#39;: 0.01,</span>
+<span class="go"> &#39;mu_mean&#39;: 1.15, &#39;mu_variance&#39;: 0.04, &#39;sigma_mean&#39;: 0.9, &#39;sigma_variance&#39;: 0.02,</span>
+<span class="go"> &#39;gamma_CI&#39;: (0.2, 0.5), &#39;mu_CI&#39;: (1.1, 1.5), &#39;sigma_CI&#39;: (0.8, 1.0)}</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.PWM_estimators.get_CIs">
+<span class="sig-name descname"><span class="pre">get_CIs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'symmetric'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.PWM_estimators.get_CIs" title="Permalink to this definition"></a></dt>
+<dd><p>Compute confidence intervals (CIs) for the GEV parameters using different methods.</p>
+<section id="id28">
+<h4>Notes<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h4>
+<p>This function calculates confidence intervals (CIs) for the Generalized Extreme Value (GEV) parameters (gamma, mu, and sigma) estimated from 
+Probability-Weighted Moments (PWM). The user can choose between two methods for computing the confidence intervals:</p>
+<ul class="simple">
+<li><p><strong>‘symmetric’</strong>: This method uses the quantiles of the distribution of parameter estimates to compute symmetric confidence intervals.</p></li>
+<li><p><strong>‘minimal_width’</strong>: This method finds the interval with minimal width that contains the desired proportion (1 - alpha) of the sorted parameter estimates.</p></li>
+</ul>
+<p>For each block maxima series, confidence intervals for the GEV shape (gamma), location (mu), and scale (sigma) parameters are calculated. The results 
+are stored in the <cite>self.statistics</cite> dictionary, with keys ‘gamma_CI’, ‘mu_CI’, and ‘sigma_CI’ corresponding to the computed confidence intervals.</p>
+</section>
+<section id="id29">
+<h4>Parameters<a class="headerlink" href="#id29" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param alpha<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional
+Significance level for the confidence intervals (default is 0.05, for a 95% CI).</p>
+</dd>
+<dt class="field-even">param method<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional
+Method for computing the confidence intervals. Options are:
+- ‘symmetric’: Uses quantiles to compute symmetric CIs (default).
+- ‘minimal_width’: Computes the minimal width interval containing (1 - alpha) of the estimates.</p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h4>Example<a class="headerlink" href="#id30" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">PWM_Estimators</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">estimator</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+<span class="go">{&#39;gamma_CI&#39;: (0.2, 0.5), &#39;mu_CI&#39;: (1.1, 1.5), &#39;sigma_CI&#39;: (0.8, 1.0)}</span>
+</pre></div>
+</div>
+</section>
+<section id="id31">
+<h4>Returns<a class="headerlink" href="#id31" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The results are stored in <cite>self.statistics</cite>, which contains the confidence intervals for each GEV parameter.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.PWM_estimators.get_PWM_estimation">
+<span class="sig-name descname"><span class="pre">get_PWM_estimation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.PWM_estimators.get_PWM_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Probability-Weighted Moment (PWM) estimators and convert them into GEV parameters.</p>
+<section id="id32">
+<h4>Notes<a class="headerlink" href="#id32" title="Permalink to this heading"></a></h4>
+<p>This function iterates over each block maxima series, computes the Probability-Weighted Moments (PWMs), and converts the PWMs into the 
+Generalized Extreme Value (GEV) distribution parameters: shape (gamma), location (mu), and scale (sigma). The function utilizes the 
+<cite>misc.PWM_estimation</cite> function to calculate the PWMs and then applies <cite>misc.PWM2GEV</cite> to convert these moments into GEV parameters.</p>
+<p>The results for each block maxima series are stored in the <cite>self.values</cite> attribute, which is a NumPy array where each row corresponds to 
+the GEV parameters [gamma, mu, sigma] for a specific block maxima series.</p>
+<p>This function clears any previously stored values in <cite>self.values</cite> before appending new estimates.</p>
+</section>
+<section id="id33">
+<h4>Parameters<a class="headerlink" href="#id33" title="Permalink to this heading"></a></h4>
+<p>None</p>
+</section>
+<section id="id34">
+<h4>Example<a class="headerlink" href="#id34" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">estimator</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="go">array([[0.2, 1.1, 0.8],</span>
+<span class="go">    [0.3, 1.2, 0.9]])</span>
+</pre></div>
+</div>
+</section>
+<section id="id35">
+<h4>Returns<a class="headerlink" href="#id35" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The results are stored in <cite>self.values</cite>, a NumPy array containing the estimated GEV parameters for each block maxima series.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.PWM_estimators.get_statistics">
+<span class="sig-name descname"><span class="pre">get_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma_true</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.PWM_estimators.get_statistics" title="Permalink to this definition"></a></dt>
+<dd><p>Compute statistics of the PWM estimators using the true gamma value.</p>
+<section id="id36">
+<h4>Notes<a class="headerlink" href="#id36" title="Permalink to this heading"></a></h4>
+<p>This function calculates various statistical measures (mean, variance, bias, and mean squared error) for the estimated 
+Generalized Extreme Value (GEV) shape parameter (gamma) compared to a provided true value (<cite>gamma_true</cite>). It also computes 
+the mean and variance for the location (mu) and scale (sigma) parameters across all block maxima series.</p>
+<ul class="simple">
+<li><p><strong>Mean Squared Error (MSE)</strong>: Measures the average of the squares of the differences between the estimated and true gamma values.</p></li>
+<li><p><strong>Bias</strong>: Represents the systematic deviation of the estimated gamma values from the true gamma value.</p></li>
+<li><p><strong>Variance</strong>: Describes the spread of the estimated gamma values around their mean.</p></li>
+</ul>
+<p>If only one block maxima series is available, a warning is raised since variance cannot be computed.</p>
+<p>The computed statistics are stored in the <cite>self.statistics</cite> dictionary with the following keys:
+- ‘gamma_mean’, ‘gamma_variance’, ‘gamma_bias’, ‘gamma_mse’
+- ‘mu_mean’, ‘mu_variance’
+- ‘sigma_mean’, ‘sigma_variance’</p>
+</section>
+<section id="id37">
+<h4>Parameters<a class="headerlink" href="#id37" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param gamma_true<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float
+The true value of the GEV shape parameter (gamma) used to compute bias and MSE.</p>
+</dd>
+</dl>
+</section>
+<section id="id38">
+<h4>Example<a class="headerlink" href="#id38" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">(</span><span class="n">gamma_true</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">estimator</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+<span class="go">{&#39;gamma_mean&#39;: 0.25, &#39;gamma_variance&#39;: 0.005, &#39;gamma_bias&#39;: 0.02, &#39;gamma_mse&#39;: 0.01,</span>
+<span class="go">&#39;mu_mean&#39;: 1.15, &#39;mu_variance&#39;: 0.04, &#39;sigma_mean&#39;: 0.9, &#39;sigma_variance&#39;: 0.02}</span>
+</pre></div>
+</div>
+</section>
+<section id="id39">
+<h4>Returns<a class="headerlink" href="#id39" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The results are stored in <cite>self.statistics</cite>, containing the calculated statistics for gamma, mu, and sigma.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.PWM_estimators.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gamma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_true</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.PWM_estimators.plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the PWM estimators and confidence intervals for the GEV parameters.</p>
+<section id="id40">
+<h4>Notes<a class="headerlink" href="#id40" title="Permalink to this heading"></a></h4>
+<p>This function generates a plot showing the Probability-Weighted Moment (PWM) estimators for the Generalized Extreme Value (GEV) parameters 
+(gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter.</p>
+<p>The plot is saved as a PNG image if the <cite>save</cite> parameter is set to True.</p>
+</section>
+<section id="id41">
+<h4>Parameters<a class="headerlink" href="#id41" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+GEV parameter to plot (default is ‘gamma’).</p>
+</dd>
+<dt class="field-even">param show_CI<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to display confidence intervals (default is True).</p>
+</dd>
+<dt class="field-odd">param show<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, optional
+Flag indicating whether to display the plot.</p>
+</dd>
+<dt class="field-even">param save<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to save the plot as a PNG image (default is False).</p>
+</dd>
+<dt class="field-odd">param filename<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+Name of the PNG file to save the plot (default is None).</p>
+</dd>
+</dl>
+</section>
+<section id="id42">
+<h4>Example<a class="headerlink" href="#id42" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_CI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_true</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;PWM_estimation.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id43">
+<h4>Returns<a class="headerlink" href="#id43" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The plot is displayed in the console and saved as a PNG image if the <cite>save</cite> parameter is set to True.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.topt.automatic_parameter_initialization">
+<span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">automatic_parameter_initialization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PWM_estimators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.automatic_parameter_initialization" title="Permalink to this definition"></a></dt>
+<dd><p>Automatic parameter initialization for ML estimation.</p>
+<section id="id44">
+<h3>Notes<a class="headerlink" href="#id44" title="Permalink to this heading"></a></h3>
+<p>This function is designed for initializing parameters for maximum likelihood estimation (ML) in statistical models.
+It automatically computes the probability weighted moment (PWM) estimators and adjusts them based on the specified
+correlation type (‘ARMAX’, ‘IID’, etc.). The ‘ts’ parameter is used to control the strength of temporal dependence
+in the model.</p>
+</section>
+<section id="id45">
+<h3>Parameters<a class="headerlink" href="#id45" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param PWM_estimators<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list or numpy.array
+Probability weighted moment estimators.</p>
+</dd>
+<dt class="field-even">param corr<span class="colon">:</span></dt>
+<dd class="field-even"><p>str
+Correlation type for the model. Supported values are ‘ARMAX’, ‘IID’, etc.</p>
+</dd>
+<dt class="field-odd">param ts<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional
+Time series parameter controlling the strength of temporal dependence (default is 0.5).</p>
+</dd>
+<dt class="field-even">return<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray
+Initial parameters for ML estimation.</p>
+</dd>
+</dl>
+</section>
+<section id="see-also">
+<h3>See also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h3>
+<p>misc.PWM_estimation : Function for computing probability weighted moment estimators.</p>
+</section>
+<section id="id46">
+<h3>Examples<a class="headerlink" href="#id46" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">test_xtremes</span> <span class="kn">import</span> <span class="n">misc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PWM_est</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">PWM_estimators</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">init_params</span> <span class="o">=</span> <span class="n">automatic_parameter_initialization</span><span class="p">(</span><span class="n">PWM_est</span><span class="p">,</span> <span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="the-ml-estimators-frechet-ml-estimators-and-ml-estimators-data-classes">
+<h2>The <code class="docutils literal notranslate"><span class="pre">ML_estimators</span></code>, <code class="docutils literal notranslate"><span class="pre">Frechet_ML_estimators</span></code> and <code class="docutils literal notranslate"><span class="pre">ML_estimators_data</span></code> Classes<a class="headerlink" href="#the-ml-estimators-frechet-ml-estimators-and-ml-estimators-data-classes" title="Permalink to this heading"></a></h2>
+<p>The <cite>ML_estimators</cite>, <cite>Frechet_ML_estimators</cite>, and <cite>ML_estimators_data</cite> classes are used for performing Maximum Likelihood Estimation (MLE) and handling the results.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.topt.ML_estimators">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">ML_estimators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TimeSeries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.ML_estimators" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Maximum Likelihood Estimators (MLE) for GEV parameters.</p>
+<p>This class calculates Maximum Likelihood Estimators (MLE) for the parameters of the Generalized Extreme Value (GEV) distribution using the method of maximum likelihood estimation.</p>
+<section id="id47">
+<h3>Parameters<a class="headerlink" href="#id47" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>TimeSeries<span class="classifier">TimeSeries</span></dt><dd><p>The TimeSeries object containing the data for which MLE estimators will be calculated.</p>
+</dd>
+</dl>
+</section>
+<section id="id48">
+<h3>Attributes<a class="headerlink" href="#id48" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>values<span class="classifier">numpy.ndarray</span></dt><dd><p>An array containing the MLE estimators for each set of high order statistics.</p>
+</dd>
+<dt>statistics<span class="classifier">dict</span></dt><dd><p>A dictionary containing statistics computed from the MLE estimators.</p>
+</dd>
+</dl>
+</section>
+<section id="id49">
+<h3>Methods<a class="headerlink" href="#id49" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>__len__()</dt><dd><p>Returns the number of MLE estimators calculated.</p>
+</dd>
+<dt>get_ML_estimation(PWM_estimators=None, initParams=’auto’, option=1, estimate_pi=False)</dt><dd><p>Computes the MLE estimators for the GEV parameters.</p>
+</dd>
+<dt>get_statistics(gamma_true)</dt><dd><p>Computes statistics from the MLE estimators.</p>
+</dd>
+</dl>
+</section>
+<section id="id50">
+<h3>Examples<a class="headerlink" href="#id50" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hos</span> <span class="kn">import</span> <span class="n">TimeSeries</span><span class="p">,</span> <span class="n">ML_estimators</span><span class="p">,</span> <span class="n">PWM_estimators</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">blockmaxima_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">high_order_stats_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">blockmaxima</span><span class="o">=</span><span class="n">blockmaxima_data</span><span class="p">,</span> <span class="n">high_order_stats</span><span class="o">=</span><span class="n">high_order_stats_data</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">ML_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">(</span><span class="n">PWM_estimators</span><span class="o">=</span><span class="n">pwm</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">(</span><span class="n">gamma_true</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ML Estimators:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Statistics:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.ML_estimators.get_CIs">
+<span class="sig-name descname"><span class="pre">get_CIs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'symmetric'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.ML_estimators.get_CIs" title="Permalink to this definition"></a></dt>
+<dd><p>Compute confidence intervals (CIs) for the GEV parameters using different methods.</p>
+<section id="id51">
+<h4>Notes<a class="headerlink" href="#id51" title="Permalink to this heading"></a></h4>
+<p>This function calculates confidence intervals (CIs) for the Generalized Extreme Value (GEV) parameters (gamma, mu, and sigma) 
+estimated from Maximum Likelihood Estimators (MLE). The user can choose between two methods for computing the confidence intervals:</p>
+<ul class="simple">
+<li><p><strong>‘symmetric’</strong>: This method uses the quantiles of the distribution of parameter estimates to compute symmetric confidence intervals.</p></li>
+<li><p><strong>‘minimal_width’</strong>: This method finds the interval with minimal width that contains the desired proportion (1 - alpha) of the sorted parameter estimates.</p></li>
+</ul>
+<p>For each block maxima series, confidence intervals for the GEV shape (gamma), location (mu), and scale (sigma) parameters are calculated. The results 
+are stored in the <cite>self.statistics</cite> dictionary, with keys ‘gamma_CI’, ‘mu_CI’, and ‘sigma_CI’ corresponding to the computed confidence intervals.</p>
+</section>
+<section id="id52">
+<h4>Parameters<a class="headerlink" href="#id52" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param alpha<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional
+Significance level for the confidence intervals (default is 0.05, for a 95% CI).</p>
+</dd>
+<dt class="field-even">param method<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional
+Method for computing the confidence intervals. Options are:
+- ‘symmetric’: Uses quantiles to compute symmetric CIs (default).
+- ‘minimal_width’: Computes the minimal width interval containing (1 - alpha) of the estimates.</p>
+</dd>
+</dl>
+</section>
+<section id="id53">
+<h4>Example<a class="headerlink" href="#id53" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">ML_stimator</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">estimator</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+<span class="go">{&#39;gamma_CI&#39;: (0.2, 0.5), &#39;mu_CI&#39;: (1.1, 1.5), &#39;sigma_CI&#39;: (0.8, 1.0)}</span>
+</pre></div>
+</div>
+</section>
+<section id="id54">
+<h4>Returns<a class="headerlink" href="#id54" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The results are stored in <cite>self.statistics</cite>, which contains the confidence intervals for each GEV parameter.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.ML_estimators.get_ML_estimation">
+<span class="sig-name descname"><span class="pre">get_ML_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PWM_estimators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.ML_estimators.get_ML_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Maximum Likelihood (ML) estimators for each series of high order statistics within the <cite>ML_estimators</cite> class.</p>
+<p>This method fits the Generalized Extreme Value (GEV) distribution to each series of high order statistics
+using Maximum Likelihood Estimation (MLE) by optimizing the log-likelihood function.</p>
+<section id="id55">
+<h4>Parameters<a class="headerlink" href="#id55" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>PWM_estimators<span class="classifier">PWM_estimators object, optional</span></dt><dd><p>An object containing PWM (Probability Weighted Moments) estimators. This is used for initializing the 
+parameters in the ML estimation if <cite>initParams</cite> is set to ‘auto’. Required if <cite>initParams</cite> is ‘auto’.</p>
+</dd>
+<dt>initParams<span class="classifier">str or numpy.ndarray, optional</span></dt><dd><p>Initial parameters for the ML estimation. If ‘auto’, the initial parameters will be computed automatically 
+using the <cite>PWM_estimators</cite> object. If a NumPy array is provided, these will be used as initial parameter values.
+Default is ‘auto’.</p>
+</dd>
+<dt>r<span class="classifier">int, optional</span></dt><dd><p>The number of order statistics to calculate the log-likelihood on. If not specified, all provided 
+order statistics will be used.</p>
+</dd>
+</dl>
+</section>
+<section id="id56">
+<h4>Returns<a class="headerlink" href="#id56" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>This method updates the <cite>self.values</cite> attribute of the <cite>ML_estimators</cite> object with the estimated parameters 
+(gamma, mu, sigma) for each series of high order statistics.</p>
+</dd>
+</dl>
+</section>
+<section id="id57">
+<h4>Raises<a class="headerlink" href="#id57" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If <cite>initParams</cite> is set to ‘auto’ and no <cite>PWM_estimators</cite> are provided, a ValueError is raised.</p>
+</dd>
+</dl>
+</section>
+<section id="id58">
+<h4>Notes<a class="headerlink" href="#id58" title="Permalink to this heading"></a></h4>
+<ul class="simple">
+<li><p>This method performs Maximum Likelihood Estimation (MLE) to fit the Generalized Extreme Value (GEV) distribution to the high order statistics within the <cite>ML_estimators</cite> class.</p></li>
+<li><p>The method uses optimization techniques such as Nelder-Mead (and optionally COBYLA) to minimize the negative log-likelihood.</p></li>
+<li><p>If <cite>initParams</cite> is set to ‘auto’, the initial parameters for the optimization are derived using the <cite>PWM_estimators</cite> object.</p></li>
+<li><p>The optimization results (gamma, mu, sigma) are stored in the <cite>self.values</cite> list for each series of high order statistics.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.ML_estimators.get_statistics">
+<span class="sig-name descname"><span class="pre">get_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gamma_true</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.ML_estimators.get_statistics" title="Permalink to this definition"></a></dt>
+<dd><p>Compute statistics of the ML estimators using a true <span class="math notranslate nohighlight">\(\gamma\)</span> value.</p>
+<section id="id59">
+<h4>Parameters<a class="headerlink" href="#id59" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param gamma_true<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float
+True <span class="math notranslate nohighlight">\(\gamma\)</span> value for calculating statistics.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.ML_estimators.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gamma'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_true</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.ML_estimators.plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the ML estimators and confidence intervals for the GEV parameters.</p>
+<section id="id60">
+<h4>Notes<a class="headerlink" href="#id60" title="Permalink to this heading"></a></h4>
+<p>This function generates a plot showing the Maximum Likelihood estimators for the Generalized Extreme Value (GEV) parameters 
+(gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter</p>
+<p>The plot is saved as a PNG image if the <cite>save</cite> parameter is set to True.</p>
+</section>
+<section id="id61">
+<h4>Parameters<a class="headerlink" href="#id61" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+GEV parameter to plot (default is ‘gamma’).</p>
+</dd>
+<dt class="field-even">param show_CI<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to display confidence intervals (default is True).</p>
+</dd>
+<dt class="field-odd">param show<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, optional
+Flag indicating whether to display the plot.</p>
+</dd>
+<dt class="field-even">param save<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to save the plot as a PNG image (default is False).</p>
+</dd>
+<dt class="field-odd">param filename<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+Name of the PNG file to save the plot (default is None).</p>
+</dd>
+</dl>
+</section>
+<section id="id62">
+<h4>Example<a class="headerlink" href="#id62" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">ML_estimators</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_CI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_true</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;PWM_estimation.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id63">
+<h4>Returns<a class="headerlink" href="#id63" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The plot is displayed in the console and saved as a PNG image if the <cite>save</cite> parameter is set to True.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xtremes.topt.Frechet_ML_estimators">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">Frechet_ML_estimators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TimeSeries</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Frechet_ML_estimators" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Maximum Likelihood Estimators (MLE) for Frechet parameters.</p>
+<p>This class calculates Maximum Likelihood Estimators (MLE) for the parameters of the 2-parameter Frechet 
+distribution using the method of maximum likelihood estimation on a series of high order statistics.</p>
+<section id="id64">
+<h3>Parameters<a class="headerlink" href="#id64" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>TimeSeries<span class="classifier">TimeSeries</span></dt><dd><p>The TimeSeries object containing the data (high order statistics) for which MLE estimators will be calculated.</p>
+</dd>
+</dl>
+</section>
+<section id="id65">
+<h3>Attributes<a class="headerlink" href="#id65" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>values<span class="classifier">numpy.ndarray</span></dt><dd><p>An array containing the MLE estimators (alpha, sigma) for each set of high order statistics.</p>
+</dd>
+<dt>statistics<span class="classifier">dict</span></dt><dd><p>A dictionary containing computed statistics from the MLE estimators such as mean, variance, bias, and MSE.</p>
+</dd>
+</dl>
+</section>
+<section id="id66">
+<h3>Methods<a class="headerlink" href="#id66" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>__len__()</dt><dd><p>Returns the number of MLE estimators calculated.</p>
+</dd>
+<dt>get_ML_estimation(PWM_estimators=None, initParams=’auto’, r=None)</dt><dd><p>Computes the MLE estimators for the Frechet parameters (alpha, sigma).</p>
+</dd>
+<dt>get_statistics(alpha_true)</dt><dd><p>Computes statistics (mean, variance, bias, and MSE) of the MLE estimators using a true alpha value.</p>
+</dd>
+</dl>
+</section>
+<section id="id67">
+<h3>Examples<a class="headerlink" href="#id67" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hos</span> <span class="kn">import</span> <span class="n">TimeSeries</span><span class="p">,</span> <span class="n">Frechet_ML_estimators</span><span class="p">,</span> <span class="n">PWM_estimators</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">blockmaxima_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">high_order_stats_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">TimeSeries</span><span class="p">(</span><span class="n">blockmaxima</span><span class="o">=</span><span class="n">blockmaxima_data</span><span class="p">,</span> <span class="n">high_order_stats</span><span class="o">=</span><span class="n">high_order_stats_data</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pwm</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span> <span class="o">=</span> <span class="n">Frechet_ML_estimators</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span><span class="o">.</span><span class="n">get_ML_estimation</span><span class="p">(</span><span class="n">PWM_estimators</span><span class="o">=</span><span class="n">pwm</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ml</span><span class="o">.</span><span class="n">get_statistics</span><span class="p">(</span><span class="n">alpha_true</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ML Estimators:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Statistics:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Frechet_ML_estimators.get_CIs">
+<span class="sig-name descname"><span class="pre">get_CIs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'symmetric'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Frechet_ML_estimators.get_CIs" title="Permalink to this definition"></a></dt>
+<dd><p>Compute confidence intervals (CIs) for the Frechet parameters using different methods.</p>
+<section id="id68">
+<h4>Notes<a class="headerlink" href="#id68" title="Permalink to this heading"></a></h4>
+<p>This function calculates confidence intervals (CIs) for the Frechet parameters (alpha and sigma) 
+estimated from Maximum Likelihood Estimators (MLE). The user can choose between two methods for computing the confidence intervals:</p>
+<ul class="simple">
+<li><p><strong>‘symmetric’</strong>: This method uses the quantiles of the distribution of parameter estimates to compute symmetric confidence intervals.</p></li>
+<li><p><strong>‘minimal_width’</strong>: This method finds the interval with minimal width that contains the desired proportion (1 - alpha) of the sorted parameter estimates.</p></li>
+</ul>
+<p>For each block maxima series, confidence intervals for the shape (alpha) and scale (sigma) parameters are calculated. The results 
+are stored in the <cite>self.statistics</cite> dictionary, with keys ‘gamma_CI’, ‘mu_CI’, and ‘sigma_CI’ corresponding to the computed confidence intervals.</p>
+<p>Do not get confused with alpha being the significance level as well as the shape parameter of the Frechet distribution.</p>
+</section>
+<section id="id69">
+<h4>Parameters<a class="headerlink" href="#id69" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param alpha<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional
+Significance level for the confidence intervals (default is 0.05, for a 95% CI).</p>
+</dd>
+<dt class="field-even">param method<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional
+Method for computing the confidence intervals. Options are:
+- ‘symmetric’: Uses quantiles to compute symmetric CIs (default).
+- ‘minimal_width’: Computes the minimal width interval containing (1 - alpha) of the estimates.</p>
+</dd>
+</dl>
+</section>
+<section id="id70">
+<h4>Example<a class="headerlink" href="#id70" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">ML_stimator</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">estimator</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id71">
+<h4>Returns<a class="headerlink" href="#id71" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The results are stored in <cite>self.statistics</cite>, which contains the confidence intervals for each GEV parameter.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Frechet_ML_estimators.get_ML_estimation">
+<span class="sig-name descname"><span class="pre">get_ML_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">PWM_estimators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Frechet_ML_estimators.get_ML_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Compute ML estimators (alpha, sigma) for each high order statistics series using Frechet distribution.</p>
+<section id="id72">
+<h4>Parameters<a class="headerlink" href="#id72" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>PWM_estimators<span class="classifier">PWM_estimators object, optional</span></dt><dd><p>PWM_estimators object containing PWM estimators for initializing parameters. Required if <cite>initParams</cite> 
+is set to ‘auto’.</p>
+</dd>
+<dt>initParams<span class="classifier">str or numpy.ndarray, optional</span></dt><dd><p>Initial parameters for ML estimation. ‘auto’ to calculate automatically using PWM estimators.
+If a numpy array is provided, these will be used as initial parameter values. Default is ‘auto’.</p>
+</dd>
+<dt>r<span class="classifier">int, optional</span></dt><dd><p>Number of order statistics to calculate the log-likelihood on. If not specified, all provided order 
+statistics will be used.</p>
+</dd>
+</dl>
+</section>
+<section id="id73">
+<h4>Returns<a class="headerlink" href="#id73" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>Updates the <cite>self.values</cite> attribute with the estimated parameters (alpha, sigma) for each series 
+of high order statistics.</p>
+</dd>
+</dl>
+</section>
+<section id="id74">
+<h4>Raises<a class="headerlink" href="#id74" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If <cite>initParams</cite> is set to ‘auto’ and no <cite>PWM_estimators</cite> are provided.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Frechet_ML_estimators.get_statistics">
+<span class="sig-name descname"><span class="pre">get_statistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha_true</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Frechet_ML_estimators.get_statistics" title="Permalink to this definition"></a></dt>
+<dd><p>Compute statistics (mean, variance, bias, and MSE) of the ML estimators using the true <span class="math notranslate nohighlight">\(\alpha\)</span> value.</p>
+<section id="id75">
+<h4>Parameters<a class="headerlink" href="#id75" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>alpha_true<span class="classifier">float</span></dt><dd><p>The true value of <span class="math notranslate nohighlight">\(\alpha\)</span> to calculate bias, MSE, and other statistics.</p>
+</dd>
+</dl>
+</section>
+<section id="id76">
+<h4>Returns<a class="headerlink" href="#id76" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>Updates the <cite>self.statistics</cite> dictionary with calculated statistics such as mean, variance, bias, 
+and MSE for both <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>.</p>
+</dd>
+</dl>
+</section>
+<section id="id77">
+<h4>Notes<a class="headerlink" href="#id77" title="Permalink to this heading"></a></h4>
+<p>The statistics include:
+- Mean and variance for the estimated alpha and sigma values.
+- Bias and mean squared error (MSE) for the alpha estimates.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xtremes.topt.Frechet_ML_estimators.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alpha'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_CI</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_true</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Frechet_ML_estimators.plot" title="Permalink to this definition"></a></dt>
+<dd><p>Plot the ML estimators and confidence intervals for the GEV parameters.</p>
+<section id="id78">
+<h4>Notes<a class="headerlink" href="#id78" title="Permalink to this heading"></a></h4>
+<p>This function generates a plot showing the Maximum Likelihood estimators for the Generalized Extreme Value (GEV) parameters 
+(gamma, mu, sigma) computed from block maxima. The user can choose to display confidence intervals (CIs) for each parameter</p>
+<p>The plot is saved as a PNG image if the <cite>save</cite> parameter is set to True.</p>
+</section>
+<section id="id79">
+<h4>Parameters<a class="headerlink" href="#id79" title="Permalink to this heading"></a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">param param<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+GEV parameter to plot (default is ‘gamma’).</p>
+</dd>
+<dt class="field-even">param show_CI<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to display confidence intervals (default is True).</p>
+</dd>
+<dt class="field-odd">param show<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, optional
+Flag indicating whether to display the plot.</p>
+</dd>
+<dt class="field-even">param save<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to save the plot as a PNG image (default is False).</p>
+</dd>
+<dt class="field-odd">param filename<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+Name of the PNG file to save the plot (default is None).</p>
+</dd>
+</dl>
+</section>
+<section id="id80">
+<h4>Example<a class="headerlink" href="#id80" title="Permalink to this heading"></a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span> <span class="o">=</span> <span class="n">PWM_estimators</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_PWM_estimation</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">get_CIs</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;minimal_width&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">estimator</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">show_CI</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_true</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;PWM_estimation.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id81">
+<h4>Returns<a class="headerlink" href="#id81" title="Permalink to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The plot is displayed in the console and saved as a PNG image if the <cite>save</cite> parameter is set to True.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.topt.log_likelihood">
+<span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">high_order_statistics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.log_likelihood" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the GEV log likelihood based on the two highest order statistics.</p>
+<section id="id82">
+<h3>Parameters<a class="headerlink" href="#id82" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>high_order_statistics<span class="classifier">numpy.ndarray</span></dt><dd><p>A 2D array where each row contains the two highest order statistics for each observation.</p>
+</dd>
+<dt>gamma<span class="classifier">float, optional</span></dt><dd><p>The shape parameter (γ) for the Generalized Extreme Value (GEV) distribution. Default is 0.</p>
+</dd>
+<dt>mu<span class="classifier">float, optional</span></dt><dd><p>The location parameter (μ) for the GEV distribution. Default is 0.</p>
+</dd>
+<dt>sigma<span class="classifier">float, optional</span></dt><dd><p>The scale parameter (σ) for the GEV distribution. Must be positive. Default is 1.</p>
+</dd>
+<dt>r<span class="classifier">int, optional</span></dt><dd><p>The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.</p>
+</dd>
+</dl>
+</section>
+<section id="id83">
+<h3>Returns<a class="headerlink" href="#id83" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>The calculated log likelihood.</p>
+</dd>
+</dl>
+</section>
+<section id="id84">
+<h3>Notes<a class="headerlink" href="#id84" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>This function computes the log likelihood using the two highest order statistics and supports both the classical 
+Gumbel case (γ = 0) and the generalized case (γ ≠ 0).</p></li>
+<li><p>The <cite>high_order_statistics</cite> array should be structured with the two highest order statistics per observation as rows.</p></li>
+<li><p>The shape parameter γ controls the tail behavior of the distribution. When γ = 0, the distribution becomes the Gumbel type.</p></li>
+<li><p>The <cite>r</cite> parameter controls how many order statistics are used for the likelihood calculation, typically <cite>r=2</cite> for two order statistics.</p></li>
+</ul>
+</section>
+<section id="id85">
+<h3>Example<a class="headerlink" href="#id85" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">log_likelihood</span><span class="p">(</span><span class="n">hos</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">-7.494890426732856</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.topt.Frechet_log_likelihood">
+<span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">Frechet_log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">high_order_statistics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.Frechet_log_likelihood" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the 2-parameter Frechet log likelihood based on the highest order statistics. 
+The calculation can be done using either the joint likelihood of the top two order statistics or the product of their marginals.</p>
+<section id="id86">
+<h3>Parameters<a class="headerlink" href="#id86" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>high_order_statistics<span class="classifier">numpy.ndarray</span></dt><dd><p>A 2D array where each row contains the two highest order statistics for each observation.</p>
+</dd>
+<dt>alpha<span class="classifier">float, optional</span></dt><dd><p>The shape parameter (α) for the Frechet distribution. Default is 1. Controls the tail behavior of the distribution.</p>
+</dd>
+<dt>sigma<span class="classifier">float, optional</span></dt><dd><p>The scale parameter (σ) for the Frechet distribution. Must be positive. Default is 1.</p>
+</dd>
+<dt>r<span class="classifier">int, optional</span></dt><dd><p>The number of order statistics to calculate the log-likelihood on. If not specified, it uses all provided statistics.</p>
+</dd>
+<dt>weights<span class="classifier">numpy.ndarray, optional</span></dt><dd><p>ABM as stride provides weights. If they are provided, use them instead of counts</p>
+</dd>
+</dl>
+</section>
+<section id="id87">
+<h3>Returns<a class="headerlink" href="#id87" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>float</dt><dd><p>The calculated log likelihood for the given data under the Frechet distribution.</p>
+</dd>
+</dl>
+</section>
+<section id="id88">
+<h3>Notes<a class="headerlink" href="#id88" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>This function computes the log likelihood using the two highest order statistics from each observation, with a focus on the Frechet distribution.</p></li>
+<li><p>The shape parameter <cite>alpha</cite> determines the heaviness of the tail in the distribution, and the scale parameter <cite>sigma</cite> must be strictly positive.</p></li>
+<li><p>The <cite>high_order_statistics</cite> array should be structured such that each row represents the two highest order statistics for an observation.</p></li>
+<li><p>The function can either calculate the joint likelihood of the top two order statistics or consider the product of their marginals, depending on the values used.</p></li>
+</ul>
+</section>
+<section id="id89">
+<h3>Example<a class="headerlink" href="#id89" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Frechet_log_likelihood</span><span class="p">(</span><span class="n">hos</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">-15.78467219003245</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="running-extensive-simulations">
+<h2>Running Extensive Simulations<a class="headerlink" href="#running-extensive-simulations" title="Permalink to this heading"></a></h2>
+<p>The <cite>xtremes.topt</cite> module also provides functions for running extensive simulations and performing multiple MLEs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.topt.run_ML_estimation">
+<span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">run_ML_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_true</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5,</span> <span class="pre">10,</span> <span class="pre">15,</span> <span class="pre">20,</span> <span class="pre">25,</span> <span class="pre">30,</span> <span class="pre">35,</span> <span class="pre">40,</span> <span class="pre">45,</span> <span class="pre">50]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SBM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimate_pi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.run_ML_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>Run maximum likelihood estimation (ML) for a given time series file.</p>
+<section id="id90">
+<h3>Notes<a class="headerlink" href="#id90" title="Permalink to this heading"></a></h3>
+<p>This function reads a time series from a file and performs ML estimation for the specified correlation type, GEV shape parameter, block sizes,
+and stride type. It iterates over each block size, extracts block maxima, computes high order statistics, and performs ML estimation.
+The results are stored in a dictionary with the GEV shape parameter as the key and ML estimation results for each block size as the value.</p>
+</section>
+<section id="id91">
+<h3>Parameters<a class="headerlink" href="#id91" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param file<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str
+Path to the file containing the time series data.</p>
+</dd>
+<dt class="field-even">param corr<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional
+Correlation type for the model (default is ‘IID’).</p>
+</dd>
+<dt class="field-odd">param gamma_true<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional
+True value of the GEV shape parameter (default is 0).</p>
+</dd>
+<dt class="field-even">param block_sizes<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, optional
+List of block sizes for extracting block maxima (default is [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]).</p>
+</dd>
+<dt class="field-odd">param stride<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+Stride type for block maxima extraction. Options are ‘SBM’ (sliding block maxima) or ‘DBM’ (default block maxima) (default is ‘SBM’).</p>
+</dd>
+<dt class="field-even">param r<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional
+Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided</p>
+</dd>
+<dt class="field-odd">param estimate_pi<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, optional
+Flag indicating whether to estimate the pi parameter (default is False).</p>
+</dd>
+</dl>
+</section>
+<section id="id92">
+<h3>Example<a class="headerlink" href="#id92" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">run_ML_estimation</span><span class="p">(</span><span class="s2">&quot;timeseries_data.pkl&quot;</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="n">gamma_true</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">block_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">estimate_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">{0.5: {10: HighOrderStats_object, 20: HighOrderStats_object, 30: HighOrderStats_object}}</span>
+</pre></div>
+</div>
+</section>
+<section id="id93">
+<h3>Returns<a class="headerlink" href="#id93" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict
+Dictionary containing ML estimation results for each block size.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.topt.run_multiple_ML_estimations">
+<span class="sig-prename descclassname"><span class="pre">xtremes.topt.</span></span><span class="sig-name descname"><span class="pre">run_multiple_ML_estimations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_trues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([-0.4,</span> <span class="pre">-0.3,</span> <span class="pre">-0.2,</span> <span class="pre">-0.1,</span> <span class="pre">0.,</span> <span class="pre">0.1,</span> <span class="pre">0.2,</span> <span class="pre">0.3,</span> <span class="pre">0.4])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_sizes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[5,</span> <span class="pre">10,</span> <span class="pre">15,</span> <span class="pre">20,</span> <span class="pre">25,</span> <span class="pre">30,</span> <span class="pre">35,</span> <span class="pre">40,</span> <span class="pre">45,</span> <span class="pre">50]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SBM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">estimate_pi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parallelize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.topt.run_multiple_ML_estimations" title="Permalink to this definition"></a></dt>
+<dd><p>Run multiple maximum likelihood estimations (ML) for a range of GEV shape parameter values.</p>
+<section id="id94">
+<h3>Notes<a class="headerlink" href="#id94" title="Permalink to this heading"></a></h3>
+<p>This function performs ML estimation for a range of GEV shape parameter values specified in ‘gamma_trues’ and aggregates the results into a single dictionary.
+It iterates over each gamma value, calls the ‘run_ML_estimation’ function, and collects the results. If ‘parallelize’ is set to True, it runs the estimations
+concurrently using asyncio.</p>
+</section>
+<section id="id95">
+<h3>Parameters<a class="headerlink" href="#id95" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param file<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str
+Path to the file containing the time series data.</p>
+</dd>
+<dt class="field-even">param corr<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional
+Correlation type for the model (default is ‘IID’).</p>
+</dd>
+<dt class="field-odd">param gamma_trues<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray, optional
+Array of GEV shape parameter values to perform ML estimation for (default is np.arange(-4, 5, 1)/10).</p>
+</dd>
+<dt class="field-even">param block_sizes<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, optional
+List of block sizes for extracting block maxima (default is [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]).</p>
+</dd>
+<dt class="field-odd">param stride<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+Stride type for block maxima extraction. Options are ‘SBM’ (sliding block maxima) or ‘DBM’ (default block maxima) (default is ‘SBM’).</p>
+</dd>
+<dt class="field-even">param r<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional
+Number of orderstatistics to calculate the log-likelihood on. If not specified, use all provided</p>
+</dd>
+<dt class="field-odd">param estimate_pi<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool, optional
+Flag indicating whether to estimate the pi parameter (default is False).</p>
+</dd>
+<dt class="field-even">param parallelize<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool, optional
+Flag indicating whether to parallelize the ML estimations using asyncio (default is False).</p>
+</dd>
+</dl>
+</section>
+<section id="id96">
+<h3>Returns<a class="headerlink" href="#id96" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict
+Dictionary containing ML estimation results for each gamma value and block size.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="id97">
+<h2>Examples<a class="headerlink" href="#id97" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Run ML Estimation</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.topt</span> <span class="kn">import</span> <span class="n">run_ML_estimation</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_ML_estimation</span><span class="p">(</span><span class="s2">&quot;timeseries_data.pkl&quot;</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="n">gamma_true</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">block_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">estimate_pi</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Run Multiple ML Estimations</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.topt</span> <span class="kn">import</span> <span class="n">run_multiple_ML_estimations</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">run_multiple_ML_estimations</span><span class="p">(</span><span class="s2">&quot;timeseries_data.pkl&quot;</span><span class="p">,</span> <span class="n">corr</span><span class="o">=</span><span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="n">gamma_trues</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span> <span class="n">block_sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">stride</span><span class="o">=</span><span class="s1">&#39;SBM&#39;</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">estimate_pi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parallelize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="miscellaneous.html" class="btn btn-neutral float-left" title="Utility Functions for Extreme Value Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_bootstrap.html" class="btn btn-neutral float-right" title="Reference: Bootstrap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Erik Haufs.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

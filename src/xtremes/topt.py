@@ -1879,10 +1879,24 @@ class Data:
             The ML estimators are stored in the `ML_estimators` attribute.
         """
         if np.shape(self.high_order_stats) == np.shape([]):
+            print('Warning: No high order statistics found, I will compute them for you using r=1.')
             # potentially use parameters optained by getting blockmaxima
             self.get_HOS(orderstats=1, block_size=self.block_size, stride=self.stride)
-        self.ML_estimators = ML_estimators_data(self.high_order_stats)
+        # self.ML_estimators = ML_estimators_data(self.high_order_stats)
+        self.ML_estimators = ML_estimators_data(self.high_order_stats, Data=self) # ABM requires Data object
         self.ML_estimators.get_ML_estimation(FrechetOrGEV=FrechetOrGEV, r=r, bounds=bounds)
+
+    # making Data class compatible with ABM
+    def get_ABM_weights(self, recursively=True):
+        r""""Computes weights for MLE with ABM stride"""
+        if recursively:
+            abm_weights = [self.block_size/self.len]
+            for i in range(self.len-self.block_size):
+                abm_weights.append(abm_weights[-1]*(self.len-self.block_size-i-1)/(self.len-2-i))
+            return abm_weights
+        else:
+            print('caution: using binominal coeffs')
+            return [comb(self.len-i-1, self.block_size-1, exact=False) for i in range(self.len-self.block_size+1)]
 
 
 class ML_estimators_data:
@@ -1931,7 +1945,7 @@ class ML_estimators_data:
     >>> print(ml.values)
     """
 
-    def __init__(self, high_order_stats):
+    def __init__(self, high_order_stats, Data=None):
         r"""
         Initialize the ML_estimators_data class with high order statistics.
 
@@ -1942,6 +1956,7 @@ class ML_estimators_data:
         """
 
         self.high_order_stats = high_order_stats
+        self.Data = Data
         self.values = []
         self.statistics = {}
     
@@ -2012,19 +2027,49 @@ class ML_estimators_data:
             if initParams=='auto':
                 initParams_GEV = misc.PWM2GEV(*misc.PWM_estimation(self.high_order_stats[:,-1]))
                 initParams = [1/initParams_GEV[0], initParams_GEV[2]]
+            
+            # new: ABM-ready
+            # compute weights in ABM case
+            if self.Data == None:
+                weights = None
+                weights = None
+            elif self.Data.stride == 'ABM':
+                weights = self.Data.get_ABM_weights()
+            else:
+                weights = None
+            # for i, ho_stat in enumerate(self.high_order_stats):
             def cost(params):
                 alpha, sigma = params
-                cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
+                cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r, weights=weights)
                 return cst
-            # for now: hard-coded init params [1,1], as it should not matter too much
-            # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
-            results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=bounds)
-            # results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=bounds)
+                
+            inits = [np.max([1/initParams[0], 0.001]), np.max([initParams[1], 0.001])]
+            #its = initParams[i][::2]
+            results = misc.minimize(cost, inits, method='Nelder-Mead', bounds=((1e-6, np.inf),(1e-5, np.inf)))
+                # results = misc.minimize(cost, inits, method='COBYLA', bounds=((0, np.inf),(0, np.inf)))
+                #constr1 = scipy.optimize.LinearConstraint(np.array([[1,0]]), lb=0, keep_feasible=False)
+                #constr2 = scipy.optimize.LinearConstraint(np.array([[0,1]]), lb=0, keep_feasible=False)
+                #results = misc.minimize(cost, initParams[i], method='COBYLA', constraints=[constr1, constr2])
+        
+            # alpha, sigma = results.x
+            
+            # self.values.append([alpha, sigma])
+            self.values = results.x
+            self.values = np.array(self.values)
+            # # old:    
+            # def cost(params):
+            #     alpha, sigma = params
+            #     cst = - Frechet_log_likelihood(self.high_order_stats, alpha=alpha, sigma=sigma, r=r)
+            #     return cst
+            # # for now: hard-coded init params [1,1], as it should not matter too much
+            # # results = misc.minimize(cost, [1,1], method='COBYLA', bounds=((0,np.inf),(0,np.inf)))
+            # results = misc.minimize(cost, [1,1], method='Nelder-Mead', bounds=bounds)
+            # # results = misc.minimize(cost, initParams, method='L-BFGS-B', bounds=bounds)
     
-            alpha, sigma = results.x
-            if bc_varpi != None:
-                alpha /= bc_varpi
-            self.values = np.array([alpha, sigma])
+            # alpha, sigma = results.x
+            # if bc_varpi != None:
+            #     alpha /= bc_varpi
+            # self.values = np.array([alpha, sigma])
         else:
             raise ValueError("FrechetOrGEV has to be 'Frechet' or 'GEV', but is ", FrechetOrGEV)
 

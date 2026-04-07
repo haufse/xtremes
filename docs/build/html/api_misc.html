@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reference: Miscellaneous &mdash; xtremes 0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/sphinx_rtd_size.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=73b1e7da"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bias Correction" href="api_biascorrection.html" />
+    <link rel="prev" title="Reference: Bootstrap" href="api_bootstrap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            xtremes
+          </a>
+              <div class="version">
+                0.3.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Chapters</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topt.html">Time Series and Extreme Value Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bootstrap.html">Bootstrap and MLE Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="biascorrection.html">Bias Correction Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Utility Functions for Extreme Value Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_topt.html">Reference: topt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_bootstrap.html">Reference: Bootstrap</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reference: Miscellaneous</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-functions">Basic Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.sigmoid"><code class="docutils literal notranslate"><span class="pre">sigmoid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.invsigmoid"><code class="docutils literal notranslate"><span class="pre">invsigmoid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.mse"><code class="docutils literal notranslate"><span class="pre">mse()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-gev-and-its-likelihood">The GEV and its Likelihood</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.GEV_pdf"><code class="docutils literal notranslate"><span class="pre">GEV_pdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.GEV_cdf"><code class="docutils literal notranslate"><span class="pre">GEV_cdf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.GEV_ll"><code class="docutils literal notranslate"><span class="pre">GEV_ll()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id21">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#piece-wise-moment-estimation">Piece Wise Moment Estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.PWM_estimation"><code class="docutils literal notranslate"><span class="pre">PWM_estimation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.PWM2GEV"><code class="docutils literal notranslate"><span class="pre">PWM2GEV()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id31">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulating-time-series">Simulating Time Series</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.simulate_timeseries"><code class="docutils literal notranslate"><span class="pre">simulate_timeseries()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.stride2int"><code class="docutils literal notranslate"><span class="pre">stride2int()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#xtremes.miscellaneous.modelparams2gamma_true"><code class="docutils literal notranslate"><span class="pre">modelparams2gamma_true()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id45">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_biascorrection.html">Bias Correction</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">xtremes</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reference: Miscellaneous</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/api_misc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reference-miscellaneous">
+<h1>Reference: Miscellaneous<a class="headerlink" href="#reference-miscellaneous" title="Permalink to this heading"></a></h1>
+<p>This module is a collection for non-specialized, frequently used or basic functions.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p>The <cite>xtremes.miscellaneous</cite> module provides a variety of utility functions that can be used across different parts of your project. These functions are designed to be general-purpose and can help simplify common tasks.</p>
+</section>
+<section id="basic-functions">
+<h2>Basic Functions<a class="headerlink" href="#basic-functions" title="Permalink to this heading"></a></h2>
+<p>The following functions are basic utility functions provided by the <cite>xtremes.miscellaneous</cite> module:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.sigmoid">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">sigmoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.sigmoid" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the sigmoid function for the given input.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param x<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like
+The input value or array.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray
+The sigmoid of the input array. It has the same shape as <cite>x</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
+<ul>
+<li><p>The sigmoid function is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\text{sigmoid}(x) = \frac{1}{1 + e^{-x}}\]</div>
+</li>
+<li><p>It maps any real-valued number to the range (0, 1).</p></li>
+</ul>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">array([0.11920292, 0.26894142, 0.5       , 0.73105858, 0.88079708])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.invsigmoid">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">invsigmoid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.invsigmoid" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the inverse sigmoid function for the given input.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param y<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or array_like
+The input value or array, representing probabilities in the range [0, 1].</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h3>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float or numpy.ndarray
+The inverse sigmoid of the input value or array.</p>
+</dd>
+</dl>
+</section>
+<section id="raises">
+<h3>Raises<a class="headerlink" href="#raises" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the input value is outside the range [0, 1].</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Notes<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The inverse sigmoid function finds the input value(s) that would produce the given output probability.</p></li>
+<li><p>It is the inverse of the sigmoid function: <cite>invsigmoid(sigmoid(x)) = x</cite>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>Example<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">invsigmoid</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="go">array([-1.3652469 ,  0.        ,  1.3652469 ])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.mse">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">mse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gammas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_true</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.mse" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Mean Squared Error, Variance, and Bias of estimators.</p>
+<section id="id5">
+<h3>Notes<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>Computes the Mean Squared Error (MSE), Variance, and Bias of a set of estimators
+given the true (theoretical) value. This function is intended for estimating the GEV
+shape parameter <span class="math notranslate nohighlight">\(\gamma\)</span>, but works for other estimators as well.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathrm{MSE}(\hat\gamma) &amp;:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\gamma\right)^2 \\
+\mathrm{Var}(\hat\gamma) &amp;:= \frac{1}{n-1}\sum_{i=1}^n \left(\hat\gamma_i-\overline\gamma\right)^2 \\
+\mathrm{Bias}(\hat\gamma) &amp;:= \frac{n}{n-1} \left(\gamma-\overline\gamma\right)^2\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\overline\gamma\)</span> denotes the mean.</p>
+<div class="math notranslate nohighlight">
+\[\overline\gamma := \frac{1}{n}\sum_{i=1}^n \gamma_i\]</div>
+<p>Also note that:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MSE} := \mathrm{Bias} + \mathrm{Var}\]</div>
+</section>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param gammas<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like
+Estimated values.</p>
+</dd>
+<dt class="field-even">param gamma_true<span class="colon">:</span></dt>
+<dd class="field-even"><p>int or float
+True (theoretical) parameter.</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple[float]
+MSE, variance, and bias.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Raises<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">raise test_xtremes.miscellaneous.warning<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If <code class="docutils literal notranslate"><span class="pre">len(gammas)==1</span></code>. <code class="docutils literal notranslate"><span class="pre">NaN</span></code>s are returned.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Sigmoid Function</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">sigmoid</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sigmoid Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Inverse Sigmoid Function</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">invsigmoid</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">invsigmoid</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inverse Sigmoid Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Mean Squared Error (MSE)</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">mse</span>
+
+<span class="n">gammas</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]</span>
+<span class="n">gamma_true</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">mse_value</span><span class="p">,</span> <span class="n">variance</span><span class="p">,</span> <span class="n">bias</span> <span class="o">=</span> <span class="n">mse</span><span class="p">(</span><span class="n">gammas</span><span class="p">,</span> <span class="n">gamma_true</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MSE:&quot;</span><span class="p">,</span> <span class="n">mse_value</span><span class="p">,</span> <span class="s2">&quot;Variance:&quot;</span><span class="p">,</span> <span class="n">variance</span><span class="p">,</span> <span class="s2">&quot;Bias:&quot;</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="the-gev-and-its-likelihood">
+<h2>The GEV and its Likelihood<a class="headerlink" href="#the-gev-and-its-likelihood" title="Permalink to this heading"></a></h2>
+<p>The following functions are related to the Generalized Extreme Value (GEV) distribution and its likelihood:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.GEV_pdf">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">GEV_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.GEV_pdf" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Probability Density Function (PDF) of the Generalized Extreme Value distribution.</p>
+<section id="id9">
+<h3>Notes<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<p>Computes the probability density function of the Generalized Extreme Value distribution:</p>
+<div class="math notranslate nohighlight">
+\[g(x) = \frac{\exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right)\cdot
+        \left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1-1/\gamma}}{\sigma}\]</div>
+</section>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param x<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray
+GEV argument <span class="math notranslate nohighlight">\(x\in \mathbb{R}\)</span>.</p>
+</dd>
+<dt class="field-even">param gamma<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, float, list or numpy.ndarray, optional
+GEV shape parameter <span class="math notranslate nohighlight">\(\gamma\in \mathbb{R}\)</span>. Default is 0.</p>
+</dd>
+<dt class="field-odd">param mu<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray, optional
+GEV location parameter <span class="math notranslate nohighlight">\(\mu\in \mathbb{R}\)</span>. Default is 0.</p>
+</dd>
+<dt class="field-even">param sigma<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, float, list or numpy.ndarray, optional
+GEV scale parameter <span class="math notranslate nohighlight">\(\sigma&gt;0\)</span>. Default is 1.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray or float
+The Probability Density Function values corresponding to the input <cite>x</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Example<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GEV_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([0.17603266, 0.23254416, 0.28556358, 0.33477888, 0.37960368])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.GEV_cdf">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">GEV_cdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.GEV_cdf" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Cumulative Density Function (CDF) of the Generalized Extreme Value distribution.</p>
+<section id="id13">
+<h3>Notes<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<p>Computes the cumulative density function of the Generalized Extreme Value distribution:</p>
+<div class="math notranslate nohighlight">
+\[G_{\gamma,\mu,\sigma}(x) = \exp\left(-\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).\]</div>
+<p>For <span class="math notranslate nohighlight">\(\gamma=0\)</span>, the term can be interpreted as the limit <span class="math notranslate nohighlight">\(\lim_{\gamma\to 0}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[G_{0,\mu,\sigma}(x) = \exp\left(-\exp\left(-\frac{x-\mu}{\sigma}\right)\right).\]</div>
+<p>This function also allows the usage of an extremal index, another parameter relevant when
+dealing with stationary time series and its extreme values:</p>
+<div class="math notranslate nohighlight">
+\[G_{\gamma,\mu,\sigma,\vartheta}(x) = \exp\left(-\vartheta\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}\right).\]</div>
+</section>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param x<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray
+GEV argument <span class="math notranslate nohighlight">\(x\in \mathbb{R}\)</span>.</p>
+</dd>
+<dt class="field-even">param gamma<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, float, list or numpy.ndarray, optional
+GEV shape parameter <span class="math notranslate nohighlight">\(\gamma\in \mathbb{R}\)</span>. Default is 0.</p>
+</dd>
+<dt class="field-odd">param mu<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray, optional
+GEV location parameter <span class="math notranslate nohighlight">\(\mu\in \mathbb{R}\)</span>. Default is 0.</p>
+</dd>
+<dt class="field-even">param sigma<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, float, list or numpy.ndarray, optional
+GEV scale parameter <span class="math notranslate nohighlight">\(\sigma&gt;0\)</span>. Default is 1.</p>
+</dd>
+<dt class="field-odd">param theta<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray, optional
+Extremal index <span class="math notranslate nohighlight">\(\vartheta\in [0, 1]\)</span>. Default is 1.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray or float
+The Cumulative Density Function values corresponding to the input <cite>x</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h3>Example<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GEV_cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="go">array([0.54610814, 0.62171922, 0.69703039, 0.77196099, 0.84644106])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.GEV_ll">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">GEV_ll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.GEV_ll" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the log-likelihood function of the Generalized Extreme Value distribution.</p>
+<section id="id17">
+<h3>Notes<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
+<p>Computes the log-likelihood function of the Generalized Extreme Value distribution:</p>
+<div class="math notranslate nohighlight">
+\[l(x) = -\left(1+\gamma \frac{x-\mu}{\sigma}\right)^{-1/\gamma}
+       -\frac{\gamma+1}{\gamma}\log\left(1+\gamma \frac{x-\mu}{\sigma}\right)
+       -\log\sigma\]</div>
+</section>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param x<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray
+GEV argument <span class="math notranslate nohighlight">\(x\in \mathbb{R}\)</span>.</p>
+</dd>
+<dt class="field-even">param gamma<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, float, list or numpy.ndarray, optional
+GEV shape parameter <span class="math notranslate nohighlight">\(\gamma\in \mathbb{R}\)</span>.</p>
+</dd>
+<dt class="field-odd">param mu<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, float, list or numpy.ndarray, optional
+GEV location parameter <span class="math notranslate nohighlight">\(\mu\in \mathbb{R}\)</span>.</p>
+</dd>
+<dt class="field-even">param sigma<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, float, list or numpy.ndarray, optional
+GEV scale parameter <span class="math notranslate nohighlight">\(\sigma&gt;0\)</span>.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray or float
+The log-likelihood values corresponding to the input <cite>x</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h3>Example<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GEV_ll</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">array([-3.11578562, -2.23851549, -1.85551157, -1.57084383, -1.33403504])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="id21">
+<h2>Examples<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>GEV CDF</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">GEV_cdf</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">GEV_cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GEV CDF Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>GEV PDF</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">GEV_pdf</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">GEV_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GEV PDF Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>GEV Log-Likelihood</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">GEV_ll</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">GEV_ll</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GEV Log-Likelihood Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="piece-wise-moment-estimation">
+<h2>Piece Wise Moment Estimation<a class="headerlink" href="#piece-wise-moment-estimation" title="Permalink to this heading"></a></h2>
+<p>The following functions are related to Probability Weighted Moment (PWM) estimation:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.PWM_estimation">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">PWM_estimation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxima</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.PWM_estimation" title="Permalink to this definition"></a></dt>
+<dd><p>PWM Estimation of GEV parameters.</p>
+<section id="id22">
+<h3>Notes<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
+<p>Computes the first three Probability Weighted Moments <span class="math notranslate nohighlight">\(\beta_0,\beta_1,\beta_2\)</span>
+on given block maxima, as introduced in Greenwood et al. (1979).</p>
+<p>Let <span class="math notranslate nohighlight">\(M_{(1)} \leq M_{(2)} \leq \cdots \leq M_{(n)}\)</span> be increasingly sorted block maxima.
+Then the first three PWMs are defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\beta_0 &amp;:= \frac{1}{n}\sum_{i=1}^n M_{(i)},\\
+\beta_1 &amp;:= \frac{1}{n(n-1)}\sum_{i=1}^n (i-1) M_{(i)},\\
+\beta_2 &amp;:= \frac{1}{n(n-1)(n-2)}\sum_{i=1}^n (i-1)(i-2)M_{(i)}.\end{split}\]</div>
+</section>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param maxima<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list or numpy.array
+Sequence of maxima. <cite>len(maxima)</cite> must be greater than or equal to 3.</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h3>Returns<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of floats
+The first three PWMs: <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>, and <span class="math notranslate nohighlight">\(\beta_2\)</span>.</p>
+</dd>
+</dl>
+</section>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this heading"></a></h3>
+<p>Greenwood, J. A., Landwehr, J. M., Matalas, N. C., &amp; Wallis, J. R. (1979). Probability weighted moments: 
+Definition and relation to parameters of several distributions expressible in inverse form. 
+Water Resources Research, 15(5), 1049–1054. <a class="reference external" href="https://doi.org/10.1029/wr015i005p01049">https://doi.org/10.1029/wr015i005p01049</a></p>
+</section>
+<section id="id25">
+<h3>Example<a class="headerlink" href="#id25" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">18</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PWM_estimation</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span>
+<span class="go">(11.6, 11.2, 39.2)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.PWM2GEV">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">PWM2GEV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b_0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b_2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.PWM2GEV" title="Permalink to this definition"></a></dt>
+<dd><p>Compute estimators for the parameters of the GEV distribution from given PWM estimators.</p>
+<section id="id26">
+<h3>Notes<a class="headerlink" href="#id26" title="Permalink to this heading"></a></h3>
+<p>Computes estimators for the parameters of the Generalized Extreme Value (GEV) distribution from given Probability 
+Weighted Moment (PWM) estimators. As shown in Hosking et al. (1985), they follow the relationship:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\gamma &amp;= g_1^{-1}\left(\frac{3\beta_2-\beta_0}{2\beta_1-\beta_0}\right), \\
+\sigma &amp;= g_2(\gamma)\cdot (2\beta_1-\beta_0), \\
+\mu &amp;= \beta_0+\sigma\cdot g_3(\gamma),\end{split}\]</div>
+<p>where:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}g_1(\gamma) &amp;:= \frac{3^\gamma-1}{2^\gamma-1}, \\
+g_2(\gamma) &amp;:= \frac{\gamma}{\Gamma(1-\gamma)(2^\gamma-1)}, \\
+g_3(\gamma) &amp;:= \frac{1-\Gamma(1-\gamma)}{\gamma}.\end{split}\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(\Gamma\)</span> denotes the gamma function. The values for <span class="math notranslate nohighlight">\(g_\bullet(0)\)</span> 
+are defined by continuity to result in:</p>
+<div class="math notranslate nohighlight">
+\[g_1(0)= \frac{\log 3}{\log 2}, \quad g_2(0) = \frac{1}{\log 2}, \quad g_3(0) = -\gamma_\mathrm{EM},\]</div>
+<p>with <span class="math notranslate nohighlight">\(\gamma_\mathrm{EM}\)</span> being the Euler-Mascheroni constant.</p>
+</section>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param b_0<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or float
+PWM estimator for the first moment.</p>
+</dd>
+<dt class="field-even">param b_1<span class="colon">:</span></dt>
+<dd class="field-even"><p>int or float
+PWM estimator for the second moment.</p>
+</dd>
+<dt class="field-odd">param b_2<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or float
+PWM estimator for the third moment.</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of floats
+Estimators for the GEV parameters: shape parameter (<span class="math notranslate nohighlight">\(\gamma\)</span>), location parameter (<span class="math notranslate nohighlight">\(\mu\)</span>), 
+and scale parameter (<span class="math notranslate nohighlight">\(\sigma\)</span>).</p>
+</dd>
+</dl>
+</section>
+<section id="id29">
+<h3>References<a class="headerlink" href="#id29" title="Permalink to this heading"></a></h3>
+<p>Hosking, J. R. M., Wallis, J. R., &amp; Wood, E. F. (1985). Estimation of the Generalized Extreme-Value Distribution 
+by the Method of Probability-Weighted Moments. Technometrics, 27(3), 251–261. 
+<a class="reference external" href="https://doi.org/10.1080/00401706.1985.10488049">https://doi.org/10.1080/00401706.1985.10488049</a></p>
+</section>
+<section id="id30">
+<h3>Example<a class="headerlink" href="#id30" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b_0</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b_1</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b_2</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">PWM2GEV</span><span class="p">(</span><span class="n">b_0</span><span class="p">,</span> <span class="n">b_1</span><span class="p">,</span> <span class="n">b_2</span><span class="p">)</span>
+<span class="go">(0.289510206281886, 10.446586187753782, 15.207496500178042)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="id31">
+<h2>Examples<a class="headerlink" href="#id31" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>PWM Estimation</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">PWM_estimation</span>
+
+<span class="n">maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">18</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">PWM_estimation</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PWM Estimation Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>PWM to GEV</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">PWM2GEV</span>
+
+<span class="n">b_0</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">b_1</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">b_2</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">PWM2GEV</span><span class="p">(</span><span class="n">b_0</span><span class="p">,</span> <span class="n">b_1</span><span class="p">,</span> <span class="n">b_2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PWM to GEV Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="simulating-time-series">
+<h2>Simulating Time Series<a class="headerlink" href="#simulating-time-series" title="Permalink to this heading"></a></h2>
+<p>The following functions are related to simulating time series data:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.simulate_timeseries">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">simulate_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GEV'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correlation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelparams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.simulate_timeseries" title="Permalink to this definition"></a></dt>
+<dd><p>Simulate a Time Series for GEV.</p>
+<section id="id32">
+<h3>Notes<a class="headerlink" href="#id32" title="Permalink to this heading"></a></h3>
+<p>This function allows simulating three different kinds of time series.</p>
+<ul class="simple">
+<li><p>The most basic time series is the IID (independent and identically distributed) case, 
+where there is no temporal dependence. The distribution from which the random variables 
+are drawn can be chosen via <cite>distr</cite>, and respective model parameters are passed via 
+<cite>modelparams</cite>.</p></li>
+<li><dl class="simple">
+<dt>For a stationary time series with temporal dependence, two models are available:</dt><dd><ul>
+<li><p>ARMAX model: The next value is computed as the maximum of two values: 
+<span class="math notranslate nohighlight">\(ts * X_{i-1}\)</span> and <span class="math notranslate nohighlight">\((1 - ts) * Z_i\)</span>, where <span class="math notranslate nohighlight">\(Z_i\)</span> is drawn from a GPD (Generalized 
+Pareto Distribution) specified by <cite>modelparams</cite>. The parameter <cite>ts</cite> controls the 
+temporal dependence.</p></li>
+<li><p>AR (Autoregressive) model: Similar to ARMAX, but <span class="math notranslate nohighlight">\(Z_i\)</span> is drawn from a Cauchy distribution.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="id33">
+<h3>Parameters<a class="headerlink" href="#id33" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param n<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int
+Length of time series to simulate.</p>
+</dd>
+<dt class="field-even">param distr<span class="colon">:</span></dt>
+<dd class="field-even"><p>str, optional
+Distribution to draw from. Default is ‘GEV’.</p>
+</dd>
+<dt class="field-odd">param correlation<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional
+Correlation type to specify, choose from [‘IID’, ‘ARMAX’, ‘AR’]. Default is ‘IID’.</p>
+</dd>
+<dt class="field-even">param modelparams<span class="colon">:</span></dt>
+<dd class="field-even"><p>list, optional
+Parameters belonging to <cite>distr</cite>. Default is [0].</p>
+</dd>
+<dt class="field-odd">param ts<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float, optional
+Time series parameter <span class="math notranslate nohighlight">\(\alpha\in[0,1]\)</span>. Default is 0.</p>
+</dd>
+<dt class="field-even">param seed<span class="colon">:</span></dt>
+<dd class="field-even"><p>int, optional
+Random seed for reproducibility. Default is None.</p>
+</dd>
+</dl>
+</section>
+<section id="id34">
+<h3>Returns<a class="headerlink" href="#id34" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray[float]
+Simulated time series.</p>
+</dd>
+</dl>
+</section>
+<section id="id35">
+<h3>Raises<a class="headerlink" href="#id35" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If an invalid model is specified.</p>
+</dd>
+</dl>
+</section>
+<section id="see-also">
+<h3>See Also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h3>
+<p>Tutorial on Time Series Simulation: <a class="reference external" href="https://xtremes.readthedocs.io/en/latest/topt.html">https://xtremes.readthedocs.io/en/latest/topt.html</a></p>
+</section>
+<section id="id36">
+<h3>Example<a class="headerlink" href="#id36" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulated_ts</span> <span class="o">=</span> <span class="n">simulate_timeseries</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distr</span><span class="o">=</span><span class="s1">&#39;GPD&#39;</span><span class="p">,</span> <span class="n">correlation</span><span class="o">=</span><span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="n">modelparams</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simulated_ts</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+<span class="go">array([0.5791584 , 0.71057555, 0.55079821, 0.61636037, 0.63544943,</span>
+<span class="go">       0.74830653, 0.66283107, 0.69929097, 0.75026675, 0.69214764])</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.stride2int">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">stride2int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stride</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.stride2int" title="Permalink to this definition"></a></dt>
+<dd><p>Integer from Stride.</p>
+<section id="id37">
+<h3>Notes<a class="headerlink" href="#id37" title="Permalink to this heading"></a></h3>
+<p>This function is a utility when handling Block maxima (disjoint, sliding, striding).
+Apart from giving the stride directly, it is handy to have the additional options
+‘SBM’ and ‘DBM’ for sliding and disjoint BM, respectively. This function converts exactly this.</p>
+</section>
+<section id="id38">
+<h3>Parameters<a class="headerlink" href="#id38" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param stride<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int or str
+Stride to be converted.</p>
+</dd>
+<dt class="field-even">param block_size<span class="colon">:</span></dt>
+<dd class="field-even"><p>int
+Block size for conversion, ignored if stride==’SBM’.</p>
+</dd>
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int
+The converted stride.</p>
+</dd>
+</dl>
+</section>
+<section id="id39">
+<h3>Raises<a class="headerlink" href="#id39" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>TypeError</dt><dd><p>If stride is not an integer or string.</p>
+</dd>
+</dl>
+</section>
+<section id="id40">
+<h3>Examples<a class="headerlink" href="#id40" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stride2int</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stride2int</span><span class="p">(</span><span class="s1">&#39;SBM&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stride2int</span><span class="p">(</span><span class="s1">&#39;DBM&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="go">10</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xtremes.miscellaneous.modelparams2gamma_true">
+<span class="sig-prename descclassname"><span class="pre">xtremes.miscellaneous.</span></span><span class="sig-name descname"><span class="pre">modelparams2gamma_true</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correllation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelparams</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xtremes.miscellaneous.modelparams2gamma_true" title="Permalink to this definition"></a></dt>
+<dd><p>Extract gamma_true from model parameters.</p>
+<section id="id41">
+<h3>Notes<a class="headerlink" href="#id41" title="Permalink to this heading"></a></h3>
+<p>For some models, it is possible to extract the true value
+of gamma theoretically. Whenever this is possible, the conversion
+should be subject to this function.</p>
+</section>
+<section id="id42">
+<h3>Parameters<a class="headerlink" href="#id42" title="Permalink to this heading"></a></h3>
+<dl class="field-list simple">
+<dt class="field-odd">param distr<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str
+Valid distribution type.</p>
+</dd>
+<dt class="field-even">param correllation<span class="colon">:</span></dt>
+<dd class="field-even"><p>str
+Valid correlation type, currently [‘IID’, ‘ARMAX’, ‘AR’].</p>
+</dd>
+<dt class="field-odd">param modelparams<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list
+Valid model parameters.</p>
+</dd>
+<dt class="field-even">return<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy.ndarray[float]
+Gamma_true, if applicable. Returns None if gamma_true cannot be extracted.</p>
+</dd>
+</dl>
+</section>
+<section id="id43">
+<h3>Raises<a class="headerlink" href="#id43" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the distribution or correlation type is not supported.</p>
+</dd>
+</dl>
+</section>
+<section id="id44">
+<h3>Examples<a class="headerlink" href="#id44" title="Permalink to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">modelparams2gamma_true</span><span class="p">(</span><span class="s1">&#39;GEV&#39;</span><span class="p">,</span> <span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="go">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modelparams2gamma_true</span><span class="p">(</span><span class="s1">&#39;GPD&#39;</span><span class="p">,</span> <span class="s1">&#39;ARMAX&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">])</span>
+<span class="go">0.3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modelparams2gamma_true</span><span class="p">(</span><span class="s1">&#39;Normal&#39;</span><span class="p">,</span> <span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Distribution type &#39;Normal&#39; is not supported.</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="id45">
+<h2>Examples<a class="headerlink" href="#id45" title="Permalink to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Simulate Time Series</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">simulate_timeseries</span>
+
+<span class="n">simulated_ts</span> <span class="o">=</span> <span class="n">simulate_timeseries</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distr</span><span class="o">=</span><span class="s1">&#39;GEV&#39;</span><span class="p">,</span> <span class="n">correlation</span><span class="o">=</span><span class="s1">&#39;IID&#39;</span><span class="p">,</span> <span class="n">modelparams</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">ts</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulated Time Series:&quot;</span><span class="p">,</span> <span class="n">simulated_ts</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Stride to Integer</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">stride2int</span>
+
+<span class="n">stride</span> <span class="o">=</span> <span class="s1">&#39;DBM&#39;</span>
+<span class="n">block_size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">stride2int</span><span class="p">(</span><span class="n">stride</span><span class="p">,</span> <span class="n">block_size</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stride to Integer Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Model Parameters to Gamma True</strong>:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xtremes.miscellaneous</span> <span class="kn">import</span> <span class="n">modelparams2gamma_true</span>
+
+<span class="n">distr</span> <span class="o">=</span> <span class="s1">&#39;GEV&#39;</span>
+<span class="n">correlation</span> <span class="o">=</span> <span class="s1">&#39;IID&#39;</span>
+<span class="n">modelparams</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">]</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">modelparams2gamma_true</span><span class="p">(</span><span class="n">distr</span><span class="p">,</span> <span class="n">correlation</span><span class="p">,</span> <span class="n">modelparams</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model Parameters to Gamma True Result:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api_bootstrap.html" class="btn btn-neutral float-left" title="Reference: Bootstrap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_biascorrection.html" class="btn btn-neutral float-right" title="Bias Correction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Erik Haufs.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
